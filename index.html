@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Retribusi SPPG - Dinas Lingkungan Hidup Kabupaten Pangkajene dan Kepulauan</title>
+  <meta name="description" content="Portal Publik Pelaporan dan Rekapitulasi Setoran Retribusi SPPG Dinas Lingkungan Hidup Kabupaten Pangkep">
+  <link rel="icon" href="https://img.icons8.com/color/96/recycle-bag.png" type="image/png">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    #app-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+    #loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      z-index: 99;
+      transition: opacity 0.3s ease;
+    }
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid #e2e8f0;
+      border-top-color: #059669;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Indikator Loading Saat Membuka Halaman -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p style="margin-top: 16px; font-size: 13px; color: #475569; font-weight: 600; letter-spacing: 0.2px;">
+      Memuat Portal Retribusi SPPG...
+    </p>
+  </div>
+
+  <!-- 
+    PETUNJUK:
+    Ganti URL di bawah ini dengan URL Web App Google Apps Script Deployment Anda:
+    Contoh: https://script.google.com/macros/s/AKfycbx.../exec
+  -->
+  <iframe 
+    id="app-frame" 
+    src="https://script.google.com/macros/s/AKfycbzkmzy9KJWuvnclG77Xy5t3w721DAyCiZjI9NKKV1AXquBstZ-caiyScJI__sj6N8IB/exec"
+    allow="clipboard-write; camera; geolocation; microphone"
+    onload="document.getElementById('loading').style.display='none';">
+  </iframe>
+</body>
+</html>
