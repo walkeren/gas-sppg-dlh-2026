@@ -2456,7 +2456,7 @@
           { id: 'SPPG-017', kec: 'Marang', nama: 'Talaka 2', startMonth: 'April' },
           { id: 'SPPG-018', kec: 'Minasa Tene', nama: 'Bonto Langkasa', startMonth: 'April' },
           { id: 'SPPG-019', kec: 'Minasa Tene', nama: 'Kabba', startMonth: 'April' },
-          { id: 'SPPG-020', kec: 'Minasa Tene', nama: 'Biraeng', startMonth: 'Mei' },
+          { id: 'SPPG-020', kec: 'Minasa Tene', nama: 'Biraeng', startMonth: 'September' },
           { id: 'SPPG-021', kec: 'Pangkajene', nama: 'Bonto Perak 1', startMonth: 'April' },
           { id: 'SPPG-022', kec: 'Pangkajene', nama: 'Bonto Perak 2', startMonth: 'April' },
           { id: 'SPPG-023', kec: 'Pangkajene', nama: 'Mappasaile', startMonth: 'April' },
@@ -2490,7 +2490,7 @@
           'SPPG-017': { Apr: true, Mei: true, Jun: true, Jul: true, Agu: true, Sep: true, Okt: true, Nov: true, Des: true },
           'SPPG-018': { Apr: true, Mei: true, Jun: true, Jul: true, Agu: true, Sep: true, Okt: true, Nov: true, Des: true },
           'SPPG-019': { Apr: true, Mei: true, Jun: true, Jul: true, Agu: true, Sep: true, Okt: true, Nov: true, Des: true },
-          'SPPG-020': { Apr: false, Mei: true, Jun: true, Jul: true, Agu: true, Sep: true, Okt: true, Nov: true, Des: true },
+          'SPPG-020': { Apr: false, Mei: false, Jun: false, Jul: false, Agu: false, Sep: true, Okt: true, Nov: true, Des: true },
           'SPPG-021': { Apr: true, Mei: true, Jun: true, Jul: true, Agu: true, Sep: true, Okt: true, Nov: true, Des: true },
           'SPPG-022': { Apr: true, Mei: true, Jun: true, Jul: true, Agu: true, Sep: true, Okt: true, Nov: true, Des: true },
           'SPPG-023': { Apr: true, Mei: true, Jun: true, Jul: true, Agu: true, Sep: true, Okt: true, Nov: true, Des: true },
@@ -4908,7 +4908,7 @@
                 this.adminSubmenu = 'pembayaran';
                 this.notifySuccess('Login Berhasil', 'Selamat datang di Portal Khusus Bendahara DLH.');
               } else {
-                this.notifyError('Login Gagal', 'Email atau password salah. Gunakan bendahara@dlh.go.id / bendahara123.');
+                this.notifyError('Login Gagal', 'Email atau password salah. Silakan periksa kembali kredensial Anda.');
               }
               this.$nextTick(() => lucide.createIcons());
             }, 400);
