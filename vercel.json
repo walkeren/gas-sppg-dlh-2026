@@ -3,7 +3,7 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "https://script.google.com/macros/s/AKfycb_DEPLOYMENT_ID_ANDA/exec",
+      "destination": "https://script.google.com/macros/s/AKfycbw4Pf7JJZ7Pi35es1RUfh7InH_Vs1Yi5ZSMzdcwcqSShh-cefg6S9JpDYGC8HO9AsC8/exec",
       "permanent": false
     }
   ]
