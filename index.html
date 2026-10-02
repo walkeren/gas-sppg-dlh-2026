@@ -4579,21 +4579,37 @@
 
           const sppgKewajiban = this.periodeWajibMap[this.form.sppgId] || {};
 
+          // Cari indeks bulan pertama yang WAJIB (misal mulai beroperasi Mei -> index 1)
+          let firstWajibIndex = -1;
+          for (let i = 0; i < this.bulanListShort.length; i++) {
+            const blnShort = this.bulanListShort[i];
+            if (sppgKewajiban[blnShort] === true) {
+              firstWajibIndex = i;
+              break;
+            }
+          }
+
+          // Jika tidak ada data spesifik, default mulai dari index 0 (April)
+          if (firstWajibIndex === -1) {
+            firstWajibIndex = 0;
+          }
+
           const available = [];
-          this.bulanListShort.forEach(blnShort => {
-            // Periksa apakah bulan ini aktif/wajib bagi SPPG ini (berdasarkan Matriks Periode Wajib di Admin)
-            const isWajib = sppgKewajiban[blnShort] !== false;
+          // Loop mulai dari periode pertama wajib hingga periode setelahnya (Desember)
+          // Periode sebelum bulan wajib pertama otomatis TIDAK tampil
+          for (let i = firstWajibIndex; i < this.bulanListShort.length; i++) {
+            const blnShort = this.bulanListShort[i];
             const isPaid = targetMatriks.months[blnShort] === 'paid';
 
-            // HANYA tampilkan bulan yang WAJIB (aktif beroperasi) dan BELUM terbayar
-            // Ini mencegah SPPG salah memilih bulan sebelum masa operasional (misal mulai Mei, April tidak akan muncul)
-            if (isWajib && !isPaid) {
+            // Dikurangi periode yang sudah terbayar
+            if (!isPaid) {
               available.push({
                 short: blnShort,
                 full: bulanFullMap[blnShort] || blnShort
               });
             }
-          });
+          }
+
           return available;
         },
 
