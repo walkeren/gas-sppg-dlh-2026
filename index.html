@@ -2149,7 +2149,7 @@
      * Masukkan URL Web App Deployment Google Apps Script Anda di bawah ini:
      * Contoh: "https://script.google.com/macros/s/AKfycbyxxxxxx/exec"
      */
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxB0y5OJa-isgbFkUtUr3rPsLSGMDQRTf4y80q0-GwTbzK5-mDjMDfGgbXLHFx8ox94/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/GANTI_DENGAN_DEPLOYMENT_ID_ANDA/exec";
 
     /**
      * Helper Universal API Caller
@@ -4577,10 +4577,17 @@
             'Des': 'Desember'
           };
 
+          const sppgKewajiban = this.periodeWajibMap[this.form.sppgId] || {};
+
           const available = [];
           this.bulanListShort.forEach(blnShort => {
-            // Hanya tampilkan bulan yang BELUM terbayar (unpaid atau belum ada status paid)
-            if (targetMatriks.months[blnShort] !== 'paid') {
+            // Periksa apakah bulan ini aktif/wajib bagi SPPG ini (berdasarkan Matriks Periode Wajib di Admin)
+            const isWajib = sppgKewajiban[blnShort] !== false;
+            const isPaid = targetMatriks.months[blnShort] === 'paid';
+
+            // HANYA tampilkan bulan yang WAJIB (aktif beroperasi) dan BELUM terbayar
+            // Ini mencegah SPPG salah memilih bulan sebelum masa operasional (misal mulai Mei, April tidak akan muncul)
+            if (isWajib && !isPaid) {
               available.push({
                 short: blnShort,
                 full: bulanFullMap[blnShort] || blnShort
