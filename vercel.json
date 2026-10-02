@@ -1,10 +1,13 @@
 {
   "version": 2,
-  "redirects": [
+  "cleanUrls": true,
+  "headers": [
     {
-      "source": "/",
-      "destination": "https://script.google.com/macros/s/AKfycbw4Pf7JJZ7Pi35es1RUfh7InH_Vs1Yi5ZSMzdcwcqSShh-cefg6S9JpDYGC8HO9AsC8/exec",
-      "permanent": false
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "ALLOWALL" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
     }
   ]
 }
