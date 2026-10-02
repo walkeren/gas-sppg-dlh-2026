@@ -1,13 +1,10 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "headers": [
+  "redirects": [
     {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Frame-Options", "value": "ALLOWALL" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
-      ]
+      "source": "/",
+      "destination": "https://script.google.com/macros/s/AKfycb_DEPLOYMENT_ID_ANDA/exec",
+      "permanent": false
     }
   ]
 }
