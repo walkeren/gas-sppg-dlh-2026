@@ -763,6 +763,12 @@ function updateSts(idTrx, noSts, tanggalSts) {
         return { success: true };
       }
     }
+    return { success: false, message: 'Transaksi tidak ditemukan.' };
+  } catch (err) {
+    return { success: false, error: err.toString() };
+  }
+}
+
 /**
  * Toggle Verifikasi Status Pembayaran (SELESAI_STS / MENUNGGU_VERIFIKASI)
  */
