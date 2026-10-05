@@ -5009,7 +5009,7 @@
             setTimeout(() => {
               this.isLoggingIn = false;
               const cleanInput = (this.loginEmail || '').trim().toLowerCase();
-              if ((cleanInput === 'bendahara@dlh.go.id' || cleanInput === 'bendahara') && this.loginPassword === 'bendahara123') {
+              if ((cleanInput === 'bendahara@dlh.go.id' || cleanInput === 'bendahara') && (this.loginPassword === 'bendahara123' || this.loginPassword === 'admin123')) {
                 this.isLoggedIn = true;
                 try {
                   localStorage.setItem('sppg_bendahara_session', JSON.stringify({
