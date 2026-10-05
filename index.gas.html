@@ -1569,10 +1569,10 @@
           </div>
         </div>
 
-        <!-- 5 Structured Settings Cards in Balanced 2-Column Grid -->
+        <!-- 4 Structured Settings Cards in Balanced 2-Column Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-          <!-- KOLOM KIRI: BRANDING & PROFIL (6 COLS) -->
+          <!-- KOLOM KIRI: BRANDING & INTEGRASI (6 COLS) -->
           <div class="lg:col-span-6 space-y-6">
 
             <!-- KARTU 1: IDENTITAS & BRANDING -->
@@ -1828,97 +1828,57 @@
             </div>
           </div>
 
-                      <!-- KARTU 2: PROFIL PENGGUNA & BENDAHARA -->
+            <!-- KARTU 2: INTEGRASI CLOUD & HELPDESK -->
             <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-card space-y-4">
               <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
-                    <i data-lucide="user-check" class="w-4 h-4"></i>
+                  <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                    <i data-lucide="cloud" class="w-4 h-4"></i>
                   </div>
                   <div>
-                    <h3 class="font-headline font-bold text-slate-900 text-sm">Profil Pengguna & Bendahara</h3>
-                    <p class="text-[11px] text-slate-400">Identitas resmi penandatangan dokumen dan akun login.</p>
+                    <h3 class="font-headline font-bold text-slate-900 text-sm">Integrasi Cloud & Helpdesk</h3>
+                    <p class="text-[11px] text-slate-400">Penyimpanan Google Drive dan kontak bantuan.</p>
                   </div>
                 </div>
-                <span class="text-[10px] font-mono font-bold text-sky-700 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-full">Akun & TTD</span>
-              </div>
-
-              <!-- Quick Preview Avatar & Identity -->
-              <div class="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                <div class="w-12 h-12 rounded-xl bg-brand-700 text-white flex items-center justify-center font-bold font-headline text-lg shadow-xs shrink-0">
-                  <span x-text="config.adminNama ? config.adminNama.charAt(0) : 'B'"></span>
-                </div>
-                <div class="min-w-0 flex-1 text-xs">
-                  <div class="font-bold text-slate-900 truncate" x-text="config.adminNama || 'Nama Bendahara'"></div>
-                  <div class="text-[11px] text-slate-500 font-mono truncate" x-text="'NIP. ' + (config.adminNip || '-')"></div>
-                  <div class="text-[11px] text-brand-700 truncate" x-text="config.adminJabatan || 'Bendahara Penerimaan'"></div>
-                </div>
+                <span class="text-[10px] font-mono font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">Sistem</span>
               </div>
 
               <div class="space-y-3 text-xs">
                 <div>
-                  <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap & Gelar <span class="text-rose-500">*</span></label>
+                  <label class="block font-semibold text-slate-700 mb-1">Google Drive Folder ID (Slip Setor)</label>
                   <input 
                     type="text" 
-                    x-model="config.adminNama" 
-                    placeholder="H. Syarifuddin, S.E."
-                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 font-semibold outline-none">
+                    x-model="config.driveFolderId" 
+                    placeholder="1AbC_dlh_retribusi_sppg_drive_folder"
+                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono outline-none">
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-3">
                   <div>
-                    <label class="block font-semibold text-slate-700 mb-1">NIP Bendahara <span class="text-rose-500">*</span></label>
+                    <label class="block font-semibold text-slate-700 mb-1">Maks. File (MB)</label>
                     <input 
-                      type="text" 
-                      x-model="config.adminNip" 
-                      placeholder="19850712 201001 1 015"
+                      type="number" 
+                      x-model="config.maxFileSizeMB" 
+                      min="1" 
+                      max="20"
                       class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono outline-none">
                   </div>
 
                   <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Jabatan Penandatangan</label>
+                    <label class="block font-semibold text-slate-700 mb-1">WhatsApp Helpdesk</label>
                     <input 
                       type="text" 
-                      x-model="config.adminJabatan" 
-                      placeholder="Bendahara Penerimaan DLH"
-                      class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none">
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
-                  <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Email Dinas</label>
-                    <input 
-                      type="email" 
-                      x-model="config.adminEmail" 
-                      placeholder="bendahara.dlh@pangkepkab.go.id"
-                      class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none">
-                  </div>
-
-                  <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Username Login</label>
-                    <input 
-                      type="text" 
-                      x-model="config.adminUsername" 
-                      placeholder="bendahara"
+                      x-model="config.waHelpdesk" 
+                      placeholder="0812-3456-7890"
                       class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono outline-none">
                   </div>
-                </div>
-
-                <div>
-                  <label class="block font-semibold text-slate-700 mb-1">Ubah Password Baru (Opsional)</label>
-                  <input 
-                    type="password" 
-                    x-model="config.adminPasswordNew" 
-                    placeholder="Kosongkan jika tidak ingin mengubah password"
-                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none">
                 </div>
               </div>
             </div>
 
           </div>
 
-          <!-- KOLOM KANAN: BULAN AKTIF, DOKUMEN & INTEGRASI (6 COLS) -->
+          <!-- KOLOM KANAN: BULAN AKTIF & PENOMORAN (6 COLS) -->
           <div class="lg:col-span-6 space-y-6">
 
             <!-- KARTU 3: PERIODE BULAN AKTIF PENAGIHAN -->
@@ -2071,54 +2031,6 @@
                     class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none">
                   <div class="mt-1 text-[11px] text-slate-500">
                     Pratinjau: <strong class="font-mono text-slate-800" x-text="formatToken(config.templateTrx, { no: '4635', bulan: 'April', tahun: config.tahunAnggaran })"></strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- KARTU 5: INTEGRASI CLOUD & HELPDESK -->
-            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-card space-y-4">
-              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
-                    <i data-lucide="cloud" class="w-4 h-4"></i>
-                  </div>
-                  <div>
-                    <h3 class="font-headline font-bold text-slate-900 text-sm">Integrasi Cloud & Helpdesk</h3>
-                    <p class="text-[11px] text-slate-400">Penyimpanan Google Drive dan kontak bantuan.</p>
-                  </div>
-                </div>
-                <span class="text-[10px] font-mono font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">Sistem</span>
-              </div>
-
-              <div class="space-y-3 text-xs">
-                <div>
-                  <label class="block font-semibold text-slate-700 mb-1">Google Drive Folder ID (Slip Setor)</label>
-                  <input 
-                    type="text" 
-                    x-model="config.driveFolderId" 
-                    placeholder="1AbC_dlh_retribusi_sppg_drive_folder"
-                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono outline-none">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Maks. File (MB)</label>
-                    <input 
-                      type="number" 
-                      x-model="config.maxFileSizeMB" 
-                      min="1" 
-                      max="20"
-                      class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono outline-none">
-                  </div>
-
-                  <div>
-                    <label class="block font-semibold text-slate-700 mb-1">WhatsApp Helpdesk</label>
-                    <input 
-                      type="text" 
-                      x-model="config.waHelpdesk" 
-                      placeholder="0812-3456-7890"
-                      class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono outline-none">
                   </div>
                 </div>
               </div>

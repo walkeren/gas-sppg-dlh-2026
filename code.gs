@@ -205,21 +205,21 @@ function styleHeaderRow(sheet, numCols) {
 
 function setupSheetMasterSppg(ss) {
   var sheet = ss.getSheetByName(SHEETS.MASTER_SPPG) || ss.insertSheet(SHEETS.MASTER_SPPG);
-  var headers = ['ID SPPG', 'Kecamatan', 'Nama SPPG', 'Status Aktif', 'Dibuat Pada'];
+  var headers = ['id_sppg', 'kecamatan', 'nama_sppg', 'status_aktif', 'created_at'];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   styleHeaderRow(sheet, headers.length);
 }
 
 function setupSheetUsers(ss) {
   var sheet = ss.getSheetByName(SHEETS.USERS) || ss.insertSheet(SHEETS.USERS);
-  var headers = ['ID User', 'Username', 'Email', 'Password', 'Nama Petugas', 'Role', 'Status Aktif', 'Created At'];
+  var headers = ['id_user', 'username', 'email', 'password', 'nama_petugas', 'role', 'status_aktif', 'created_at'];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   styleHeaderRow(sheet, headers.length);
 }
 
 function setupSheetConfig(ss) {
   var sheet = ss.getSheetByName(SHEETS.CONFIG) || ss.insertSheet(SHEETS.CONFIG);
-  var headers = ['Key', 'Value', 'Deskripsi', 'Updated At'];
+  var headers = ['config_key', 'config_value', 'deskripsi', 'updated_at'];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   styleHeaderRow(sheet, headers.length);
 
@@ -243,7 +243,7 @@ function setupSheetConfig(ss) {
 
 function setupSheetPeriodeWajib(ss) {
   var sheet = ss.getSheetByName(SHEETS.PERIODE_WAJIB) || ss.insertSheet(SHEETS.PERIODE_WAJIB);
-  var headers = ['ID SPPG', 'Kecamatan', 'Nama SPPG', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember', 'Updated At'];
+  var headers = ['id_sppg', 'kecamatan', 'nama_sppg', 'jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des', 'updated_at'];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   styleHeaderRow(sheet, headers.length);
 }
@@ -251,29 +251,81 @@ function setupSheetPeriodeWajib(ss) {
 function setupSheetPembayaran(ss) {
   var sheet = ss.getSheetByName(SHEETS.PEMBAYARAN) || ss.insertSheet(SHEETS.PEMBAYARAN);
   var headers = [
-    'ID Transaksi', 
-    'ID SPPG', 
-    'Nama SPPG', 
-    'Kecamatan', 
-    'Nama Pelapor', 
-    'Kontak WhatsApp', 
-    'Periode Bulan', 
-    'Tanggal Transfer', 
-    'Jumlah Transfer', 
-    'Bukti Slip URL', 
-    'Status Dokumen', 
-    'No STS', 
-    'No STBP', 
-    'ID Transaksi Bank', 
-    'Tanggal STS', 
-    'Catatan / Ref Excel', 
-    'Created At'
+    'id_transaksi', 
+    'id_sppg', 
+    'nama_sppg', 
+    'kecamatan', 
+    'nama_pelapor', 
+    'kontak_pelapor', 
+    'periode_bulan', 
+    'tanggal_transfer', 
+    'jumlah_transfer', 
+    'bukti_slip_url', 
+    'status_verifikasi', 
+    'no_sts', 
+    'no_stbp', 
+    'id_transaksi_bank', 
+    'tanggal_sts', 
+    'catatan', 
+    'created_at'
   ];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   styleHeaderRow(sheet, headers.length);
 }
 
 // ============================================================================
+/**
+ * Jalankan fungsi ini untuk otomatis menamai ulang seluruh baris header tabel database ke format standar.
+ */
+function migrateDatabaseHeaders() {
+  try {
+    var ss = getDb();
+
+    // 1. master_sppg
+    var s1 = ss.getSheetByName(SHEETS.MASTER_SPPG);
+    if (s1) {
+      s1.getRange(1, 1, 1, 5).setValues([['id_sppg', 'kecamatan', 'nama_sppg', 'status_aktif', 'created_at']]);
+      styleHeaderRow(s1, 5);
+    }
+
+    // 2. users_bendahara
+    var s2 = ss.getSheetByName(SHEETS.USERS);
+    if (s2) {
+      s2.getRange(1, 1, 1, 8).setValues([['id_user', 'username', 'email', 'password', 'nama_petugas', 'role', 'status_aktif', 'created_at']]);
+      styleHeaderRow(s2, 8);
+    }
+
+    // 3. app_config
+    var s3 = ss.getSheetByName(SHEETS.CONFIG);
+    if (s3) {
+      s3.getRange(1, 1, 1, 4).setValues([['config_key', 'config_value', 'deskripsi', 'updated_at']]);
+      styleHeaderRow(s3, 4);
+    }
+
+    // 4. periode_wajib
+    var s4 = ss.getSheetByName(SHEETS.PERIODE_WAJIB);
+    if (s4) {
+      var pwHeaders = ['id_sppg', 'kecamatan', 'nama_sppg', 'jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des', 'updated_at'];
+      s4.getRange(1, 1, 1, pwHeaders.length).setValues([pwHeaders]);
+      styleHeaderRow(s4, pwHeaders.length);
+    }
+
+    // 5. pembayaran_retribusi
+    var s5 = ss.getSheetByName(SHEETS.PEMBAYARAN);
+    if (s5) {
+      var payHeaders = ['id_transaksi', 'id_sppg', 'nama_sppg', 'kecamatan', 'nama_pelapor', 'kontak_pelapor', 'periode_bulan', 'tanggal_transfer', 'jumlah_transfer', 'bukti_slip_url', 'status_verifikasi', 'no_sts', 'no_stbp', 'id_transaksi_bank', 'tanggal_sts', 'catatan', 'created_at'];
+      s5.getRange(1, 1, 1, payHeaders.length).setValues([payHeaders]);
+      styleHeaderRow(s5, payHeaders.length);
+    }
+
+    Logger.log('Semua header tabel database berhasil distandarisasi.');
+    return { success: true, message: 'Semua header tabel database berhasil distandarisasi.' };
+  } catch (err) {
+    Logger.log('Error migrateDatabaseHeaders: ' + err.toString());
+    return { success: false, error: err.toString() };
+  }
+}
+
 // 3. INSERT MASTER DATA (SPPG, ADMIN, TRANSAKSI DARI EXCEL)
 // ============================================================================
 
