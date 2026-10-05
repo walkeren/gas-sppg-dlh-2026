@@ -517,38 +517,30 @@
                       @click.stop="item.months && (item.months[bln] === 'verified' || item.months[bln] === 'paid' || item.months[bln] === 'pending') ? toggleCellPopover(item, bln, $event) : null">
                       
                       <!-- 1. Terverifikasi (Lunas) - Centang Hijau Besar & Tegas -->
-                      <template x-if="item.months && (item.months[bln] === 'verified' || item.months[bln] === 'paid')">
-                        <div class="flex items-center justify-center py-0.5" title="Setoran Terverifikasi (Lunas) - Klik untuk lihat rincian">
-                          <svg class="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                          </svg>
-                        </div>
-                      </template>
+                      <div x-show="item.months && (item.months[bln] === 'verified' || item.months[bln] === 'paid')" class="flex items-center justify-center py-0.5" title="Setoran Terverifikasi (Lunas) - Klik untuk lihat rincian">
+                        <svg class="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                      </div>
 
                       <!-- 2. Menunggu Verifikasi - Centang Kuning Besar & Tegas -->
-                      <template x-if="item.months && item.months[bln] === 'pending'">
-                        <div class="flex items-center justify-center py-0.5" title="Form sudah disubmit, menunggu verifikasi - Klik untuk lihat rincian">
-                          <svg class="w-5 h-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                          </svg>
-                        </div>
-                      </template>
+                      <div x-show="item.months && item.months[bln] === 'pending'" class="flex items-center justify-center py-0.5" title="Form sudah disubmit, menunggu verifikasi - Klik untuk lihat rincian">
+                        <svg class="w-5 h-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                      </div>
 
                       <!-- 3. Belum Bayar - Silang Merah Besar & Tegas -->
-                      <template x-if="item.months && item.months[bln] === 'unpaid'">
-                        <div class="flex items-center justify-center py-0.5" title="Belum Bayar">
-                          <svg class="w-5 h-5 text-rose-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </div>
-                      </template>
+                      <div x-show="item.months && item.months[bln] === 'unpaid'" class="flex items-center justify-center py-0.5" title="Belum Bayar">
+                        <svg class="w-5 h-5 text-rose-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </div>
 
                       <!-- 4. Belum Wajib - Tanda Garis Strip -->
-                      <template x-if="!item.months || item.months[bln] === 'not_required'">
-                        <div class="flex items-center justify-center py-0.5" title="Belum Wajib">
-                          <span class="font-bold text-slate-400 text-sm leading-none select-none">-</span>
-                        </div>
-                      </template>
+                      <div x-show="!item.months || item.months[bln] === 'not_required'" class="flex items-center justify-center py-0.5" title="Belum Wajib">
+                        <span class="font-bold text-slate-400 text-sm leading-none select-none">-</span>
+                      </div>
 
                     </td>
                   </template>
@@ -578,7 +570,9 @@
               <div class="text-[11px] text-brand-600 font-semibold leading-tight mt-0.5" x-text="'Bulan: ' + popover.bulan + ' ' + config.tahunAnggaran"></div>
             </div>
             <button @click="closePopover()" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition shrink-0" title="Tutup">
-              <i data-lucide="x" class="w-4 h-4"></i>
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
 
