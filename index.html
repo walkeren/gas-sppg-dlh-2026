@@ -522,17 +522,18 @@
                     <!-- 9 Cells with Popover Trigger (Hanya untuk yang sudah bayar / disubmit, Merah & Abu-abu TIDAK BUKA Popover) -->
                     <template x-for="bln in bulanListShort" :key="bln">
                       <td 
-                        class="py-2 px-1 text-center border-b border-r border-slate-200 font-mono relative group"
+                        class="py-2 px-1 text-center border-b border-r border-slate-200 font-mono relative select-none"
                         :class="{
                           'bg-emerald-100/90 text-emerald-800 hover:bg-emerald-200 cursor-pointer': item.months[bln] === 'verified' || item.months[bln] === 'paid',
                           'bg-amber-100/90 text-amber-900 hover:bg-amber-200 cursor-pointer': item.months[bln] === 'pending',
                           'bg-rose-100/90 text-rose-800 hover:bg-rose-200/50 cursor-default': item.months[bln] === 'unpaid',
                           'bg-slate-100/90 text-slate-400 hover:bg-slate-200/40 cursor-default': item.months[bln] === 'not_required'
-                        }">
+                        }"
+                        @click.stop="(item.months[bln] === 'verified' || item.months[bln] === 'paid' || item.months[bln] === 'pending') ? toggleCellPopover(item, bln, $event) : null">
                         
                         <!-- 1. Terverifikasi (Lunas) - Centang Hijau Besar & Tegas -->
                         <template x-if="item.months[bln] === 'verified' || item.months[bln] === 'paid'">
-                          <div class="flex items-center justify-center py-0.5">
+                          <div class="flex items-center justify-center py-0.5" title="Setoran Terverifikasi (Lunas) - Klik untuk lihat rincian">
                             <svg class="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                             </svg>
@@ -541,7 +542,7 @@
 
                         <!-- 2. Menunggu Verifikasi - Centang Kuning Besar & Tegas -->
                         <template x-if="item.months[bln] === 'pending'">
-                          <div class="flex items-center justify-center py-0.5">
+                          <div class="flex items-center justify-center py-0.5" title="Form sudah disubmit, menunggu verifikasi - Klik untuk lihat rincian">
                             <svg class="w-5 h-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                             </svg>
@@ -550,7 +551,7 @@
 
                         <!-- 3. Belum Bayar - Silang Merah Besar & Tegas -->
                         <template x-if="item.months[bln] === 'unpaid'">
-                          <div class="flex items-center justify-center py-0.5">
+                          <div class="flex items-center justify-center py-0.5" title="Belum Bayar">
                             <svg class="w-5 h-5 text-rose-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -559,108 +560,8 @@
 
                         <!-- 4. Belum Wajib - Tanda Garis Strip -->
                         <template x-if="item.months[bln] === 'not_required'">
-                          <div class="flex items-center justify-center py-0.5">
+                          <div class="flex items-center justify-center py-0.5" title="Belum Wajib">
                             <span class="font-bold text-slate-400 text-sm leading-none select-none">-</span>
-                          </div>
-                        </template>
-
-                        <!-- ================= PURE CSS HOVER TOOLTIP (STATUS TERVERIFIKASI & VALID LENGKAP) ================= -->
-                        <template x-if="(item.months[bln] === 'verified' || item.months[bln] === 'paid' || item.months[bln] === 'pending') && item.details && item.details[bln]">
-                          <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-76 bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 p-3.5 opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 origin-bottom text-left select-text">
-                            
-                            <!-- Panah Segitiga Tooltip -->
-                            <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-white"></div>
-                            
-                            <!-- Header Tooltip -->
-                            <div class="pb-2 border-b border-slate-100">
-                              <div class="font-headline font-bold text-slate-900 text-xs truncate" x-text="item.nama"></div>
-                              <div class="text-[10px] text-brand-600 font-semibold" x-text="'Bulan: ' + bln + ' ' + config.tahunAnggaran"></div>
-                            </div>
-
-                            <!-- Baris Status: Terverifikasi & Valid -->
-                            <div class="py-2 border-b border-slate-100 flex items-center justify-between gap-1 text-slate-600">
-                              <span class="text-slate-400 text-[10px] font-medium">Status:</span>
-                              <div class="flex items-center gap-1 flex-wrap justify-end">
-                                <!-- Status Verifikasi -->
-                                <template x-if="item.months[bln] === 'verified' || item.months[bln] === 'paid'">
-                                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                                    <svg class="w-3 h-3 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                                    </svg>
-                                    <span>Terverifikasi</span>
-                                  </span>
-                                </template>
-                                <template x-if="item.months[bln] === 'pending'">
-                                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                                    <svg class="w-3 h-3 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                                    </svg>
-                                    <span>Menunggu Verifikasi</span>
-                                  </span>
-                                </template>
-
-                                <!-- Status Validasi (STS + STBP + Trx Bank) -->
-                                <template x-if="item.details[bln].isValid">
-                                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300" title="Valid: Dokumen STS, STBP, dan Transaksi Lengkap">
-                                    <svg class="w-3 h-3 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                                    </svg>
-                                    <span>Valid</span>
-                                  </span>
-                                </template>
-                                <template x-if="!item.details[bln].isValid">
-                                  <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-500 border border-slate-200" title="Belum Lengkap: Menunggu pengisian no dokumen">
-                                    <span>Belum Valid</span>
-                                  </span>
-                                </template>
-                              </div>
-                            </div>
-
-                            <!-- Baris Data Transaksi -->
-                            <div class="mt-2 space-y-1.5 text-[11px] font-sans">
-                              
-                              <div class="flex justify-between items-center text-slate-600">
-                                <span class="text-slate-400 text-[10px]">ID Bank:</span>
-                                <template x-if="item.details[bln].idTransaksi && item.details[bln].idTransaksi !== '-'">
-                                  <span class="font-mono font-bold text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded text-[10px]" x-text="formatTRX(item.details[bln].idTransaksi, bln, item.id, item.kec)"></span>
-                                </template>
-                                <template x-if="!item.details[bln].idTransaksi || item.details[bln].idTransaksi === '-'">
-                                  <span class="text-slate-400 font-mono text-[10px]">&mdash;</span>
-                                </template>
-                              </div>
-
-                              <div class="flex justify-between items-center text-slate-600">
-                                <span class="text-slate-400 text-[10px]">Tgl Setor:</span>
-                                <span class="font-mono font-bold text-slate-800 text-[10px]" x-text="item.details[bln].tglSetor || '—'"></span>
-                              </div>
-
-                              <div class="flex justify-between items-center text-slate-600">
-                                <span class="text-slate-400 text-[10px]">No. STBP:</span>
-                                <template x-if="item.details[bln].noStbp && item.details[bln].noStbp !== '-'">
-                                  <span class="font-mono font-bold text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded text-[10px]" x-text="formatSTBP(item.details[bln].noStbp, bln, item.id, item.kec)"></span>
-                                </template>
-                                <template x-if="!item.details[bln].noStbp || item.details[bln].noStbp === '-'">
-                                  <span class="text-slate-400 font-mono text-[10px]">&mdash;</span>
-                                </template>
-                              </div>
-
-                              <div class="flex justify-between items-center text-slate-600">
-                                <span class="text-slate-400 text-[10px]">No. STS:</span>
-                                <template x-if="item.details[bln].noSts && item.details[bln].noSts !== '-'">
-                                  <span class="font-mono font-bold text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded text-[10px]" x-text="formatSTS(item.details[bln].noSts, bln, item.id, item.kec)"></span>
-                                </template>
-                                <template x-if="!item.details[bln].noSts || item.details[bln].noSts === '-'">
-                                  <span class="text-slate-400 font-mono text-[10px]">&mdash;</span>
-                                </template>
-                              </div>
-
-                              <div class="flex justify-between items-center pt-1.5 border-t border-slate-100 text-slate-800 font-semibold">
-                                <span class="text-slate-400 text-[10px]">Nominal:</span>
-                                <span class="font-mono font-bold text-emerald-700" x-text="formatRupiah(item.details[bln].nominal || 750000)"></span>
-                              </div>
-
-                            </div>
-
                           </div>
                         </template>
 
@@ -674,7 +575,134 @@
           </table>
         </div>
 
-                                <!-- OPSI 3: Tooltip langsung melekat di tiap sel tabel -->
+                                        <!-- ================= POPOVER DETAIL TRANSAKSI SETORAN (CLICK TRIGGER & AUTO-OFF) ================= -->
+        <!-- 1. Transparent Backdrop for 100% Reliable Auto-Off on Outside Click -->
+        <div 
+          x-show="popover.show" 
+          @click="closePopover()"
+          @keydown.escape.window="closePopover()"
+          class="fixed inset-0 z-40 bg-transparent" 
+          x-cloak>
+        </div>
+
+        <!-- 2. Floating Popover Card (Desain Bersih Sesuai Sebelumnya + Status & Valid) -->
+        <div 
+          x-show="popover.show" 
+          @click.stop
+          x-transition:enter="transition ease-out duration-150" 
+          x-transition:enter-start="opacity-0 scale-95" 
+          x-transition:enter-end="opacity-100 scale-100" 
+          class="fixed z-50 bg-white border border-slate-200 rounded-2xl shadow-popover p-4 w-80 max-w-[92vw] text-xs space-y-2.5 pointer-events-auto"
+          :style="`top: ${popover.top}px; left: ${popover.left}px;`"
+          x-cloak>
+          
+          <!-- Popover Header: Nama SPPG & Periode -->
+          <div class="flex items-start justify-between pb-2.5 border-b border-slate-100">
+            <div class="min-w-0 pr-2">
+              <h4 class="font-headline font-bold text-slate-900 text-sm leading-snug truncate" x-text="popover.nama"></h4>
+              <div class="text-[11px] text-brand-600 font-semibold leading-tight mt-0.5" x-text="'Bulan: ' + popover.bulan + ' ' + config.tahunAnggaran"></div>
+            </div>
+            <button @click="closePopover()" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition shrink-0" title="Tutup">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Popover Body Fields -->
+          <div class="space-y-2 font-sans">
+            
+            <!-- 1. Status: Terverifikasi / Menunggu Verifikasi & Valid -->
+            <div class="flex justify-between items-center text-slate-600">
+              <span class="text-slate-500 text-[11px]">Status:</span>
+              <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                <template x-if="popover.status === 'verified' || popover.status === 'paid' || popover.isVerified">
+                  <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                    <svg class="w-3 h-3 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                    <span>Terverifikasi</span>
+                  </span>
+                </template>
+                <template x-if="popover.status === 'pending' || (!popover.isVerified && popover.status === 'paid')">
+                  <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                    <svg class="w-3 h-3 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                    <span>Menunggu Verifikasi</span>
+                  </span>
+                </template>
+                <template x-if="popover.isValid">
+                  <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300" title="Valid: No. STS, No. STBP, dan ID Transaksi telah lengkap">
+                    <svg class="w-3 h-3 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                    <span>Valid</span>
+                  </span>
+                </template>
+                <template x-if="!popover.isValid">
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-500 border border-slate-200" title="Belum Lengkap: Menunggu pengisian no dokumen">
+                    <span>Belum Valid</span>
+                  </span>
+                </template>
+              </div>
+            </div>
+
+            <!-- 2. ID Transaksi Bank -->
+            <div class="flex justify-between items-center text-slate-600">
+              <span class="text-slate-500 text-[11px]">ID Transaksi Bank:</span>
+              <template x-if="popover.idTransaksi && popover.idTransaksi !== '-' && popover.idTransaksi !== '—'">
+                <span class="font-mono font-bold text-slate-800 text-[11px]" x-text="formatTRX(popover.idTransaksi, popover.bulan, popover.sppgId, popover.kec)"></span>
+              </template>
+              <template x-if="!popover.idTransaksi || popover.idTransaksi === '-' || popover.idTransaksi === '—'">
+                <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
+              </template>
+            </div>
+
+            <!-- 3. Tgl Setor -->
+            <div class="flex justify-between items-center text-slate-600">
+              <span class="text-slate-500 text-[11px]">Tgl Setor:</span>
+              <template x-if="popover.tglSetor && popover.tglSetor !== '-' && popover.tglSetor !== '—'">
+                <span class="font-mono font-semibold text-slate-800 text-xs" x-text="popover.tglSetor"></span>
+              </template>
+              <template x-if="!popover.tglSetor || popover.tglSetor === '-' || popover.tglSetor === '—'">
+                <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
+              </template>
+            </div>
+
+            <!-- 4. No. STBP -->
+            <div class="flex justify-between items-center text-slate-600">
+              <span class="text-slate-500 text-[11px]">No. STBP:</span>
+              <template x-if="popover.noStbp && popover.noStbp !== '-' && popover.noStbp !== '—'">
+                <span class="font-mono font-bold text-slate-800 text-[11px]" x-text="formatSTBP(popover.noStbp, popover.bulan, popover.sppgId, popover.kec)"></span>
+              </template>
+              <template x-if="!popover.noStbp || popover.noStbp === '-' || popover.noStbp === '—'">
+                <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
+              </template>
+            </div>
+
+            <!-- 5. No. STS -->
+            <div class="flex justify-between items-center text-slate-600">
+              <span class="text-slate-500 text-[11px]">No. STS:</span>
+              <template x-if="popover.noSts && popover.noSts !== '-' && popover.noSts !== '—'">
+                <span class="font-mono font-bold text-slate-800 text-[11px]" x-text="formatSTS(popover.noSts, popover.bulan, popover.sppgId, popover.kec)"></span>
+              </template>
+              <template x-if="!popover.noSts || popover.noSts === '-' || popover.noSts === '—'">
+                <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
+              </template>
+            </div>
+
+            <!-- 6. Nominal -->
+            <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-slate-800 font-semibold text-xs">
+              <span class="text-slate-500 text-[11px]">Nominal:</span>
+              <template x-if="popover.nominal">
+                <span class="font-mono font-bold text-emerald-700" x-text="formatRupiah(popover.nominal)"></span>
+              </template>
+              <template x-if="!popover.nominal">
+                <span class="text-slate-400 font-mono text-xs">&mdash;</span>
+              </template>
+            </div>
+
+          </div>
+        </div>
 
       </div>
 
@@ -5035,9 +5063,13 @@
         },
 
         // Popover Action on Dashboard Matrix Cell Click (Hanya untuk sel yang ada data setoran)
+                // Popover Action on Dashboard Matrix Cell Click (Hanya untuk sel yang ada data setoran)
         toggleCellPopover(item, bln, event) {
           if (!item) return;
           const status = (item.months && item.months[bln]) ? item.months[bln] : 'unpaid';
+          if (status !== 'verified' && status !== 'paid' && status !== 'pending') {
+            return;
+          }
           const bulanFullMap = {
             'Jan': 'Januari', 'Feb': 'Februari', 'Mar': 'Maret',
             'Apr': 'April', 'Mei': 'Mei', 'Jun': 'Juni', 'Jul': 'Juli',
@@ -5052,52 +5084,8 @@
             return;
           }
 
-          // Cari transaksi yang cocok untuk SPPG dan bulan ini
-          const matchedTrx = (this.transaksiList || []).find(t => t.sppgId === item.id && (t.periodeBulan === fullBln || t.periodeBulan === bln));
-
-          const monthIndex = this.bulanListShort.indexOf(bln);
-          const monthNumStr = (monthIndex !== -1 ? monthIndex + 4 : 4).toString().padStart(2, '0');
-          const sppgNumStr = (item.id || '').replace('SPPG-', '');
-
-          let tglSetor = '';
-          let idTransaksi = '';
-          let noStbp = '';
-          let noSts = '';
-          let nominal = null;
-
-          if (matchedTrx) {
-            tglSetor = matchedTrx.tanggalTransfer || '';
-            idTransaksi = (matchedTrx.noTrxBank || matchedTrx.id || '').trim();
-            noStbp = (matchedTrx.noStbp || '').trim();
-            noSts = (matchedTrx.noSts || '').trim();
-            nominal = matchedTrx.jumlahTransfer || 750000;
-          } else if (status === 'verified' || status === 'paid') {
-            tglSetor = '2026-' + monthNumStr + '-15';
-            idTransaksi = 'TRX-2026' + monthNumStr + '-' + sppgNumStr.padStart(4, '0');
-            noStbp = 'STBP/DLH/2026/' + monthNumStr + '/' + sppgNumStr.padStart(3, '0');
-            noSts = 'STS/KASDA/2026/' + monthNumStr + '/' + (parseInt(sppgNumStr || '1') + 100).toString().padStart(4, '0');
-            nominal = 750000;
-          }
-
-          const isVerified = Boolean(
-            status === 'verified' || 
-            (matchedTrx && (matchedTrx.status === 'SELESAI_STS' || matchedTrx.status === 'TERVERIFIKASI' || matchedTrx.isVerified === true))
-          );
-
-          let statusVerifikasi = 'Belum Bayar';
-          if (status === 'verified' || status === 'paid' || isVerified) {
-            statusVerifikasi = 'Terverifikasi (Lunas)';
-          } else if (status === 'pending' || (matchedTrx && !isVerified)) {
-            statusVerifikasi = 'Menunggu Verifikasi';
-          } else if (status === 'not_required') {
-            statusVerifikasi = 'Belum Wajib';
-          }
-
-          const hasSts = Boolean(noSts && noSts !== '-' && noSts !== '—');
-          const hasStbp = Boolean(noStbp && noStbp !== '-' && noStbp !== '—');
-          const hasTrxBank = Boolean(idTransaksi && idTransaksi !== '-' && idTransaksi !== '—');
-          const isValid = hasSts && hasStbp && hasTrxBank;
-          const statusValidasi = isValid ? 'Valid (Lengkap)' : 'Belum Valid';
+          const details = (item.details && item.details[bln]) ? item.details[bln] : {};
+          const isVerified = (status === 'verified' || status === 'paid');
 
           const targetEl = (event && event.currentTarget) ? event.currentTarget : (event && event.target ? event.target.closest('td') : null);
           const rect = targetEl ? targetEl.getBoundingClientRect() : { top: 150, bottom: 190, left: 150, width: 60 };
@@ -5119,7 +5107,7 @@
 
           const itemKec = item.kecamatan || item.kec || '';
 
-          // Mutasi properti secara in-place via Object.assign agar reactive proxy Alpine tetap utuh
+          // In-place mutation with Object.assign to preserve Alpine reactive proxy
           Object.assign(this.popover, {
             show: true,
             top: Math.round(top),
@@ -5129,15 +5117,13 @@
             kec: itemKec,
             bulan: fullBln,
             status: status,
-            tglSetor: tglSetor,
-            idTransaksi: idTransaksi,
-            noStbp: noStbp,
-            noSts: noSts,
+            tglSetor: details.tglSetor || '',
+            idTransaksi: details.idTransaksi || '',
+            noStbp: details.noStbp || '',
+            noSts: details.noSts || '',
             isVerified: isVerified,
-            isValid: isValid,
-            statusVerifikasi: statusVerifikasi,
-            statusValidasi: statusValidasi,
-            nominal: nominal
+            isValid: Boolean(details.isValid),
+            nominal: details.nominal || 750000
           });
 
           this.$nextTick(() => {
