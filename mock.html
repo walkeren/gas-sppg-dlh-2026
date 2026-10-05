@@ -495,49 +495,29 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200 text-slate-700">
-              <template x-for="row in matriksRows" :key="row.id">
-                <tr 
-                  :class="row.isHeader ? 'bg-[#cdd3df] text-slate-900 font-headline uppercase tracking-wider text-[11px] font-bold border-y border-[#b0b9ca]' : 'hover:bg-slate-50/50 transition-colors'">
+              <template x-for="item in matriksData" :key="item.id">
+                <tr class="hover:bg-slate-50/50 transition-colors">
                   
-                  <!-- Group Header Row per Kecamatan (#cdd3df) -->
-                  <td 
-                    x-show="row.isHeader" 
-                    :colspan="1 + bulanListShort.length" 
-                    class="py-2.5 px-3.5 bg-[#cdd3df]">
-                    <div class="flex items-center gap-2">
-                      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-700 text-white shadow-2xs">
-                        <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                      </span>
-                      <span class="font-bold text-slate-900 tracking-wide text-xs">Kecamatan <span x-text="row.kecamatan"></span></span>
-                      <span class="text-[10px] font-mono font-bold text-slate-800 lowercase bg-[#b9c2d3] px-2.5 py-0.5 rounded-full border border-[#a8b3c7] shadow-2xs">(<span x-text="row.count"></span> SPPG)</span>
-                    </div>
-                  </td>
-
-                  <!-- SPPG Name Column -->
-                  <td 
-                    x-show="!row.isHeader" 
-                    class="py-2.5 px-3.5 border-b border-r border-slate-200 bg-white">
-                    <div class="font-bold text-slate-900 text-xs sm:text-sm truncate" x-text="row.nama && row.nama.startsWith('SPPG') ? row.nama : 'SPPG ' + (row.nama || '')"></div>
+                  <!-- Kolom Nama SPPG & Kecamatan -->
+                  <td class="py-2.5 px-3.5 border-b border-r border-slate-200 bg-white">
+                    <div class="font-bold text-slate-900 text-xs sm:text-sm truncate" x-text="item.nama.startsWith('SPPG') ? item.nama : 'SPPG ' + item.nama"></div>
+                    <div class="text-[10px] text-slate-400 font-medium" x-text="'Kec. ' + (item.kecamatan || item.kec)"></div>
                   </td>
 
                   <!-- 9 Cells with Popover Trigger (Hanya untuk yang sudah bayar / disubmit, Merah & Abu-abu TIDAK BUKA Popover) -->
                   <template x-for="bln in bulanListShort" :key="bln">
                     <td 
-                      x-show="!row.isHeader"
                       class="py-2 px-1 text-center border-b border-r border-slate-200 font-mono relative select-none"
                       :class="{
-                        'bg-emerald-100/90 text-emerald-800 hover:bg-emerald-200 cursor-pointer': row.months && (row.months[bln] === 'verified' || row.months[bln] === 'paid'),
-                        'bg-amber-100/90 text-amber-900 hover:bg-amber-200 cursor-pointer': row.months && row.months[bln] === 'pending',
-                        'bg-rose-100/90 text-rose-800 hover:bg-rose-200/50 cursor-default': row.months && row.months[bln] === 'unpaid',
-                        'bg-slate-100/90 text-slate-400 hover:bg-slate-200/40 cursor-default': !row.months || row.months[bln] === 'not_required'
+                        'bg-emerald-100/90 text-emerald-800 hover:bg-emerald-200 cursor-pointer': item.months && (item.months[bln] === 'verified' || item.months[bln] === 'paid'),
+                        'bg-amber-100/90 text-amber-900 hover:bg-amber-200 cursor-pointer': item.months && item.months[bln] === 'pending',
+                        'bg-rose-100/90 text-rose-800 hover:bg-rose-200/50 cursor-default': item.months && item.months[bln] === 'unpaid',
+                        'bg-slate-100/90 text-slate-400 hover:bg-slate-200/40 cursor-default': !item.months || item.months[bln] === 'not_required'
                       }"
-                      @click.stop="row.months && (row.months[bln] === 'verified' || row.months[bln] === 'paid' || row.months[bln] === 'pending') ? toggleCellPopover(row, bln, $event) : null">
+                      @click.stop="item.months && (item.months[bln] === 'verified' || item.months[bln] === 'paid' || item.months[bln] === 'pending') ? toggleCellPopover(item, bln, $event) : null">
                       
                       <!-- 1. Terverifikasi (Lunas) - Centang Hijau Besar & Tegas -->
-                      <template x-if="row.months && (row.months[bln] === 'verified' || row.months[bln] === 'paid')">
+                      <template x-if="item.months && (item.months[bln] === 'verified' || item.months[bln] === 'paid')">
                         <div class="flex items-center justify-center py-0.5" title="Setoran Terverifikasi (Lunas) - Klik untuk lihat rincian">
                           <svg class="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -546,7 +526,7 @@
                       </template>
 
                       <!-- 2. Menunggu Verifikasi - Centang Kuning Besar & Tegas -->
-                      <template x-if="row.months && row.months[bln] === 'pending'">
+                      <template x-if="item.months && item.months[bln] === 'pending'">
                         <div class="flex items-center justify-center py-0.5" title="Form sudah disubmit, menunggu verifikasi - Klik untuk lihat rincian">
                           <svg class="w-5 h-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -555,7 +535,7 @@
                       </template>
 
                       <!-- 3. Belum Bayar - Silang Merah Besar & Tegas -->
-                      <template x-if="row.months && row.months[bln] === 'unpaid'">
+                      <template x-if="item.months && item.months[bln] === 'unpaid'">
                         <div class="flex items-center justify-center py-0.5" title="Belum Bayar">
                           <svg class="w-5 h-5 text-rose-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -564,7 +544,7 @@
                       </template>
 
                       <!-- 4. Belum Wajib - Tanda Garis Strip -->
-                      <template x-if="!row.months || row.months[bln] === 'not_required'">
+                      <template x-if="!item.months || item.months[bln] === 'not_required'">
                         <div class="flex items-center justify-center py-0.5" title="Belum Wajib">
                           <span class="font-bold text-slate-400 text-sm leading-none select-none">-</span>
                         </div>
@@ -579,24 +559,15 @@
           </table>
         </div>
 
-        <!-- ================= POPOVER DETAIL TRANSAKSI SETORAN (CLICK TRIGGER & AUTO-OFF) ================= -->
-        <!-- 1. Transparent Backdrop for 100% Reliable Auto-Off on Outside Click -->
+        <!-- ================= FLOATING POPOVER CARD (NATIVE ALPINE @click.outside) ================= -->
         <div 
           x-show="popover.show" 
-          @click="closePopover()"
+          @click.outside="closePopover()"
           @keydown.escape.window="closePopover()"
-          class="fixed inset-0 z-40 bg-transparent" 
-          x-cloak>
-        </div>
-
-        <!-- 2. Floating Popover Card (Desain Bersih Sesuai Sebelumnya + Status & Valid) -->
-        <div 
-          x-show="popover.show" 
-          @click.stop
           x-transition:enter="transition ease-out duration-150" 
           x-transition:enter-start="opacity-0 scale-95" 
           x-transition:enter-end="opacity-100 scale-100" 
-          class="fixed z-50 bg-white border border-slate-200 rounded-2xl shadow-popover p-4 w-80 max-w-[92vw] text-xs space-y-2.5 pointer-events-auto"
+          class="fixed z-50 bg-white border border-slate-200 rounded-2xl shadow-popover p-4 w-80 max-w-[92vw] text-xs space-y-2.5"
           :style="`top: ${popover.top}px; left: ${popover.left}px;`"
           x-cloak>
           
