@@ -2453,7 +2453,7 @@
                 if (res.config) Object.assign(this.config, res.config);
                 if (res.masterSppg && res.masterSppg.length) this.masterData = res.masterSppg;
                 if (res.periodeWajibMap && Object.keys(res.periodeWajibMap).length) this.periodeWajibMap = res.periodeWajibMap;
-                if (res.transaksiList && res.transaksiList.length) {
+                if (res.transaksiList !== undefined && Array.isArray(res.transaksiList)) {
                   this.transaksiList = res.transaksiList;
                   this.initTrxEditFields();
                 }
@@ -2473,7 +2473,7 @@
                   if (res.config) Object.assign(this.config, res.config);
                   if (res.masterSppg && res.masterSppg.length) this.masterData = res.masterSppg;
                   if (res.periodeWajibMap && Object.keys(res.periodeWajibMap).length) this.periodeWajibMap = res.periodeWajibMap;
-                  if (res.transaksiList && res.transaksiList.length) {
+                  if (res.transaksiList !== undefined && Array.isArray(res.transaksiList)) {
                     this.transaksiList = res.transaksiList;
                     this.initTrxEditFields();
                   }
