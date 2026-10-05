@@ -100,36 +100,36 @@
     [x-cloak] { display: none !important; }
   </style>
 </head>
-<body x-data="appData()" x-init="$nextTick(() => lucide.createIcons())" class="min-h-screen flex flex-col bg-[#F8FAFC] antialiased pb-20 md:pb-6 selection:bg-brand-100 selection:text-brand-900 relative">
+<body x-data="appData()" x-init="$nextTick(() => lucide.createIcons())" class="min-h-screen flex flex-col bg-[#F8FAFC] antialiased pb-28 md:pb-6 selection:bg-brand-100 selection:text-brand-900 relative">
 
   <!-- ========================================================================= -->
-  <!-- TOAST NOTIFICATION STACK (FLOATING DYNAMIC ALERTS)                         -->
+  <!-- TOAST NOTIFICATION STACK (TOP-CENTER FLOATING DYNAMIC BANNER / ISLAND)      -->
   <!-- ========================================================================= -->
-  <div class="fixed top-4 right-4 z-[9999] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-3 sm:px-0" aria-live="polite">
+  <div class="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center gap-2.5 max-w-lg w-full px-4 pointer-events-none" aria-live="polite">
     <template x-for="t in toasts" :key="t.id">
       <div 
         x-show="t.visible"
-        x-transition:enter="transition ease-out duration-300 transform"
-        x-transition:enter-start="opacity-0 translate-y-2 sm:translate-y-0 sm:translate-x-4 scale-95"
-        x-transition:enter-end="opacity-100 translate-y-0 sm:translate-x-0 scale-100"
+        x-transition:enter="transition cubic-bezier(0.34, 1.56, 0.64, 1) duration-350 transform"
+        x-transition:enter-start="opacity-0 -translate-y-5 scale-90"
+        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
         x-transition:leave="transition ease-in duration-200 transform"
         x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-90"
-        class="pointer-events-auto bg-white rounded-xl shadow-xl border overflow-hidden relative flex items-start gap-3 p-4 transition-all"
+        x-transition:leave-end="opacity-0 -translate-y-3 scale-95"
+        class="pointer-events-auto w-full bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border overflow-hidden relative flex items-center gap-3.5 px-4 py-3 sm:px-5 sm:py-3.5 transition-all"
         :class="{
-          'border-emerald-200 shadow-emerald-500/10': t.type === 'success',
-          'border-rose-200 shadow-rose-500/10': t.type === 'error' || t.type === 'danger',
-          'border-amber-200 shadow-amber-500/10': t.type === 'warning',
-          'border-blue-200 shadow-blue-500/10': t.type === 'info'
+          'border-emerald-300 ring-4 ring-emerald-500/10': t.type === 'success',
+          'border-rose-300 ring-4 ring-rose-500/10': t.type === 'error' || t.type === 'danger',
+          'border-amber-300 ring-4 ring-amber-500/10': t.type === 'warning',
+          'border-blue-300 ring-4 ring-blue-500/10': t.type === 'info'
         }">
         
         <!-- Icon Badge -->
-        <div class="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-sm"
+        <div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center text-sm shadow-xs"
           :class="{
-            'bg-emerald-50 text-emerald-600': t.type === 'success',
-            'bg-rose-50 text-rose-600': t.type === 'error' || t.type === 'danger',
-            'bg-amber-50 text-amber-600': t.type === 'warning',
-            'bg-blue-50 text-brand-600': t.type === 'info'
+            'bg-emerald-100 text-emerald-700': t.type === 'success',
+            'bg-rose-100 text-rose-700': t.type === 'error' || t.type === 'danger',
+            'bg-amber-100 text-amber-700': t.type === 'warning',
+            'bg-blue-100 text-brand-700': t.type === 'info'
           }">
           <template x-if="t.type === 'success'"><i data-lucide="check-circle-2" class="w-5 h-5"></i></template>
           <template x-if="t.type === 'error' || t.type === 'danger'"><i data-lucide="alert-circle" class="w-5 h-5"></i></template>
@@ -138,15 +138,15 @@
         </div>
 
         <!-- Text Content -->
-        <div class="flex-1 min-w-0 pr-2">
-          <h4 class="font-headline font-bold text-xs text-slate-900 leading-snug" x-text="t.title"></h4>
-          <p class="text-[11px] text-slate-600 mt-0.5 leading-relaxed" x-text="t.message"></p>
+        <div class="flex-1 min-w-0">
+          <h4 class="font-headline font-bold text-xs sm:text-sm text-slate-900 leading-snug" x-text="t.title"></h4>
+          <p class="text-xs text-slate-600 mt-0.5 leading-normal" x-text="t.message"></p>
         </div>
 
         <!-- Close Button -->
         <button 
           @click="removeToast(t.id)" 
-          class="text-slate-400 hover:text-slate-600 transition p-1 -mr-1 -mt-1 rounded-md hover:bg-slate-100">
+          class="text-slate-400 hover:text-slate-700 transition p-1.5 rounded-lg hover:bg-slate-100 shrink-0 cursor-pointer">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
 
@@ -180,7 +180,7 @@
             <img :src="config.customLogoUrl" alt="Logo DLH" class="w-full h-full object-contain p-1">
           </template>
           <template x-if="!config.customLogoUrl">
-            <i data-lucide="trash-2" class="w-5 h-5"></i>
+            <i data-lucide="heart-handshake" class="w-5 h-5"></i>
           </template>
         </div>
         <div>
@@ -199,7 +199,7 @@
             @click="currentView = 'dashboard'" 
             :class="currentView === 'dashboard' ? 'bg-white text-brand-700 font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900'"
             class="px-4 py-1.5 rounded-pill transition flex items-center gap-2">
-            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            <i data-lucide="chart-column" class="w-4 h-4"></i>
             <span>Dashboard</span>
           </button>
           
@@ -341,15 +341,32 @@
                         <span class="font-semibold text-slate-800 text-xs sm:text-sm truncate block" x-text="item.nama"></span>
                       </div>
 
-                      <!-- 9 Columns Month Grid with Solid Blocks for All Reported/Paid Months -->
+                      <!-- 9 Columns Month Grid with Seamless Bars (No Gap Between Months) -->
                       <div class="col-span-8 relative h-5 flex items-center">
-                        <!-- 9 Grid columns with reported month bars -->
-                        <div class="w-full h-full grid grid-cols-9 absolute inset-0">
-                          <template x-for="bln in bulanListShort" :key="bln">
-                            <div class="border-l border-slate-200/80 h-full flex items-center justify-center px-0.5">
+                        <!-- Background Grid Lines (Behind Bars) -->
+                        <div class="w-full h-full grid grid-cols-9 absolute inset-0 pointer-events-none opacity-40">
+                          <div class="border-l border-slate-200 h-full"></div>
+                          <div class="border-l border-slate-200 h-full"></div>
+                          <div class="border-l border-slate-200 h-full"></div>
+                          <div class="border-l border-slate-200 h-full"></div>
+                          <div class="border-l border-slate-200 h-full"></div>
+                          <div class="border-l border-slate-200 h-full"></div>
+                          <div class="border-l border-slate-200 h-full"></div>
+                          <div class="border-l border-slate-200 h-full"></div>
+                          <div class="border-l border-slate-200 h-full"></div>
+                        </div>
+
+                        <!-- Solid Seamless Month Blocks Layer (z-10, Zero Borders, Overlapping by 1px to eliminate any subpixel gaps) -->
+                        <div class="w-full h-full grid grid-cols-9 absolute inset-0 z-10">
+                          <template x-for="(bln, bIdx) in bulanListShort" :key="bln">
+                            <div class="h-full flex items-center justify-center p-0 m-0 border-0">
                               <template x-if="item.paidMonths && item.paidMonths[bln]">
                                 <div 
-                                  class="w-full h-3.5 bg-amber-500 hover:bg-amber-600 rounded-[2px] shadow-2xs transition-colors"
+                                  class="w-[calc(100%+1px)] -mr-[1px] h-3.5 bg-amber-500 hover:bg-amber-600 transition-colors"
+                                  :class="{
+                                    'rounded-l-xs': bIdx === 0 || !item.paidMonths[bulanListShort[bIdx - 1]],
+                                    'rounded-r-xs': bIdx === bulanListShort.length - 1 || !item.paidMonths[bulanListShort[bIdx + 1]]
+                                  }"
                                   :title="item.nama + ' — Setoran Bulan ' + bln + ' (Sudah Bayar/Lapor)'">
                                 </div>
                               </template>
@@ -392,7 +409,7 @@
 
             <!-- List 6 Transaksi Terkini -->
             <div class="divide-y divide-slate-100 space-y-0.5">
-              <template x-for="trx in transaksiList.slice(0, 6)" :key="trx.id">
+              <template x-for="trx in recentTransactions" :key="trx.id">
                 <div class="py-2.5 flex items-center justify-between gap-2.5 text-xs sm:text-sm hover:bg-slate-50/80 px-1.5 rounded transition">
                   <div class="min-w-0">
                     <div class="font-semibold text-slate-900 truncate" x-text="trx.namaSppg"></div>
@@ -441,7 +458,7 @@
         <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between gap-4">
           <div class="min-w-0 flex-1">
             <h2 class="font-headline font-bold text-slate-900 text-base flex items-center gap-2">
-              <i data-lucide="table" class="w-4.5 h-4.5 text-brand-600 shrink-0"></i>
+              <i data-lucide="grid-2x2-plus" class="w-4.5 h-4.5 text-brand-600 shrink-0"></i>
               <span class="truncate">Matriks Pembayaran Retribusi SPPG</span>
             </h2>
             <p class="text-xs text-slate-500 mt-0.5 truncate sm:whitespace-normal">Rekapitulasi status setoran per SPPG periode April - Desember <span x-text="config.tahunAnggaran"></span>.</p>
@@ -479,18 +496,18 @@
             </thead>
             <template x-for="group in matriksGrouped" :key="group.kecamatan">
               <tbody class="divide-y divide-slate-200 text-slate-700">
-                <!-- Group Header Row per Kecamatan (Warna Biru Muda Lembut, Segar & Kontras) -->
-                <tr class="bg-sky-100/90 text-sky-950 font-headline uppercase tracking-wider text-[11px] font-bold border-y-2 border-sky-300/80">
-                  <td :colspan="1 + bulanListShort.length" class="py-2.5 px-3.5 bg-sky-100/90">
+                <!-- Group Header Row per Kecamatan (#cdd3df) -->
+                <tr class="bg-[#cdd3df] text-slate-900 font-headline uppercase tracking-wider text-[11px] font-bold border-y border-[#b0b9ca]">
+                  <td :colspan="1 + bulanListShort.length" class="py-2.5 px-3.5 bg-[#cdd3df]">
                     <div class="flex items-center gap-2">
-                      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-sky-200 text-sky-800 shadow-2xs border border-sky-300">
-                        <svg class="w-3.5 h-3.5 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-700 text-white shadow-2xs">
+                        <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                       </span>
-                      <span class="font-bold text-sky-950 tracking-wide text-xs">Kecamatan <span x-text="group.kecamatan"></span></span>
-                      <span class="text-[10px] font-mono font-semibold text-sky-800 lowercase bg-white px-2.5 py-0.5 rounded-full border border-sky-300 shadow-2xs">(<span x-text="group.items.length"></span> SPPG)</span>
+                      <span class="font-bold text-slate-900 tracking-wide text-xs">Kecamatan <span x-text="group.kecamatan"></span></span>
+                      <span class="text-[10px] font-mono font-bold text-slate-800 lowercase bg-[#b9c2d3] px-2.5 py-0.5 rounded-full border border-[#a8b3c7] shadow-2xs">(<span x-text="group.items.length"></span> SPPG)</span>
                     </div>
                   </td>
                 </tr>
@@ -569,13 +586,13 @@
           :style="`top: ${popover.top}px; left: ${popover.left}px;`"
           x-cloak>
           
-          <!-- Popover Header -->
-          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <div>
-              <div class="font-bold text-slate-900 text-sm" x-text="popover.nama"></div>
-              <div class="text-[11px] text-brand-600 font-semibold" x-text="'Bulan: ' + popover.bulan + ' ' + config.tahunAnggaran"></div>
+          <!-- Popover Header: Nama SPPG & Periode -->
+          <div class="flex items-start justify-between pb-2.5 border-b border-slate-100">
+            <div class="min-w-0">
+              <h4 class="font-headline font-bold text-slate-900 text-sm leading-snug truncate" x-text="popover.nama"></h4>
+              <div class="text-[11px] text-brand-600 font-semibold leading-tight mt-0.5" x-text="'Bulan: ' + popover.bulan + ' ' + config.tahunAnggaran"></div>
             </div>
-            <button @click="closePopover()" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition">
+            <button @click="closePopover()" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition shrink-0">
               <i data-lucide="x" class="w-4 h-4"></i>
             </button>
           </div>
@@ -583,17 +600,16 @@
           <!-- Popover Body Fields -->
           <div class="space-y-2 font-sans">
             
-            <!-- Status Verifikasi & Status Validasi (Dokumen) -->
-            <div class="space-y-1.5 bg-slate-50/90 p-2.5 rounded-xl border border-slate-100">
-              <!-- Baris 1: Status Verifikasi -->
-              <div class="flex justify-between items-center">
-                <span class="text-slate-500 font-medium text-[11px]">Status Verifikasi:</span>
+            <!-- 1. Status: (Terverifikasi / Menunggu Verifikasi + Valid di sebelah kanan) -->
+            <div class="flex justify-between items-center text-slate-600">
+              <span class="text-slate-500 text-[11px]">Status:</span>
+              <div class="flex items-center gap-1.5 flex-wrap justify-end">
                 <template x-if="popover.status === 'verified' || popover.status === 'paid' || popover.isVerified">
                   <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                     <svg class="w-3 h-3 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
-                    <span>Terverifikasi (Lunas)</span>
+                    <span>Terverifikasi</span>
                   </span>
                 </template>
                 <template x-if="popover.status === 'pending' || (!popover.isVerified && popover.status === 'paid')">
@@ -604,75 +620,72 @@
                     <span>Menunggu Verifikasi</span>
                   </span>
                 </template>
-              </div>
-
-              <!-- Baris 2: Status Validasi (Kelengkapan No. STS, STBP & ID Trx) -->
-              <div class="flex justify-between items-center pt-1.5 border-t border-slate-200/60">
-                <span class="text-slate-500 font-medium text-[11px]">Status Validasi:</span>
                 <template x-if="popover.isValid">
-                  <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-900 border border-sky-300" title="Valid: Memiliki No. STS, STBP, dan ID Transaksi yang lengkap">
-                    <svg class="w-3 h-3 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300" title="Valid: No. STS, No. STBP, dan ID Transaksi telah lengkap">
+                    <svg class="w-3 h-3 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
-                    <span>Valid (Lengkap)</span>
-                  </span>
-                </template>
-                <template x-if="!popover.isValid">
-                  <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200" title="Belum Valid: Nomor STS, STBP, atau ID Transaksi belum lengkap">
-                    <svg class="w-3 h-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                    </svg>
-                    <span>Belum Valid</span>
+                    <span>Valid</span>
                   </span>
                 </template>
               </div>
             </div>
 
-            <!-- ID Transaksi / Ref -->
+            <!-- 2. ID Transaksi Bank -->
             <div class="flex justify-between items-center text-slate-600">
-              <span class="text-slate-500">ID Transaksi:</span>
-              <template x-if="popover.idTransaksi && popover.idTransaksi !== '-'">
+              <span class="text-slate-500 text-[11px]">ID Transaksi Bank:</span>
+              <template x-if="popover.idTransaksi && popover.idTransaksi !== '-' && popover.idTransaksi !== '—'">
                 <span class="font-mono font-bold text-slate-800 text-[11px]" x-text="formatTRX(popover.idTransaksi, popover.bulan, popover.sppgId, popover.kec)"></span>
               </template>
-              <template x-if="!popover.idTransaksi || popover.idTransaksi === '-'">
-                <span class="text-slate-400 font-mono text-xs italic">-</span>
+              <template x-if="!popover.idTransaksi || popover.idTransaksi === '-' || popover.idTransaksi === '—'">
+                <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
               </template>
             </div>
 
-            <!-- Tgl Setor -->
+            <!-- 3. Tgl Setor -->
             <div class="flex justify-between items-center text-slate-600">
-              <span class="text-slate-500">Tgl Setor:</span>
-              <span class="font-mono font-semibold text-slate-800 text-xs" x-text="popover.tglSetor || '-'"></span>
+              <span class="text-slate-500 text-[11px]">Tgl Setor:</span>
+              <template x-if="popover.tglSetor && popover.tglSetor !== '-' && popover.tglSetor !== '—'">
+                <span class="font-mono font-semibold text-slate-800 text-xs" x-text="popover.tglSetor"></span>
+              </template>
+              <template x-if="!popover.tglSetor || popover.tglSetor === '-' || popover.tglSetor === '—'">
+                <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
+              </template>
             </div>
 
-            <!-- No. STBP -->
+            <!-- 4. No. STBP -->
             <div class="flex justify-between items-center text-slate-600">
-              <span class="text-slate-500">No. STBP:</span>
-              <template x-if="popover.noStbp && popover.noStbp !== '-'">
-                <span class="font-mono font-bold text-blue-700 text-[11px]" x-text="formatSTBP(popover.noStbp, popover.bulan, popover.sppgId, popover.kec)"></span>
+              <span class="text-slate-500 text-[11px]">No. STBP:</span>
+              <template x-if="popover.noStbp && popover.noStbp !== '-' && popover.noStbp !== '—'">
+                <span class="font-mono font-bold text-slate-800 text-[11px]" x-text="formatSTBP(popover.noStbp, popover.bulan, popover.sppgId, popover.kec)"></span>
               </template>
-              <template x-if="!popover.noStbp || popover.noStbp === '-'">
-                <span class="text-slate-400 font-mono text-xs italic">Belum Terbit</span>
+              <template x-if="!popover.noStbp || popover.noStbp === '-' || popover.noStbp === '—'">
+                <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
               </template>
             </div>
 
-            <!-- No. STS -->
+            <!-- 5. No. STS -->
             <div class="flex justify-between items-center text-slate-600">
-              <span class="text-slate-500">No. STS:</span>
-              <template x-if="popover.noSts && popover.noSts !== '-'">
-                <span class="font-mono font-bold text-emerald-700 text-[11px]" x-text="formatSTS(popover.noSts, popover.bulan, popover.sppgId, popover.kec)"></span>
+              <span class="text-slate-500 text-[11px]">No. STS:</span>
+              <template x-if="popover.noSts && popover.noSts !== '-' && popover.noSts !== '—'">
+                <span class="font-mono font-bold text-slate-800 text-[11px]" x-text="formatSTS(popover.noSts, popover.bulan, popover.sppgId, popover.kec)"></span>
               </template>
-              <template x-if="!popover.noSts || popover.noSts === '-'">
-                <span class="text-slate-400 font-mono text-xs italic">Belum Terbit</span>
+              <template x-if="!popover.noSts || popover.noSts === '-' || popover.noSts === '—'">
+                <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
               </template>
             </div>
 
-            <template x-if="popover.nominal">
-              <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-slate-800 font-semibold text-xs">
-                <span class="text-slate-500">Nominal:</span>
+            <!-- 6. Nominal -->
+            <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-slate-800 font-semibold text-xs">
+              <span class="text-slate-500 text-[11px]">Nominal:</span>
+              <template x-if="popover.nominal">
                 <span class="font-mono text-emerald-600 font-bold" x-text="formatRupiah(popover.nominal)"></span>
-              </div>
-            </template>
+              </template>
+              <template x-if="!popover.nominal">
+                <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
+              </template>
+            </div>
+
           </div>
 
         </div>
@@ -1111,18 +1124,18 @@
                     <td class="py-1.5 px-1.5 text-center border-l border-slate-200 w-[165px] min-w-[160px]">
                       <div class="flex items-center gap-1.5 justify-center">
                         
-                        <!-- Tombol 1: Batal (Putih/Abu-abu) - Lebar Konsisten w-[76px] -->
+                        <!-- Tombol 1: Unverif (Putih/Abu-abu) - Lebar Konsisten w-[76px] -->
                         <template x-if="trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI'">
                           <button 
                             type="button" 
                             @click="toggleVerifikasi(trx)"
                             :disabled="trx.isVerifying"
                             class="w-[76px] py-1 px-1.5 rounded text-[10.5px] font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 transition flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
-                            title="Batalkan status verifikasi (Kembalikan ke Menunggu Verifikasi)">
+                            title="Unverifikasi setoran (Kembalikan ke Menunggu Verifikasi)">
                             <svg class="w-3 h-3 text-slate-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                             </svg>
-                            <span>Batal</span>
+                            <span>Unverif</span>
                           </button>
                         </template>
 
@@ -1556,11 +1569,14 @@
           </div>
         </div>
 
-        <!-- 3 Functional Settings Cards Grouped by Similarity -->
+        <!-- 5 Structured Settings Cards in Balanced 2-Column Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-          <!-- KARTU 1: IDENTITAS & UPLOAD LOGO INSTANSI (7 COLS) -->
-          <div class="lg:col-span-7 bg-white border border-slate-200 rounded-xl p-6 shadow-card space-y-6">
+          <!-- KOLOM KIRI: BRANDING & PROFIL (6 COLS) -->
+          <div class="lg:col-span-6 space-y-6">
+
+            <!-- KARTU 1: IDENTITAS & BRANDING -->
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-card space-y-5">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-lg bg-blue-50 text-brand-600 flex items-center justify-center">
@@ -1568,28 +1584,26 @@
                 </div>
                 <div>
                   <h3 class="font-headline font-bold text-slate-900 text-sm">Logo & Identitas Aplikasi</h3>
-                  <p class="text-[11px] text-slate-400">Unggah berkas logo dan sesuaikan identitas visual header.</p>
+                  <p class="text-[11px] text-slate-400">Atur visual logo, judul sistem, dan informasi instansi.</p>
                 </div>
               </div>
               <span class="text-[10px] font-mono font-bold text-brand-700 bg-brand-50 border border-brand-200 px-2 py-0.5 rounded-full">Branding</span>
             </div>
 
             <!-- Upload Logo Component -->
-            <div class="space-y-3">
-              <label class="block text-xs font-semibold text-slate-700">
-                Berkas Logo Instansi (DLH / Pemda)
-              </label>
+            <div class="space-y-2.5">
+              <label class="block text-xs font-semibold text-slate-700">Berkas Logo Instansi</label>
 
               <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                <!-- Live Logo Thumbnail Preview -->
+                <!-- Logo Preview -->
                 <div 
-                  class="w-16 h-16 rounded-xl flex items-center justify-center text-white shadow-md overflow-hidden relative shrink-0 transition-all border border-white"
+                  class="w-16 h-16 rounded-xl flex items-center justify-center text-white shadow-md overflow-hidden relative shrink-0 transition-all border-2 border-white"
                   :style="`background: ${config.logoBg};`">
                   <template x-if="config.customLogoUrl">
                     <img :src="config.customLogoUrl" alt="Preview Logo" class="w-full h-full object-contain p-1.5">
                   </template>
                   <template x-if="!config.customLogoUrl">
-                    <i data-lucide="trash-2" class="w-7 h-7"></i>
+                    <i data-lucide="heart-handshake" class="w-7 h-7"></i>
                   </template>
                 </div>
 
@@ -1605,86 +1619,202 @@
                     <button 
                       type="button" 
                       @click="$refs.customLogoInput.click()"
-                      class="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-bold text-xs shadow-xs transition inline-flex items-center gap-1.5">
+                      class="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-bold text-xs shadow-xs transition inline-flex items-center gap-1.5 cursor-pointer">
                       <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                      <span x-text="config.customLogoUrl ? 'Ganti Berkas Logo' : 'Unggah Berkas Logo'"></span>
+                      <span x-text="config.customLogoUrl ? 'Ganti Logo' : 'Unggah Logo'"></span>
                     </button>
 
                     <template x-if="config.customLogoUrl">
                       <button 
                         type="button" 
                         @click="removeCustomLogo()"
-                        class="px-3 py-1.5 border border-rose-200 hover:bg-rose-50 text-rose-600 rounded-lg font-semibold text-xs transition inline-flex items-center gap-1">
+                        class="px-3 py-1.5 border border-rose-200 hover:bg-rose-50 text-rose-600 rounded-lg font-semibold text-xs transition inline-flex items-center gap-1 cursor-pointer">
                         <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                         <span>Hapus</span>
                       </button>
                     </template>
                   </div>
-                  <p class="text-[11px] text-slate-400">Rekomendasi format PNG transparan atau SVG (Maks. 2 MB).</p>
+                  <p class="text-[11px] text-slate-400">Format PNG / SVG / JPG (Maksimal 2 MB).</p>
                 </div>
               </div>
             </div>
 
-            <!-- Preset Warna / Gradien Latar Logo -->
-            <div class="space-y-2">
-              <label class="block text-xs font-semibold text-slate-700">Latar Belakang Logo (Preset Warna & Gradien)</label>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <button 
-                  type="button" 
-                  @click="config.logoBg = 'linear-gradient(135deg, #2563eb, #059669)'"
-                  :class="config.logoBg === 'linear-gradient(135deg, #2563eb, #059669)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
-                  class="h-9 rounded-lg text-white text-[11px] font-bold flex items-center justify-center transition shadow-xs"
-                  style="background: linear-gradient(135deg, #2563eb, #059669);">
-                  Blue-Green
-                </button>
+                                                            <!-- Preset Warna Latar Logo (14 Pilihan: 4 Standar + 10 Gradien Baru) -->
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="block text-xs font-semibold text-slate-700">Preset Latar Logo (14 Pilihan)</label>
+                <span class="text-[10px] text-slate-400 font-mono" x-text="config.logoBg ? 'Warna Aktif' : ''"></span>
+              </div>
 
-                <button 
-                  type="button" 
-                  @click="config.logoBg = 'linear-gradient(135deg, #7c3aed, #2563eb)'"
-                  :class="config.logoBg === 'linear-gradient(135deg, #7c3aed, #2563eb)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
-                  class="h-9 rounded-lg text-white text-[11px] font-bold flex items-center justify-center transition shadow-xs"
-                  style="background: linear-gradient(135deg, #7c3aed, #2563eb);">
-                  Purple-Blue
-                </button>
+              <!-- Preset Standar Resmi (4 Pilihan) -->
+              <div class="space-y-1.5">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Preset Standar</div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <!-- 1. Blue-Green -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = 'linear-gradient(135deg, #2563eb, #059669)'"
+                    :class="config.logoBg === 'linear-gradient(135deg, #2563eb, #059669)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center transition shadow-xs cursor-pointer"
+                    style="background: linear-gradient(135deg, #2563eb, #059669);">
+                    Blue-Green
+                  </button>
 
-                <button 
-                  type="button" 
-                  @click="config.logoBg = '#059669'"
-                  :class="config.logoBg === '#059669' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
-                  class="h-9 rounded-lg text-white text-[11px] font-bold flex items-center justify-center bg-emerald-600 transition shadow-xs">
-                  Emerald Solid
-                </button>
+                  <!-- 2. Purple-Blue -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = 'linear-gradient(135deg, #7c3aed, #2563eb)'"
+                    :class="config.logoBg === 'linear-gradient(135deg, #7c3aed, #2563eb)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center transition shadow-xs cursor-pointer"
+                    style="background: linear-gradient(135deg, #7c3aed, #2563eb);">
+                    Purple-Blue
+                  </button>
 
-                <button 
-                  type="button" 
-                  @click="config.logoBg = '#1e3a8a'"
-                  :class="config.logoBg === '#1e3a8a' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
-                  class="h-9 rounded-lg text-white text-[11px] font-bold flex items-center justify-center bg-brand-900 transition shadow-xs">
-                  Navy Solid
-                </button>
+                  <!-- 3. Emerald Solid -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = '#059669'"
+                    :class="config.logoBg === '#059669' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center bg-emerald-600 transition shadow-xs cursor-pointer">
+                    Emerald Solid
+                  </button>
+
+                  <!-- 4. Navy Solid -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = '#1e3a8a'"
+                    :class="config.logoBg === '#1e3a8a' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center bg-brand-900 transition shadow-xs cursor-pointer">
+                    Navy Solid
+                  </button>
+                </div>
+              </div>
+
+              <!-- Preset Gradien Modern (10 Pilihan) -->
+              <div class="space-y-1.5 pt-1">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Preset Gradien Modern</div>
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                  <!-- 5. Coral Red -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = 'linear-gradient(135deg, #ed484c, #b8282f)'"
+                    :class="config.logoBg === 'linear-gradient(135deg, #ed484c, #b8282f)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center transition shadow-xs cursor-pointer"
+                    style="background: linear-gradient(135deg, #ed484c, #b8282f);">
+                    Coral Red
+                  </button>
+
+                  <!-- 6. Peach Pink -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = 'linear-gradient(135deg, #ffb077, #fe56c4)'"
+                    :class="config.logoBg === 'linear-gradient(135deg, #ffb077, #fe56c4)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center transition shadow-xs cursor-pointer"
+                    style="background: linear-gradient(135deg, #ffb077, #fe56c4);">
+                    Peach Pink
+                  </button>
+
+                  <!-- 7. Mint Teal -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = 'linear-gradient(135deg, #49d2b8, #1ea192)'"
+                    :class="config.logoBg === 'linear-gradient(135deg, #49d2b8, #1ea192)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center transition shadow-xs cursor-pointer"
+                    style="background: linear-gradient(135deg, #49d2b8, #1ea192);">
+                    Mint Teal
+                  </button>
+
+                  <!-- 8. Ocean Navy -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = 'linear-gradient(135deg, #4293c3, #232a7b)'"
+                    :class="config.logoBg === 'linear-gradient(135deg, #4293c3, #232a7b)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center transition shadow-xs cursor-pointer"
+                    style="background: linear-gradient(135deg, #4293c3, #232a7b);">
+                    Ocean Navy
+                  </button>
+
+                  <!-- 9. Sky Blue -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = 'linear-gradient(135deg, #99c8fe, #6a95fe)'"
+                    :class="config.logoBg === 'linear-gradient(135deg, #99c8fe, #6a95fe)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center transition shadow-xs cursor-pointer"
+                    style="background: linear-gradient(135deg, #99c8fe, #6a95fe);">
+                    Sky Blue
+                  </button>
+
+                  <!-- 10. Purple Pink -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = 'linear-gradient(135deg, #a54aec, #e657b9)'"
+                    :class="config.logoBg === 'linear-gradient(135deg, #a54aec, #e657b9)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center transition shadow-xs cursor-pointer"
+                    style="background: linear-gradient(135deg, #a54aec, #e657b9);">
+                    Purple Pink
+                  </button>
+
+                  <!-- 11. Lime Green -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = 'linear-gradient(135deg, #5ec168, #d5e956)'"
+                    :class="config.logoBg === 'linear-gradient(135deg, #5ec168, #d5e956)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-slate-900 text-xs font-bold flex items-center justify-center transition shadow-xs cursor-pointer"
+                    style="background: linear-gradient(135deg, #5ec168, #d5e956);">
+                    Lime Green
+                  </button>
+
+                  <!-- 12. Warm Amber -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = 'linear-gradient(135deg, #fecc50, #fba651)'"
+                    :class="config.logoBg === 'linear-gradient(135deg, #fecc50, #fba651)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-slate-900 text-xs font-bold flex items-center justify-center transition shadow-xs cursor-pointer"
+                    style="background: linear-gradient(135deg, #fecc50, #fba651);">
+                    Warm Amber
+                  </button>
+
+                  <!-- 13. Flame Orange -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = 'linear-gradient(135deg, #f79635, #ea2711)'"
+                    :class="config.logoBg === 'linear-gradient(135deg, #f79635, #ea2711)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center transition shadow-xs cursor-pointer"
+                    style="background: linear-gradient(135deg, #f79635, #ea2711);">
+                    Flame Orange
+                  </button>
+
+                  <!-- 14. Cyan Aqua -->
+                  <button 
+                    type="button" 
+                    @click="config.logoBg = 'linear-gradient(135deg, #5aebfe, #50c1fd)'"
+                    :class="config.logoBg === 'linear-gradient(135deg, #5aebfe, #50c1fd)' ? 'ring-2 ring-brand-500 ring-offset-2 scale-[1.02]' : ''"
+                    class="py-2.5 px-3 rounded-xl text-slate-900 text-xs font-bold flex items-center justify-center transition shadow-xs cursor-pointer"
+                    style="background: linear-gradient(135deg, #5aebfe, #50c1fd);">
+                    Cyan Aqua
+                  </button>
+                </div>
               </div>
             </div>
 
-            <!-- Identitas Teks Aplikasi -->
-            <div class="space-y-4 pt-2 border-t border-slate-100 text-xs">
+            <!-- Teks Identitas -->
+            <div class="space-y-3 pt-2 border-t border-slate-100 text-xs">
               <div>
-                <label class="block font-semibold text-slate-700 mb-1">
-                  Nama Aplikasi & Browser &lt;title&gt; <span class="text-rose-500">*</span>
-                </label>
+                <label class="block font-semibold text-slate-700 mb-1">Nama Aplikasi &lt;title&gt; <span class="text-rose-500">*</span></label>
                 <input 
                   type="text" 
                   x-model="config.appName" 
-                  placeholder="Contoh: Retribusi SPPG"
-                  class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3.5 py-2 text-xs text-slate-900 font-bold outline-none">
+                  placeholder="Retribusi SPPG"
+                  class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 font-bold outline-none">
               </div>
 
               <div>
-                <label class="block font-semibold text-slate-700 mb-1">Tagline / Sub-judul Instansi</label>
+                <label class="block font-semibold text-slate-700 mb-1">Tagline / Instansi</label>
                 <input 
                   type="text" 
                   x-model="config.tagline" 
-                  placeholder="Contoh: Dinas Lingkungan Hidup Kabupaten Pangkajene dan Kepulauan"
-                  class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3.5 py-2 text-xs text-slate-800 outline-none">
+                  placeholder="Dinas Lingkungan Hidup Kabupaten Pangkajene dan Kepulauan"
+                  class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none">
               </div>
 
               <div>
@@ -1692,16 +1822,177 @@
                 <input 
                   type="text" 
                   x-model="config.footerText" 
-                  placeholder="Contoh: Dinas Lingkungan Hidup (DLH)"
-                  class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3.5 py-2 text-xs text-slate-800 outline-none">
+                  placeholder="Dinas Lingkungan Hidup (DLH)"
+                  class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none">
               </div>
             </div>
           </div>
 
-          <!-- KOLOM KANAN: FINANSIAL & INTEGRASI CLOUD (5 COLS) -->
-          <div class="lg:col-span-5 space-y-6">
+                      <!-- KARTU 2: PROFIL PENGGUNA & BENDAHARA -->
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-card space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
+                    <i data-lucide="user-check" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-headline font-bold text-slate-900 text-sm">Profil Pengguna & Bendahara</h3>
+                    <p class="text-[11px] text-slate-400">Identitas resmi penandatangan dokumen dan akun login.</p>
+                  </div>
+                </div>
+                <span class="text-[10px] font-mono font-bold text-sky-700 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-full">Akun & TTD</span>
+              </div>
 
-            <!-- KARTU 2: FORMAT PENOMORAN DOKUMEN (SISTEM TOKEN / TAG) -->
+              <!-- Quick Preview Avatar & Identity -->
+              <div class="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <div class="w-12 h-12 rounded-xl bg-brand-700 text-white flex items-center justify-center font-bold font-headline text-lg shadow-xs shrink-0">
+                  <span x-text="config.adminNama ? config.adminNama.charAt(0) : 'B'"></span>
+                </div>
+                <div class="min-w-0 flex-1 text-xs">
+                  <div class="font-bold text-slate-900 truncate" x-text="config.adminNama || 'Nama Bendahara'"></div>
+                  <div class="text-[11px] text-slate-500 font-mono truncate" x-text="'NIP. ' + (config.adminNip || '-')"></div>
+                  <div class="text-[11px] text-brand-700 truncate" x-text="config.adminJabatan || 'Bendahara Penerimaan'"></div>
+                </div>
+              </div>
+
+              <div class="space-y-3 text-xs">
+                <div>
+                  <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap & Gelar <span class="text-rose-500">*</span></label>
+                  <input 
+                    type="text" 
+                    x-model="config.adminNama" 
+                    placeholder="H. Syarifuddin, S.E."
+                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 font-semibold outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block font-semibold text-slate-700 mb-1">NIP Bendahara <span class="text-rose-500">*</span></label>
+                    <input 
+                      type="text" 
+                      x-model="config.adminNip" 
+                      placeholder="19850712 201001 1 015"
+                      class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono outline-none">
+                  </div>
+
+                  <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Jabatan Penandatangan</label>
+                    <input 
+                      type="text" 
+                      x-model="config.adminJabatan" 
+                      placeholder="Bendahara Penerimaan DLH"
+                      class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                  <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Email Dinas</label>
+                    <input 
+                      type="email" 
+                      x-model="config.adminEmail" 
+                      placeholder="bendahara.dlh@pangkepkab.go.id"
+                      class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none">
+                  </div>
+
+                  <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Username Login</label>
+                    <input 
+                      type="text" 
+                      x-model="config.adminUsername" 
+                      placeholder="bendahara"
+                      class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono outline-none">
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block font-semibold text-slate-700 mb-1">Ubah Password Baru (Opsional)</label>
+                  <input 
+                    type="password" 
+                    x-model="config.adminPasswordNew" 
+                    placeholder="Kosongkan jika tidak ingin mengubah password"
+                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none">
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- KOLOM KANAN: BULAN AKTIF, DOKUMEN & INTEGRASI (6 COLS) -->
+          <div class="lg:col-span-6 space-y-6">
+
+            <!-- KARTU 3: PERIODE BULAN AKTIF PENAGIHAN -->
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-card space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <i data-lucide="calendar-range" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-headline font-bold text-slate-900 text-sm">Bulan Aktif Penagihan</h3>
+                    <p class="text-[11px] text-slate-400">Pilih bulan yang aktif muncul di periode wajib bayar, matriks, dan grafik.</p>
+                  </div>
+                </div>
+                <span class="text-[10px] font-mono font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full" x-text="`${config.bulanAktif ? config.bulanAktif.length : 9} Bulan Aktif`"></span>
+              </div>
+
+              <!-- Quick Presets -->
+              <div class="space-y-2">
+                <label class="block text-[11px] font-semibold text-slate-600">Pilihan Cepat (Preset):</label>
+                <div class="flex flex-wrap gap-1.5">
+                  <button 
+                    type="button" 
+                    @click="setBulanAktifPreset('all')"
+                    class="px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 transition cursor-pointer">
+                    Semua (12 Bln)
+                  </button>
+                  <button 
+                    type="button" 
+                    @click="setBulanAktifPreset('apr_des')"
+                    class="px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-brand-200 bg-brand-50 hover:bg-brand-100 text-brand-700 transition cursor-pointer">
+                    Apr - Des (Standar SPPG)
+                  </button>
+                  <button 
+                    type="button" 
+                    @click="setBulanAktifPreset('sem1')"
+                    class="px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 transition cursor-pointer">
+                    Semester 1 (Jan-Jun)
+                  </button>
+                  <button 
+                    type="button" 
+                    @click="setBulanAktifPreset('sem2')"
+                    class="px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 transition cursor-pointer">
+                    Semester 2 (Jul-Des)
+                  </button>
+                </div>
+              </div>
+
+              <!-- 12 Month Multi-Select Grid -->
+              <div class="space-y-2 pt-2 border-t border-slate-100">
+                <label class="block text-[11px] font-semibold text-slate-600">Pilih Multi-Select Bulan Aktif:</label>
+                <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  <template x-for="bln in ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']" :key="bln">
+                    <button 
+                      type="button" 
+                      @click="toggleBulanAktif(bln)"
+                      :class="config.bulanAktif && config.bulanAktif.includes(bln) 
+                        ? 'bg-brand-600 text-white border-brand-600 shadow-xs font-bold' 
+                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'"
+                      class="px-2.5 py-2 rounded-lg border text-xs text-center flex items-center justify-between transition cursor-pointer">
+                      <span x-text="bln"></span>
+                      <i data-lucide="check" class="w-3.5 h-3.5" :class="config.bulanAktif && config.bulanAktif.includes(bln) ? 'opacity-100' : 'opacity-0'"></i>
+                    </button>
+                  </template>
+                </div>
+              </div>
+
+              <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2 text-[11px] text-amber-800">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                <span>Bulan yang tidak dicentang otomatis tidak akan muncul pada tabel periode wajib bayar, matriks rekapitulasi, grafik monitoring, dan opsi bulan form setor.</span>
+              </div>
+            </div>
+
+            <!-- KARTU 4: FORMAT PENOMORAN DOKUMEN -->
             <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-card space-y-4">
               <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2">
@@ -1709,39 +2000,37 @@
                     <i data-lucide="tags" class="w-4 h-4"></i>
                   </div>
                   <div>
-                    <h3 class="font-headline font-bold text-slate-900 text-sm">Format Dokumen & Penomoran (Sistem Token)</h3>
-                    <p class="text-[11px] text-slate-400">Database hanya menyimpan nomor inti. Format lengkap frontend diatur di sini.</p>
+                    <h3 class="font-headline font-bold text-slate-900 text-sm">Format Penomoran Dokumen</h3>
+                    <p class="text-[11px] text-slate-400">Template nomor otomatis berbasis token/tag.</p>
                   </div>
                 </div>
-                <span class="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Token System</span>
+                <span class="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Format</span>
               </div>
 
-              <!-- Daftar Token / Tag Cheatsheet -->
-              <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1.5 text-[11px]">
+              <!-- Cheatsheet Token -->
+              <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg space-y-1 text-[11px]">
                 <div class="font-bold text-slate-700 flex items-center gap-1.5">
                   <i data-lucide="info" class="w-3.5 h-3.5 text-brand-600"></i>
-                  <span>Tag / Token Tersedia:</span>
+                  <span>Tag Tersedia:</span>
                 </div>
-                <div class="flex flex-wrap gap-1.5 text-[10px] font-mono">
-                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-800 font-semibold">{TAHUN}</span>
-                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-800 font-semibold">{BULAN}</span>
-                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-800 font-semibold">{BULAN_SINGKAT}</span>
-                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-800 font-semibold">{BULAN_ANGKA}</span>
-                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-800 font-semibold">{BULAN_ROMAWI}</span>
-                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-800 font-semibold">{NO}</span>
-                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-800 font-semibold">{PAD3}</span>
-                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-800 font-semibold">{PAD4}</span>
+                <div class="flex flex-wrap gap-1 text-[10px] font-mono">
+                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-700">{TAHUN}</span>
+                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-700">{BULAN_SINGKAT}</span>
+                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-700">{BULAN_ANGKA}</span>
+                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-700">{BULAN_ROMAWI}</span>
+                  <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-slate-700">{NO}</span>
+                  <span class="px-1.5 py-0.5 bg-brand-50 border border-brand-300 rounded text-brand-700 font-bold">{PAD2}</span>
+                  <span class="px-1.5 py-0.5 bg-brand-50 border border-brand-300 rounded text-brand-700 font-bold">{PAD3}</span>
+                  <span class="px-1.5 py-0.5 bg-brand-50 border border-brand-300 rounded text-brand-700 font-bold">{PAD4}</span>
                 </div>
               </div>
 
-              <div class="space-y-3.5 text-xs">
+              <div class="space-y-3 text-xs">
                 <div>
-                  <label class="block font-semibold text-slate-700 mb-1">
-                    Tahun Anggaran Aktif <span class="text-rose-500">*</span>
-                  </label>
+                  <label class="block font-semibold text-slate-700 mb-1">Tahun Anggaran Aktif <span class="text-rose-500">*</span></label>
                   <select 
                     x-model="config.tahunAnggaran" 
-                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3.5 py-2 text-xs text-slate-800 font-mono font-bold outline-none">
+                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono font-bold outline-none">
                     <option value="2025">2025</option>
                     <option value="2026">2026</option>
                     <option value="2027">2027</option>
@@ -1750,56 +2039,44 @@
                 </div>
 
                 <div>
-                  <div class="flex justify-between items-center mb-1">
-                    <label class="font-semibold text-slate-700">Template Format Nomor STBP</label>
-                    <span class="text-[10px] text-slate-400 font-mono">Contoh: STBP/DLH/{TAHUN}/{BULAN_SINGKAT}/{PAD4}</span>
-                  </div>
+                  <label class="block font-semibold text-slate-700 mb-1">Template No. STBP</label>
                   <input 
                     type="text" 
                     x-model="config.templateStbp" 
                     placeholder="STBP/DLH/{TAHUN}/{BULAN_SINGKAT}/{PAD4}"
-                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3.5 py-2 text-xs text-slate-800 font-mono outline-none">
-                  <div class="mt-1 text-[11px] text-slate-500 flex items-center gap-1">
-                    <span>Pratinjau:</span>
-                    <strong class="font-mono text-blue-700" x-text="formatToken(config.templateStbp, { no: '84', bulan: 'April', tahun: config.tahunAnggaran })"></strong>
+                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none">
+                  <div class="mt-1 text-[11px] text-slate-500">
+                    Pratinjau: <strong class="font-mono text-slate-800" x-text="formatToken(config.templateStbp, { no: '84', bulan: 'April', tahun: config.tahunAnggaran })"></strong>
                   </div>
                 </div>
 
                 <div>
-                  <div class="flex justify-between items-center mb-1">
-                    <label class="font-semibold text-slate-700">Template Format Nomor STS Kas Daerah</label>
-                    <span class="text-[10px] text-slate-400 font-mono">Contoh: STS/KASDA/{TAHUN}/{BULAN_SINGKAT}/{PAD4}</span>
-                  </div>
+                  <label class="block font-semibold text-slate-700 mb-1">Template No. STS</label>
                   <input 
                     type="text" 
                     x-model="config.templateSts" 
                     placeholder="STS/KASDA/{TAHUN}/{BULAN_SINGKAT}/{PAD4}"
-                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3.5 py-2 text-xs text-slate-800 font-mono outline-none">
-                  <div class="mt-1 text-[11px] text-slate-500 flex items-center gap-1">
-                    <span>Pratinjau:</span>
-                    <strong class="font-mono text-emerald-700" x-text="formatToken(config.templateSts, { no: '34', bulan: 'April', tahun: config.tahunAnggaran })"></strong>
+                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none">
+                  <div class="mt-1 text-[11px] text-slate-500">
+                    Pratinjau: <strong class="font-mono text-slate-800" x-text="formatToken(config.templateSts, { no: '34', bulan: 'April', tahun: config.tahunAnggaran })"></strong>
                   </div>
                 </div>
 
                 <div>
-                  <div class="flex justify-between items-center mb-1">
-                    <label class="font-semibold text-slate-700">Template Format Kode Transaksi / Ref</label>
-                    <span class="text-[10px] text-slate-400 font-mono">Contoh: TRX-{TAHUN}{BULAN_ANGKA}-{PAD4}</span>
-                  </div>
+                  <label class="block font-semibold text-slate-700 mb-1">Template Ref. Transaksi</label>
                   <input 
                     type="text" 
                     x-model="config.templateTrx" 
                     placeholder="TRX-{TAHUN}{BULAN_ANGKA}-{PAD4}"
-                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3.5 py-2 text-xs text-slate-800 font-mono outline-none">
-                  <div class="mt-1 text-[11px] text-slate-500 flex items-center gap-1">
-                    <span>Pratinjau:</span>
-                    <strong class="font-mono text-purple-700" x-text="formatToken(config.templateTrx, { no: '4635', bulan: 'April', tahun: config.tahunAnggaran })"></strong>
+                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none">
+                  <div class="mt-1 text-[11px] text-slate-500">
+                    Pratinjau: <strong class="font-mono text-slate-800" x-text="formatToken(config.templateTrx, { no: '4635', bulan: 'April', tahun: config.tahunAnggaran })"></strong>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- KARTU 3: INTEGRASI CLOUD & HELPDESK -->
+            <!-- KARTU 5: INTEGRASI CLOUD & HELPDESK -->
             <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-card space-y-4">
               <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2">
@@ -1808,40 +2085,40 @@
                   </div>
                   <div>
                     <h3 class="font-headline font-bold text-slate-900 text-sm">Integrasi Cloud & Helpdesk</h3>
-                    <p class="text-[11px] text-slate-400">Google Drive folder dan nomor WhatsApp pengurus.</p>
+                    <p class="text-[11px] text-slate-400">Penyimpanan Google Drive dan kontak bantuan.</p>
                   </div>
                 </div>
-                <span class="text-[10px] font-mono font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">Cloud</span>
+                <span class="text-[10px] font-mono font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">Sistem</span>
               </div>
 
-              <div class="space-y-3.5 text-xs">
+              <div class="space-y-3 text-xs">
                 <div>
-                  <label class="block font-semibold text-slate-700 mb-1">Google Drive Folder ID (Bukti Slip)</label>
+                  <label class="block font-semibold text-slate-700 mb-1">Google Drive Folder ID (Slip Setor)</label>
                   <input 
                     type="text" 
                     x-model="config.driveFolderId" 
                     placeholder="1AbC_dlh_retribusi_sppg_drive_folder"
-                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-purple-500 rounded-lg px-3.5 py-2 text-xs text-slate-800 font-mono outline-none">
+                    class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono outline-none">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                   <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Maks Upload (MB)</label>
+                    <label class="block font-semibold text-slate-700 mb-1">Maks. File (MB)</label>
                     <input 
                       type="number" 
                       x-model="config.maxFileSizeMB" 
                       min="1" 
                       max="20"
-                      class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-purple-500 rounded-lg px-3.5 py-2 text-xs text-slate-800 font-mono outline-none">
+                      class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono outline-none">
                   </div>
 
                   <div>
-                    <label class="block font-semibold text-slate-700 mb-1">No. WA Helpdesk</label>
+                    <label class="block font-semibold text-slate-700 mb-1">WhatsApp Helpdesk</label>
                     <input 
                       type="text" 
                       x-model="config.waHelpdesk" 
                       placeholder="0812-3456-7890"
-                      class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-purple-500 rounded-lg px-3.5 py-2 text-xs text-slate-800 font-mono outline-none">
+                      class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono outline-none">
                   </div>
                 </div>
               </div>
@@ -1851,23 +2128,29 @@
 
         </div>
 
-        <!-- Sticky Bottom Save Reminder Bar -->
+        <!-- Action Bar Bawah (Simpan & Reset) -->
         <div class="p-4 bg-slate-900 text-white rounded-xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
               <i data-lucide="shield-check" class="w-4 h-4"></i>
             </div>
             <div>
-              <p class="text-xs font-semibold">Pastikan perubahan pengaturan telah sesuai sebelum disimpan.</p>
-              <p class="text-[11px] text-slate-400">Pengaturan akan langsung berlaku pada seluruh portal publik & bendahara.</p>
+              <p class="text-xs font-semibold">Perubahan langsung sinkron ke seluruh portal publik & bendahara.</p>
             </div>
           </div>
 
-          <div class="flex items-center gap-2 self-end sm:self-center">
+          <div class="flex items-center gap-2.5 self-end sm:self-center">
+            <button 
+              type="button" 
+              @click="resetConfigToDefault()" 
+              class="px-3.5 py-2 border border-slate-700 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg text-xs font-semibold transition cursor-pointer">
+              Reset Standar
+            </button>
+
             <button 
               type="button" 
               @click="savePageSettings()" 
-              class="px-5 py-2 bg-brand-500 hover:bg-brand-600 active:scale-[0.99] text-white rounded-lg text-xs font-bold shadow-md transition flex items-center gap-1.5">
+              class="px-5 py-2 bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white rounded-lg text-xs font-bold shadow-md transition flex items-center gap-1.5 cursor-pointer">
               <i data-lucide="save" class="w-3.5 h-3.5"></i>
               <span>Simpan Perubahan</span>
             </button>
@@ -1906,24 +2189,24 @@
   <!-- ========================================================================= -->
   <!-- MOBILE BOTTOM NAVIGATION (HANYA BERISI MENU PUBLIK: DASHBOARD, KONFIRMASI) -->
   <!-- ========================================================================= -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-lg px-4 py-1.5 flex items-center justify-around">
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl px-6 pt-3 pb-5 flex items-center justify-around">
     
     <!-- Tab 1: Dashboard -->
     <button 
       @click="currentView = 'dashboard'" 
-      :class="currentView === 'dashboard' ? 'text-brand-600 font-semibold' : 'text-slate-400 hover:text-slate-600'"
-      class="flex flex-col items-center justify-center flex-1 py-1 text-[11px] transition">
-      <i data-lucide="layout-dashboard" class="w-5 h-5 mb-0.5"></i>
+      :class="currentView === 'dashboard' ? 'text-brand-600 font-bold' : 'text-slate-400 hover:text-slate-600'"
+      class="flex flex-col items-center justify-center flex-1 py-1 text-xs transition">
+      <i data-lucide="chart-column" class="w-6 h-6 mb-1"></i>
       <span>Dashboard</span>
     </button>
 
-    <!-- Tab 2: Konfirmasi (Highlight Button Tengah) -->
+    <!-- Tab 2: Konfirmasi (Highlight Button Tengah Lebih Besar & Terangkat) -->
     <button 
       @click="currentView = 'form'" 
-      :class="currentView === 'form' ? 'text-brand-600 font-semibold' : 'text-slate-400 hover:text-slate-600'"
-      class="flex flex-col items-center justify-center flex-1 py-1 text-[11px] transition">
-      <div class="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center shadow-md mb-0.5 -mt-3 border-2 border-white">
-        <i data-lucide="plus" class="w-5 h-5"></i>
+      :class="currentView === 'form' ? 'text-brand-600 font-bold' : 'text-slate-500 hover:text-slate-700'"
+      class="flex flex-col items-center justify-center flex-1 py-1 text-xs transition relative">
+      <div class="w-12 h-12 rounded-full bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center shadow-lg -mt-7 border-4 border-white ring-2 ring-brand-100 transition transform active:scale-95 mb-0.5">
+        <i data-lucide="plus" class="w-6.5 h-6.5 stroke-[2.5]"></i>
       </div>
       <span>Konfirmasi</span>
     </button>
@@ -1931,8 +2214,8 @@
     <!-- Tab 3: Matriks -->
     <button 
       @click="currentView = 'dashboard'; $nextTick(() => scrollToMatriks());" 
-      class="flex flex-col items-center justify-center flex-1 py-1 text-[11px] text-slate-400 hover:text-slate-600 transition">
-      <i data-lucide="table" class="w-5 h-5 mb-0.5"></i>
+      class="flex flex-col items-center justify-center flex-1 py-1 text-xs text-slate-400 hover:text-slate-600 transition">
+      <i data-lucide="grid-2x2-plus" class="w-6 h-6 mb-1"></i>
       <span>Matriks</span>
     </button>
 
@@ -2029,7 +2312,7 @@
       
       <div>
         <h3 class="text-xl font-headline font-bold text-slate-900">Konfirmasi Berhasil Terkirim!</h3>
-        <p class="text-xs text-slate-500 mt-1">Laporan setoran Anda telah tersimpan dan akan diverifikasi oleh Bendahara DLH.</p>
+        <p class="text-sm text-slate-600 mt-1.5 leading-relaxed">Laporan setoran Anda telah tersimpan dan akan diverifikasi oleh Bendahara DLH.</p>
       </div>
 
       <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-left font-sans text-xs space-y-2 text-slate-700">
@@ -2053,8 +2336,8 @@
 
       <button 
         @click="showSuccessModal = false; currentView = 'dashboard'; resetForm();"
-        class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-semibold transition shadow-md">
-        Kembali ke Dashboard
+        class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-semibold transition shadow-md cursor-pointer">
+        Saya Mengerti
       </button>
     </div>
   </div>
@@ -2246,6 +2529,7 @@
           }
 
           this.initTrxEditFields();
+          this.ensurePeriodeWajibMap();
 
           // 1. Sinkronisasi Data via Vercel REST API (GAS)
           if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
@@ -2434,7 +2718,14 @@
           templateTrx: 'TRX-{TAHUN}{BULAN_ANGKA}-{PAD4}',
           maxFileSizeMB: 5,
           waHelpdesk: '0812-3456-7890',
-          driveFolderId: '1AbC_dlh_retribusi_sppg_drive_folder'
+          driveFolderId: '1AbC_dlh_retribusi_sppg_drive_folder',
+          bulanAktif: ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+          adminNama: 'H. Syarifuddin, S.E.',
+          adminNip: '19850712 201001 1 015',
+          adminJabatan: 'Bendahara Penerimaan DLH Kab. Pangkep',
+          adminEmail: 'bendahara.dlh@pangkepkab.go.id',
+          adminUsername: 'bendahara',
+          adminPasswordNew: ''
         },
 
         // Popover Dashboard State
@@ -2460,7 +2751,14 @@
         },
 
         // 9 Bulan Pelayanan (Apr - Des)
-        bulanListShort: ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+        // Bulan Pelayanan Aktif (Dihitung Dinamis dari config.bulanAktif)
+        get bulanListShort() {
+          const master = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          if (!this.config || !Array.isArray(this.config.bulanAktif) || this.config.bulanAktif.length === 0) {
+            return ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          }
+          return master.filter(m => this.config.bulanAktif.includes(m));
+        },
 
         // Login Form
         loginEmail: '',
@@ -4238,6 +4536,62 @@
         },
 
         // Chart Data: DIHITUNG DINAMIS DARI DATA TRANSAKSI & DIURUTKAN BERDASARKAN TANGGAL TERAKHIR PEMBAYARAN (TERBARU DI ATAS)
+                // Helper Parser Tanggal Pembayaran (Mendukung format "14 Mei 2026", "21/8/2026", "2026-05-14", dsb.)
+        parsePaymentDate(str) {
+          if (!str) return 0;
+          str = String(str).trim();
+          if (str.includes('/')) {
+            const parts = str.split('/').map(s => s.trim());
+            if (parts.length === 3 && parts.every(p => /^\d+$/.test(p))) {
+              const d = parseInt(parts[0], 10);
+              const m = parseInt(parts[1], 10) - 1;
+              const y = parseInt(parts[2], 10);
+              return new Date(y, m, d).getTime();
+            }
+            let maxTime = 0;
+            for (const part of parts) {
+              const t = this.parsePaymentDate(part);
+              if (t > maxTime) maxTime = t;
+            }
+            if (maxTime > 0) return maxTime;
+          }
+          if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+            const t = new Date(str).getTime();
+            if (!isNaN(t)) return t;
+          }
+          const monthMap = {
+            'jan': 0, 'januari': 0, 'feb': 1, 'februari': 1, 'mar': 2, 'maret': 2,
+            'apr': 3, 'april': 3, 'mei': 4, 'may': 4, 'jun': 5, 'juni': 5,
+            'jul': 6, 'juli': 6, 'agu': 7, 'ags': 7, 'agus': 7, 'agustus': 7,
+            'sep': 8, 'sept': 8, 'september': 8, 'okt': 9, 'oktober': 9, 'oct': 9,
+            'nov': 10, 'november': 10, 'des': 11, 'desember': 11, 'dec': 11
+          };
+          const match = str.match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
+          if (match) {
+            const d = parseInt(match[1], 10);
+            const mKey = match[2].toLowerCase();
+            const y = parseInt(match[3], 10);
+            const m = monthMap[mKey];
+            if (m !== undefined) {
+              return new Date(y, m, d).getTime();
+            }
+          }
+          const fallback = new Date(str).getTime();
+          return isNaN(fallback) ? 0 : fallback;
+        },
+
+        // 6 Penyetor Paling Terbaru (Diurutkan dari pembayaran paling terakhir di atas)
+        get recentTransactions() {
+          return [...(this.transaksiList || [])]
+            .sort((a, b) => {
+              const tsA = this.parsePaymentDate(a.tanggalTransfer);
+              const tsB = this.parsePaymentDate(b.tanggalTransfer);
+              if (tsB !== tsA) return tsB - tsA;
+              return b.id.localeCompare(a.id, undefined, { numeric: true });
+            })
+            .slice(0, 6);
+        },
+
         get chartData() {
           const bulanFullToShort = {
             'januari': 'Jan', 'februari': 'Feb', 'maret': 'Mar', 'april': 'Apr',
@@ -4246,49 +4600,6 @@
             'jan': 'Jan', 'feb': 'Feb', 'mar': 'Mar', 'apr': 'Apr',
             'may': 'Mei', 'jun': 'Jun', 'jul': 'Jul', 'agu': 'Agu', 'ags': 'Agu',
             'sep': 'Sep', 'okt': 'Okt', 'nov': 'Nov', 'des': 'Des'
-          };
-
-          const parseDate = (str) => {
-            if (!str) return 0;
-            str = String(str).trim();
-            if (str.includes('/')) {
-              const parts = str.split('/').map(s => s.trim());
-              if (parts.length === 3 && parts.every(p => /^\d+$/.test(p))) {
-                const d = parseInt(parts[0], 10);
-                const m = parseInt(parts[1], 10) - 1;
-                const y = parseInt(parts[2], 10);
-                return new Date(y, m, d).getTime();
-              }
-              let maxTime = 0;
-              for (const part of parts) {
-                const t = parseDate(part);
-                if (t > maxTime) maxTime = t;
-              }
-              if (maxTime > 0) return maxTime;
-            }
-            if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
-              const t = new Date(str).getTime();
-              if (!isNaN(t)) return t;
-            }
-            const monthMap = {
-              'jan': 0, 'januari': 0, 'feb': 1, 'februari': 1, 'mar': 2, 'maret': 2,
-              'apr': 3, 'april': 3, 'mei': 4, 'may': 4, 'jun': 5, 'juni': 5,
-              'jul': 6, 'juli': 6, 'agu': 7, 'ags': 7, 'agus': 7, 'agustus': 7,
-              'sep': 8, 'sept': 8, 'september': 8, 'okt': 9, 'oktober': 9, 'oct': 9,
-              'nov': 10, 'november': 10, 'des': 11, 'desember': 11, 'dec': 11
-            };
-            const match = str.match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
-            if (match) {
-              const d = parseInt(match[1], 10);
-              const mKey = match[2].toLowerCase();
-              const y = parseInt(match[3], 10);
-              const m = monthMap[mKey];
-              if (m !== undefined) {
-                return new Date(y, m, d).getTime();
-              }
-            }
-            const fallback = new Date(str).getTime();
-            return isNaN(fallback) ? 0 : fallback;
           };
 
           const paidMap = {};
@@ -4305,7 +4616,7 @@
               paidMap[sppgId].add(bShort);
             }
 
-            const ts = parseDate(trx.tanggalTransfer);
+            const ts = this.parsePaymentDate(trx.tanggalTransfer);
             if (!lastPaymentMap[sppgId] || ts > lastPaymentMap[sppgId].ts) {
               lastPaymentMap[sppgId] = {
                 ts: ts,
@@ -4399,6 +4710,36 @@
           this.$nextTick(() => lucide.createIcons());
         },
 
+        toggleBulanAktif(bln) {
+          if (!this.config.bulanAktif || !Array.isArray(this.config.bulanAktif)) {
+            this.config.bulanAktif = ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          }
+          const idx = this.config.bulanAktif.indexOf(bln);
+          if (idx > -1) {
+            if (this.config.bulanAktif.length <= 1) {
+              this.notifyError('Peringatan', 'Minimal harus ada 1 bulan aktif penagihan.');
+              return;
+            }
+            this.config.bulanAktif.splice(idx, 1);
+          } else {
+            this.config.bulanAktif.push(bln);
+          }
+          this.$nextTick(() => lucide.createIcons());
+        },
+
+        setBulanAktifPreset(preset) {
+          if (preset === 'all') {
+            this.config.bulanAktif = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          } else if (preset === 'apr_des') {
+            this.config.bulanAktif = ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          } else if (preset === 'sem1') {
+            this.config.bulanAktif = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'];
+          } else if (preset === 'sem2') {
+            this.config.bulanAktif = ['Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          }
+          this.$nextTick(() => lucide.createIcons());
+        },
+
         async savePageSettings() {
           document.title = this.config.appName + ' - ' + this.config.tagline;
           if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
@@ -4440,7 +4781,14 @@
                 templateTrx: 'TRX-{TAHUN}{BULAN_ANGKA}-{PAD4}',
                 maxFileSizeMB: 5,
                 waHelpdesk: '0812-3456-7890',
-                driveFolderId: '1AbC_dlh_retribusi_sppg_drive_folder'
+                driveFolderId: '1AbC_dlh_retribusi_sppg_drive_folder',
+                bulanAktif: ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                adminNama: 'H. Syarifuddin, S.E.',
+                adminNip: '19850712 201001 1 015',
+                adminJabatan: 'Bendahara Penerimaan DLH Kab. Pangkep',
+                adminEmail: 'bendahara.dlh@pangkepkab.go.id',
+                adminUsername: 'bendahara',
+                adminPasswordNew: ''
               };
               if (this.$refs.customLogoInput) this.$refs.customLogoInput.value = '';
               document.title = this.config.appName + ' - ' + this.config.tagline;
@@ -4510,6 +4858,7 @@
             return;
           }
           const bulanFullMap = {
+            'Jan': 'Januari', 'Feb': 'Februari', 'Mar': 'Maret',
             'Apr': 'April', 'Mei': 'Mei', 'Jun': 'Juni', 'Jul': 'Juli',
             'Agu': 'Agustus', 'Sep': 'September', 'Okt': 'Oktober',
             'Nov': 'November', 'Des': 'Desember'
@@ -4523,18 +4872,18 @@
           const monthNumStr = (monthIndex !== -1 ? monthIndex + 4 : 4).toString().padStart(2, '0');
           const sppgNumStr = item.id.replace('SPPG-', '');
 
-          let tglSetor = '-';
-          let idTransaksi = '-';
+          let tglSetor = '';
+          let idTransaksi = '';
           let noStbp = '';
           let noSts = '';
           let nominal = null;
 
           if (matchedTrx) {
-            tglSetor = matchedTrx.tanggalTransfer || ('2026-' + monthNumStr + '-15');
-            idTransaksi = matchedTrx.noTrxBank || matchedTrx.id || ('TRX-2026' + monthNumStr + '-' + sppgNumStr.padStart(4, '0'));
-            noStbp = matchedTrx.noStbp || '';
-            noSts = matchedTrx.noSts || '';
-            nominal = matchedTrx.jumlahTransfer || 750000;
+            tglSetor = matchedTrx.tanggalTransfer || '';
+            idTransaksi = (matchedTrx.noTrxBank || matchedTrx.id || '').trim();
+            noStbp = (matchedTrx.noStbp || '').trim();
+            noSts = (matchedTrx.noSts || '').trim();
+            nominal = matchedTrx.jumlahTransfer || null;
           } else if (status === 'verified' || status === 'paid') {
             tglSetor = '2026-' + monthNumStr + '-15';
             idTransaksi = 'TRX-2026' + monthNumStr + '-' + sppgNumStr.padStart(4, '0');
@@ -4558,9 +4907,9 @@
           }
 
           // Valid: Memiliki No. STS, No. STBP, dan ID Transaksi yang lengkap
-          const hasSts = Boolean(noSts && String(noSts).trim() !== '' && String(noSts).trim() !== '-');
-          const hasStbp = Boolean(noStbp && String(noStbp).trim() !== '' && String(noStbp).trim() !== '-');
-          const hasTrxBank = Boolean(idTransaksi && String(idTransaksi).trim() !== '' && String(idTransaksi).trim() !== '-');
+          const hasSts = Boolean(noSts && noSts !== '-' && noSts !== '—');
+          const hasStbp = Boolean(noStbp && noStbp !== '-' && noStbp !== '—');
+          const hasTrxBank = Boolean(idTransaksi && idTransaksi !== '-' && idTransaksi !== '—');
           const isValid = hasSts && hasStbp && hasTrxBank;
           const statusValidasi = isValid ? 'Valid (Lengkap)' : 'Belum Valid';
 
@@ -4605,6 +4954,20 @@
 
         closePopover() {
           this.popover.show = false;
+        },
+
+        ensurePeriodeWajibMap() {
+          const all12 = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          (this.masterData || []).forEach(sppg => {
+            if (!this.periodeWajibMap[sppg.id]) {
+              this.periodeWajibMap[sppg.id] = {};
+            }
+            all12.forEach(m => {
+              if (this.periodeWajibMap[sppg.id][m] === undefined) {
+                this.periodeWajibMap[sppg.id][m] = (['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].includes(m));
+              }
+            });
+          });
         },
 
         // Periode Wajib Helpers
@@ -4659,6 +5022,9 @@
           if (!targetMatriks) return [];
           
           const bulanFullMap = {
+            'Jan': 'Januari',
+            'Feb': 'Februari',
+            'Mar': 'Maret',
             'Apr': 'April',
             'Mei': 'Mei',
             'Jun': 'Juni',
@@ -4908,7 +5274,8 @@
             startMonth: this.newSppg.startMonth
           });
           
-          this.periodeWajibMap[newId] = { Apr: true, Mei: true, Jun: true, Jul: true, Agu: true, Sep: true, Okt: true, Nov: true, Des: true };
+          this.periodeWajibMap[newId] = { Jan: false, Feb: false, Mar: false, Apr: true, Mei: true, Jun: true, Jul: true, Agu: true, Sep: true, Okt: true, Nov: true, Des: true };
+            this.ensurePeriodeWajibMap();
 
           this.notifySuccess('SPPG Ditambahkan', `SPPG ${this.newSppg.nama} (${newId}) berhasil didaftarkan.`);
           this.newSppg = { kec: '', nama: '', startMonth: 'April', nominalTarget: null };
@@ -5051,20 +5418,27 @@
 
         // Computed Filters
         get filteredTransaksi() {
-          return this.transaksiList.filter(item => {
-            const matchSearch = !this.filters.search || 
-              item.namaSppg.toLowerCase().includes(this.filters.search.toLowerCase()) ||
-              item.id.toLowerCase().includes(this.filters.search.toLowerCase()) ||
-              (item.noTrxBank && item.noTrxBank.toLowerCase().includes(this.filters.search.toLowerCase())) ||
-              (item.noStbp && item.noStbp.toLowerCase().includes(this.filters.search.toLowerCase())) ||
-              (item.noSts && item.noSts.toLowerCase().includes(this.filters.search.toLowerCase()));
+          return this.transaksiList
+            .filter(item => {
+              const matchSearch = !this.filters.search || 
+                item.namaSppg.toLowerCase().includes(this.filters.search.toLowerCase()) ||
+                item.id.toLowerCase().includes(this.filters.search.toLowerCase()) ||
+                (item.noTrxBank && item.noTrxBank.toLowerCase().includes(this.filters.search.toLowerCase())) ||
+                (item.noStbp && item.noStbp.toLowerCase().includes(this.filters.search.toLowerCase())) ||
+                (item.noSts && item.noSts.toLowerCase().includes(this.filters.search.toLowerCase()));
 
-            const matchKec = !this.filters.kecamatan || item.kecamatan === this.filters.kecamatan;
-            const matchBulan = !this.filters.bulan || item.periodeBulan === this.filters.bulan;
-            const matchStatus = !this.filters.status || item.status === this.filters.status;
+              const matchKec = !this.filters.kecamatan || item.kecamatan === this.filters.kecamatan;
+              const matchBulan = !this.filters.bulan || item.periodeBulan === this.filters.bulan;
+              const matchStatus = !this.filters.status || item.status === this.filters.status;
 
-            return matchSearch && matchKec && matchBulan && matchStatus;
-          });
+              return matchSearch && matchKec && matchBulan && matchStatus;
+            })
+            .sort((a, b) => {
+              const tsA = this.parsePaymentDate(a.tanggalTransfer);
+              const tsB = this.parsePaymentDate(b.tanggalTransfer);
+              if (tsB !== tsA) return tsB - tsA; // Paling terakhir membayar paling atas
+              return b.id.localeCompare(a.id, undefined, { numeric: true });
+            });
         },
 
         // Computed Pagination
@@ -5245,7 +5619,7 @@
                 if (trx.isVerified) {
                   this.notifySuccess('Terverifikasi', `Setoran ${trx.namaSppg} bulan ${trx.periodeBulan} telah diverifikasi (Status Lunas).`);
                 } else {
-                  this.notifyWarning('Status Dibatalkan', `Verifikasi ${trx.namaSppg} bulan ${trx.periodeBulan} dikembalikan ke Menunggu Verifikasi.`);
+                  this.notifyWarning('Unverifikasi Berhasil', `Verifikasi ${trx.namaSppg} bulan ${trx.periodeBulan} dikembalikan ke Menunggu Verifikasi.`);
                 }
               } else {
                 this.notifyError('Gagal Mengubah Status', res ? res.message || res.error : 'Terjadi kesalahan.');
@@ -5267,7 +5641,7 @@
                   if (trx.isVerified) {
                     this.notifySuccess('Terverifikasi', `Setoran ${trx.namaSppg} bulan ${trx.periodeBulan} telah diverifikasi (Status Lunas).`);
                   } else {
-                    this.notifyWarning('Status Dibatalkan', `Verifikasi ${trx.namaSppg} bulan ${trx.periodeBulan} dikembalikan ke Menunggu Verifikasi.`);
+                    this.notifyWarning('Unverifikasi Berhasil', `Verifikasi ${trx.namaSppg} bulan ${trx.periodeBulan} dikembalikan ke Menunggu Verifikasi.`);
                   }
                 } else {
                   this.notifyError('Gagal Mengubah Status', res ? res.message || res.error : 'Terjadi kesalahan.');
@@ -5288,7 +5662,7 @@
               if (trx.isVerified) {
                 this.notifySuccess('Terverifikasi', `Setoran ${trx.namaSppg} bulan ${trx.periodeBulan} telah diverifikasi (Status Lunas).`);
               } else {
-                this.notifyWarning('Status Dibatalkan', `Verifikasi ${trx.namaSppg} bulan ${trx.periodeBulan} dikembalikan ke Menunggu Verifikasi.`);
+                this.notifyWarning('Unverifikasi Berhasil', `Verifikasi ${trx.namaSppg} bulan ${trx.periodeBulan} dikembalikan ke Menunggu Verifikasi.`);
               }
               this.$nextTick(() => lucide.createIcons());
             }, 250);
