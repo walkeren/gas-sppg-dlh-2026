@@ -1,0 +1,2351 @@
+[
+  {
+    "id": "SPPG-001",
+    "kecamatan": "Balocci",
+    "nama": "Kassi",
+    "penyetor": "Siti Zuraima SPPG Kassi1",
+    "hp": "089501737683",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "14 Mei 2026",
+        "sts": "034",
+        "stbp": "0084",
+        "trx": "4635",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t14 Mei 2026 ref ...4635 / sts 034 / stbp 0084"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "08 Juli 2026",
+        "sts": "084",
+        "stbp": "",
+        "trx": "5870",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t08 Juli 2026 ref...5870 / sts 084"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "28 Juli 2026",
+        "sts": "116",
+        "stbp": "",
+        "trx": "8350",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t28 Juli 2026 ref...8350 / sts 116"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-002",
+    "kecamatan": "Balocci",
+    "nama": "Kassi 2",
+    "penyetor": "Darwan Muis SPPG Kassi2",
+    "hp": "085393517300",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "14 Mei 2026",
+        "sts": "035",
+        "stbp": "0085",
+        "trx": "8618",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t14 Mei 2026 ref ...8618 / sts 035 / stbp 0085"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "10 Juli 2026",
+        "sts": "087",
+        "stbp": "",
+        "trx": "7839",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t10 Juli 2026 ref...7839 / sts 087"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "10 Ags 2026",
+        "sts": "131",
+        "stbp": "",
+        "trx": "6417",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t10 Ags 2026 ref...6417 / sts 131"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-003",
+    "kecamatan": "Bungoro",
+    "nama": "Samalewa 1",
+    "penyetor": "Haerul Fahresi SPPG Samalewa1",
+    "hp": "087714145593",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "14 Mei 2026",
+        "sts": "036",
+        "stbp": "0086",
+        "trx": "2626",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t14 Mei 2026 ref...2626 / sts 036 / stbp 0086"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "2 JuLi 2026",
+        "sts": "075",
+        "stbp": "",
+        "trx": "5122",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t2 JuLi 2026 ref...5122 / sts 075"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "17 JuLi 2026",
+        "sts": "103",
+        "stbp": "",
+        "trx": "0098",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t17 JuLi 2026 ref...0098 / sts 103"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-004",
+    "kecamatan": "Bungoro",
+    "nama": "Samalewa 2",
+    "penyetor": "Nurul Mutmainnah SPPG Samalewa 2",
+    "hp": "085756416172",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "14 Mei 2026",
+        "sts": "037",
+        "stbp": "0087",
+        "trx": "3976",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t14 Mei 2026 ref ...3976 / sts 037 / stbp 0087"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "30 Juni 2026",
+        "sts": "069",
+        "stbp": "",
+        "trx": "5456",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t30 Juni 2026 ref...5456 / sts 069"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "23 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "4717",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t23 Juli 2026 ref...4717"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-005",
+    "kecamatan": "Bungoro",
+    "nama": "Samalewa 3",
+    "penyetor": "Wahyuddin SPPG Samalewa3",
+    "hp": "085342286433",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "16 Mei 2026",
+        "sts": "041",
+        "stbp": "0091",
+        "trx": "0518",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t16 Mei 2026 ref...0518 / sts 041 / stbp 0091"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "25 Juni 2026",
+        "sts": "065",
+        "stbp": "",
+        "trx": "1936",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t25 Juni 2026 ref...1936 / sts 065"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "15 Juni 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "0259",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t15 Juni 2026 ref...0259"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-006",
+    "kecamatan": "Bungoro",
+    "nama": "Samalewa 4",
+    "penyetor": "Musakkir SPPG Samalewa4",
+    "hp": "082296461855",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "19 Mei 2026",
+        "sts": "045",
+        "stbp": "",
+        "trx": "1172",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t19 Mei 2026 ref...1172 / sts 045 catatan: 743.500 (kurang 6.500)"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "19 Juni 2026",
+        "sts": "062",
+        "stbp": "",
+        "trx": "6424",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t19 Juni 2026 ref...6424 / sts 062"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "11 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "2527",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t11 Juli 2026 ref...2527 / ref"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-007",
+    "kecamatan": "Bungoro",
+    "nama": "Samalewa 5",
+    "penyetor": "Anugrahwan SPPG Samalewa 5",
+    "hp": "081340075010",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "03 Juni 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "2970",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t03 Juni 2026 ref...2970"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "19 Juni 2026",
+        "sts": "063",
+        "stbp": "",
+        "trx": "6887",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t19 Juni 2026 ref...6887 / sts 063"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "13 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "5266",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t13 Juli 2026 ref...5266 / sts"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-008",
+    "kecamatan": "Labakkang",
+    "nama": "Labakkang",
+    "penyetor": "Ardiansyah SPPG Labakkang",
+    "hp": "085975073614",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "16 Mei 2026",
+        "sts": "042",
+        "stbp": "0092",
+        "trx": "1570",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t16 Mei 2026 ref...1570 / sts 042 / stbp 0092"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "14 Juli 2026",
+        "sts": "093",
+        "stbp": "",
+        "trx": "8472",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t14 Juli 2026 ref...8472 / sts 093"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "21 Jul 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "2419",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t21 Jul 2026 ref...2419"
+      },
+      "Juli": {
+        "is_paid": true,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "1226",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t21/8/2026 ref...1226"
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-009",
+    "kecamatan": "Labakkang",
+    "nama": "Labakkang 2",
+    "penyetor": "Muammar SPPG Labakkang 2",
+    "hp": "082349170976",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "15 Mei 2026",
+        "sts": "039",
+        "stbp": "0089",
+        "trx": "5299",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t15 Mei 2026 ref...5299 / sts 039 / stbp 0089"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "30 Jul 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "2536",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t30 Jul 2026 ref...2536"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "30 Jul 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "2537",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t30 Jul 2026 ref...2537"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-010",
+    "kecamatan": "Labakkang",
+    "nama": "Labakkang 3",
+    "penyetor": "Heris SPPG Labakkang 3",
+    "hp": "085343793941",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "29 Mei 2026",
+        "sts": "050",
+        "stbp": "",
+        "trx": "6780",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t29 Mei 2026 / 03 Juni 2026 ref...6780 / sts 050  Cat:  Bukti TF: 29/05/2026 rek.koran 03/06/2026 747.500 (kurang 2.500)"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "17 Mei 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "4062",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t17 Mei 2026 ref...4062"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "27 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "6240",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t27 Juli 2026 ref...6240"
+      },
+      "Juli": {
+        "is_paid": true,
+        "tgl": "27 Agus 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "7567",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t27 Agus 2026 ref...7567"
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-011",
+    "kecamatan": "Labakkang",
+    "nama": "Manakku",
+    "penyetor": "Rabiullanda Kulsum SPPG Manakku",
+    "hp": "085341370164",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "13 Mei 2026",
+        "sts": "027",
+        "stbp": "0077",
+        "trx": "6534",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t13 Mei 2026 ref...6534 / sts 027 / stbp 0077"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "08 Juli 2026",
+        "sts": "082",
+        "stbp": "",
+        "trx": "5847",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t08 Juli 2026 ref...5847 / sts 082"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "14 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "9153",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t14 Juli 2026 ref...9153 / sts"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-012",
+    "kecamatan": "Labakkang",
+    "nama": "Mangallekana",
+    "penyetor": "Nur Chaerunnisa SPPG Mangallekana",
+    "hp": "082315045264",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "15 Mei 2026",
+        "sts": "040",
+        "stbp": "0090",
+        "trx": "1973",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t15 Mei 2026 ref...1973 / sts 040 / stbp 0090"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "29 Juni 2026",
+        "sts": "066",
+        "stbp": "",
+        "trx": "4680",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t29 Juni 2026 ref...4680 / sts 066"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "27 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "3233",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t27 Juli 2026 ref...3233"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-013",
+    "kecamatan": "Labakkang",
+    "nama": "Batara",
+    "penyetor": "Fatma Sri Fatimah SPPG Batara",
+    "hp": "088744874889",
+    "months": {
+      "April": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \tBelum PKS"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "25 Juni 2026",
+        "sts": "064",
+        "stbp": "",
+        "trx": "3870",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t25 Juni 2026 ref...3870 / sts 064"
+      },
+      "Juni": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-014",
+    "kecamatan": "Mandalle",
+    "nama": "Manggalung",
+    "penyetor": "Adi Irwandi SPPG Manggalung",
+    "hp": "085242761351",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "16 Mei 2026",
+        "sts": "043",
+        "stbp": "0093",
+        "trx": "2076",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t16 Mei 2026 ref...2076 / sts 043 / stbp 0093"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "07 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t07 Juli 2026 ref..."
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "20 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "1010",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t20 Juli 2026 ref...1010"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-015",
+    "kecamatan": "Mandalle",
+    "nama": "Tamarupa",
+    "penyetor": "Agatha Febriandani SPPG Tamarupa",
+    "hp": "085346164018",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "13 Mei 2026",
+        "sts": "028",
+        "stbp": "0078",
+        "trx": "8308",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t13 Mei 2026 ref...8308 / sts 028 / stbp 0078"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "07 Juli 2026",
+        "sts": "078",
+        "stbp": "",
+        "trx": "0991",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t07 Juli 2026 ref...0991 / sts 078"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "16 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "8920",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t16 Juli 2026 ref...8920"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-016",
+    "kecamatan": "Marang",
+    "nama": "Talaka",
+    "penyetor": "Awal Fajaruddin SPPG Talaka1",
+    "hp": "089684444665",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "18 Mei 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t18 Mei 2026"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "16 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "1404",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t16 Juli 2026 ref...1404"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "16 Juli 2025",
+        "sts": "",
+        "stbp": "",
+        "trx": "9649",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t16 Juli 2025 ref...9649"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-017",
+    "kecamatan": "Marang",
+    "nama": "Talaka 2",
+    "penyetor": "Nurul Afian SPPG Talaka2",
+    "hp": "085397984559",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "13 Mei 2026",
+        "sts": "029",
+        "stbp": "0079",
+        "trx": "1130",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t13 Mei 2026 ref...1130 / sts 029 / stbp 0079"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "05 JuLi 2026",
+        "sts": "076",
+        "stbp": "",
+        "trx": "0724",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t05 JuLi 2026 ref...0724 / sts 076"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "24 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "2517",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t24 Juli 2026 ref...2517"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-018",
+    "kecamatan": "Minasa Tene",
+    "nama": "Bonto Langkasa",
+    "penyetor": "Indah Putri Humairah SPPG Bonto Langkasa",
+    "hp": "087858320557",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "15 Mei 2026",
+        "sts": "",
+        "stbp": "0099",
+        "trx": "2679",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t15 Mei 2026 ref...2679 / sts / 051 / stbp 0099"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "22 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "4561",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t22 Juli 2026 ref...4561"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-019",
+    "kecamatan": "Minasa Tene",
+    "nama": "Kabba",
+    "penyetor": "Fani Fajriani SPPG Kabba",
+    "hp": "082318479896",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "14 Mei 2026",
+        "sts": "038",
+        "stbp": "0088",
+        "trx": "6036",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t14 Mei 2026 ref...6036 / sts 038 / stbp 0088"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "06 JuLi 2026",
+        "sts": "077",
+        "stbp": "",
+        "trx": "4598",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t06 JuLi 2026 ref...4598 / sts 077"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "31 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "2407",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t31 Juli 2026 ref...2407"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-020",
+    "kecamatan": "Minasa Tene",
+    "nama": "Biraeng",
+    "penyetor": "Muhammad Ardas Daruslam SPPG Biraeng",
+    "hp": "082188224010",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "12 Mei 2026",
+        "sts": "025",
+        "stbp": "0075",
+        "trx": "1100",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t12 Mei 2026 ref...1100 / sts 025 / stbp 0075"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "30 Juni 2026",
+        "sts": "068",
+        "stbp": "",
+        "trx": "6903",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t30 Juni 2026 ref...6903 / sts 068"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "10 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "4993",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t10 Juli 2026 ref...4993 / sts"
+      },
+      "Juli": {
+        "is_paid": true,
+        "tgl": "20 JuLi 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "3912",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t20 JuLi 2026 ref...3912"
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-021",
+    "kecamatan": "Pangkajene",
+    "nama": "Bonto Perak 1",
+    "penyetor": "Fahmi Sofyan SPPG Bonto Perak1",
+    "hp": "081244287373",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "13 Mei 2026",
+        "sts": "030",
+        "stbp": "0080",
+        "trx": "9043",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t13 Mei 2026 ref...9043 / sts 030 / stbp 0080"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "10 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "4991",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t10 Juli 2026 ref...4991 / sts"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "20 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "3912",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t20 Juli 2026 ref...3912"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-022",
+    "kecamatan": "Pangkajene",
+    "nama": "Bonto Perak 2",
+    "penyetor": "Saharuddin SPPG Bonto Perak2",
+    "hp": "085343693131",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "13 Mei 2025",
+        "sts": "031",
+        "stbp": "0081",
+        "trx": "1053",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t13 Mei 2025 ref...1053 / sts 031 / stbp 0081"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "30 Juni 2026",
+        "sts": "067",
+        "stbp": "",
+        "trx": "2039",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t30 Juni 2026 ref...2039 / sts 067"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "29 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "0608",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t29 Juli 2026 ref...0608"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-023",
+    "kecamatan": "Pangkajene",
+    "nama": "Mappasaile",
+    "penyetor": "Evi Irviyanti SPPG Mappasaile",
+    "hp": "085870552736",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "16 Mei 2026",
+        "sts": "044",
+        "stbp": "0094",
+        "trx": "4284",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t16 Mei 2026 ref...4284 / sts 044 / stbp 0094"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "30 Juni 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "5314",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t30 Juni 2026 ref....5314 / sts"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "23 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "7977",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t23 Juli 2026 ref...7977"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-024",
+    "kecamatan": "Pangkajene",
+    "nama": "Mappasaile 2",
+    "penyetor": "Akbar Tola SPPG Mappasaile 2",
+    "hp": "085340312677",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "13 Mei 2026",
+        "sts": "032",
+        "stbp": "0082",
+        "trx": "7536",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t13 Mei 2026 ref...7536 / sts 032 / stbp 0082"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "30 Juni 2026",
+        "sts": "061",
+        "stbp": "",
+        "trx": "0979",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t30 Juni 2026 ref...0979 / sts 061"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "30 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "2948",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t30 Juli 2026 ref...2948"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-025",
+    "kecamatan": "Pangkajene",
+    "nama": "Padoang Doangan",
+    "penyetor": "Amran SPPG Padoang2an",
+    "hp": "085230740101",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "13 Mei 2026",
+        "sts": "033",
+        "stbp": "0083",
+        "trx": "6525",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t13 Mei 2026 ref...6525 / sts 033 / stbp 0083"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "30 Juni 2026",
+        "sts": "070",
+        "stbp": "",
+        "trx": "0652",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t30 Juni 2026 ref...0652 / sts 070"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "24 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "6610",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t24 Juli 2026 ref...6610"
+      },
+      "Juli": {
+        "is_paid": true,
+        "tgl": "28 Agus 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "2088",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t28 Agus 2026 ref...2088"
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-026",
+    "kecamatan": "Pangkajene",
+    "nama": "Tumampua",
+    "penyetor": "Mar'atul Islam SPPG Tumampua",
+    "hp": "085338318156",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "13 Mei 2026",
+        "sts": "026",
+        "stbp": "0076",
+        "trx": "0581",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t13 Mei 2026 ref...0581 / sts 026 / stbp 0076"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "08 Juli 2026",
+        "sts": "081",
+        "stbp": "",
+        "trx": "8584",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t08 Juli 2026 ref...8584 / sts 081"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "08 Juli 2026",
+        "sts": "082",
+        "stbp": "",
+        "trx": "8585",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t08 Juli 2026 ref...8585 / sts 082"
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-027",
+    "kecamatan": "Segeri",
+    "nama": "Bone",
+    "penyetor": "Mawarni Utami SPPG Bone",
+    "hp": "085346567732",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "20 Mei 2026",
+        "sts": "046",
+        "stbp": "0096",
+        "trx": "0764",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t20 Mei 2026 ref...0764 / sts 046 / stbp 0096"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "21 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "2499",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t21 Juli 2026 ref...2499"
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "21 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "5234",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t21 Juli 2026 ref...5234"
+      },
+      "Juli": {
+        "is_paid": true,
+        "tgl": "24 Agus 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "8393",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t24 Agus 2026 ref...8393"
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-028",
+    "kecamatan": "Segeri",
+    "nama": "Segeri",
+    "penyetor": "Ashar Saputra SPPG Segeri",
+    "hp": "085259870711",
+    "months": {
+      "April": {
+        "is_paid": true,
+        "tgl": "20 Mei 2026",
+        "sts": "047",
+        "stbp": "0097",
+        "trx": "4752",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t20 Mei 2026 ref...4752 / sts 047 / stbp 0097"
+      },
+      "Mei": {
+        "is_paid": true,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Juni": {
+        "is_paid": true,
+        "tgl": "23 Juli 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "8367",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t23 Juli 2026 ref...8367"
+      },
+      "Juli": {
+        "is_paid": true,
+        "tgl": "10 Agus 2026",
+        "sts": "",
+        "stbp": "",
+        "trx": "1256",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \t10 Agus 2026 ref...1256"
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  },
+  {
+    "id": "SPPG-029",
+    "kecamatan": "Segeri",
+    "nama": "Segeri 2",
+    "penyetor": "Amell Akuntan SPPG Segeri2",
+    "hp": "082189423315",
+    "months": {
+      "April": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": "[Threaded comment]  Your version of Excel allows you to read this threaded comment; however, any edits to it will get removed if the file is opened in a newer version of Excel. Learn more: https://go.microsoft.com/fwlink/?linkid=870924 Comment: \tTidak terlayani"
+      },
+      "Mei": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Juni": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Juli": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Agustus": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "September": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Oktober": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "November": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      },
+      "Desember": {
+        "is_paid": false,
+        "tgl": "",
+        "sts": "",
+        "stbp": "",
+        "trx": "",
+        "raw_comment": ""
+      }
+    }
+  }
+]
