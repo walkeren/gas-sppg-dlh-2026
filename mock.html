@@ -575,40 +575,40 @@
           </table>
         </div>
 
-                        <!-- ================= POPOVER DETAIL TRANSAKSI SETORAN (LATAR BIRU & BACKDROP AUTO-OFF) ================= -->
-        <!-- 1. Transparent Backdrop for Auto-Off on Outside Click -->
+                                <!-- ================= POPOVER DETAIL TRANSAKSI SETORAN (DESAIN ORIGINAL & AUTO-OFF) ================= -->
+        <!-- Backdrop Transparan untuk Auto-Off saat Klik di Luar Popover -->
         <div 
           x-show="popover.show" 
           @click="closePopover()"
           @keydown.escape.window="closePopover()"
-          class="fixed inset-0 z-40 bg-slate-900/10 backdrop-blur-[1px]" 
+          class="fixed inset-0 z-40 bg-transparent" 
           x-cloak>
         </div>
 
-        <!-- 2. Popover Floating Card (Latar Biru DLH) -->
+        <!-- Kartu Popover Desain Asli Bersih -->
         <div 
           x-show="popover.show" 
           @click.stop
           x-transition:enter="transition ease-out duration-150" 
           x-transition:enter-start="opacity-0 scale-95" 
           x-transition:enter-end="opacity-100 scale-100" 
-          class="fixed z-50 bg-white border border-blue-200 rounded-2xl shadow-2xl w-80 max-w-[92vw] text-xs overflow-hidden pointer-events-auto ring-4 ring-blue-500/15"
+          class="fixed z-50 bg-white border border-slate-200 rounded-2xl shadow-popover p-4 w-80 max-w-[92vw] text-xs space-y-2.5 pointer-events-auto"
           :style="`top: ${popover.top}px; left: ${popover.left}px;`"
           x-cloak>
           
-          <!-- Popover Header: Latar Biru Segar DLH -->
-          <div class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white px-4 py-3 flex items-start justify-between shadow-xs select-none">
+          <!-- Popover Header: Nama SPPG & Periode -->
+          <div class="flex items-start justify-between pb-2.5 border-b border-slate-100">
             <div class="min-w-0 pr-2">
-              <h4 class="font-headline font-bold text-white text-sm leading-snug truncate" x-text="popover.nama"></h4>
-              <div class="text-[11px] text-blue-100 font-medium leading-tight mt-0.5" x-text="'Bulan: ' + popover.bulan + ' ' + config.tahunAnggaran"></div>
+              <h4 class="font-headline font-bold text-slate-900 text-sm leading-snug truncate" x-text="popover.nama"></h4>
+              <div class="text-[11px] text-brand-600 font-semibold leading-tight mt-0.5" x-text="'Bulan: ' + popover.bulan + ' ' + config.tahunAnggaran"></div>
             </div>
-            <button @click="closePopover()" class="p-1 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition shrink-0" title="Tutup">
+            <button @click="closePopover()" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition shrink-0" title="Tutup">
               <i data-lucide="x" class="w-4 h-4"></i>
             </button>
           </div>
 
           <!-- Popover Body Fields -->
-          <div class="p-4 space-y-2.5 font-sans bg-white">
+          <div class="space-y-2 font-sans">
             
             <!-- 1. Status: (Terverifikasi / Menunggu Verifikasi + Valid di sebelah kanan) -->
             <div class="flex justify-between items-center text-slate-600">
@@ -5019,8 +5019,8 @@
           };
           const fullBln = bulanFullMap[bln] || bln;
 
-          // Toggle off if clicking the same cell while open
-          if (this.popover && this.popover.show && this.popover.sppgId === item.id && this.popover.bulan === fullBln) {
+          // Toggle off if clicking the exact same active cell
+          if (this.popover.show && this.popover.sppgId === item.id && this.popover.bulan === fullBln) {
             this.closePopover();
             return;
           }
@@ -5092,7 +5092,8 @@
 
           const itemKec = item.kecamatan || item.kec || '';
 
-          this.popover = {
+          // Mutasi properti secara in-place via Object.assign agar reactive proxy Alpine tetap utuh
+          Object.assign(this.popover, {
             show: true,
             top: Math.round(top),
             left: Math.round(left),
@@ -5110,7 +5111,8 @@
             statusVerifikasi: statusVerifikasi,
             statusValidasi: statusValidasi,
             nominal: nominal
-          };
+          });
+
           this.$nextTick(() => {
             if (typeof lucide !== 'undefined' && lucide.createIcons) {
               lucide.createIcons();
