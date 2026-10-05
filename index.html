@@ -4995,7 +4995,7 @@
             .replace(/{PAD3}/g, cleanNumOnly.padStart(3, '0'))
             .replace(/{PAD4}/g, cleanNumOnly.padStart(4, '0'))
             .replace(/{SPPG_ID}/g, params.sppgId || '')
-            .replace(/{KEC}|{KECAMATAN}/g, param(s.kec || s.kecamatan || '') || '');
+            .replace(/{KEC}|{KECAMATAN}/g, (params.kec || params.kecamatan || '') || '');
         },
 
         formatSTS(noSts, bulan, sppgId, kec) {
@@ -5596,7 +5596,7 @@
                 (item.noStbp && item.noStbp.toLowerCase().includes(this.filters.search.toLowerCase())) ||
                 (item.noSts && item.noSts.toLowerCase().includes(this.filters.search.toLowerCase()));
 
-              const matchKec = !this.filter(s.kec || s.kecamatan || '')amatan || item.kecamatan === this.filter(s.kec || s.kecamatan || '')amatan;
+              const matchKec = !this.filters.kecamatan || item.kecamatan === this.filters.kecamatan;
               const matchBulan = !this.filters.bulan || item.periodeBulan === this.filters.bulan;
               const matchStatus = !this.filters.status || item.status === this.filters.status;
 
