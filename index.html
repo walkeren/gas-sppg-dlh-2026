@@ -448,26 +448,21 @@
             <p class="text-xs text-slate-500 mt-0.5 truncate sm:whitespace-normal">Rekapitulasi status setoran per SPPG periode April - Desember <span x-text="config.tahunAnggaran"></span>.</p>
           </div>
 
-          <!-- Legenda Warna & Simbol (DI KANAN TETAP) -->
+          <!-- Legenda Warna & Simbol (3 Keterangan: Terverifikasi, Menunggu Verifikasi, Belum Bayar) -->
           <div class="flex items-center flex-wrap gap-2 text-xs font-semibold shrink-0 ml-auto">
             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 border border-emerald-200" title="Setoran telah diverifikasi resmi oleh Bendahara DLH">
-              <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3] text-emerald-700"></i>
+              <i data-lucide="check" class="w-4 h-4 stroke-[3] text-emerald-700"></i>
               <span>Terverifikasi</span>
             </div>
             
             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-100 text-amber-800 border border-amber-300" title="Laporan sudah dikirim oleh SPPG, menunggu verifikasi Bendahara">
-              <i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-700"></i>
+              <i data-lucide="check" class="w-4 h-4 stroke-[3] text-amber-700"></i>
               <span>Menunggu Verifikasi</span>
             </div>
 
             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-rose-100 text-rose-800 border border-rose-200">
-              <i data-lucide="x" class="w-3.5 h-3.5 stroke-[2.5] text-rose-700"></i>
+              <i data-lucide="x" class="w-4 h-4 stroke-[2.5] text-rose-700"></i>
               <span>Belum Bayar</span>
-            </div>
-
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-100 text-slate-600 border border-slate-200">
-              <span class="font-bold text-slate-400 text-xs">-</span>
-              <span>Belum Wajib</span>
             </div>
           </div>
         </div>
@@ -485,18 +480,18 @@
             </thead>
             <template x-for="group in matriksGrouped" :key="group.kecamatan">
               <tbody class="divide-y divide-slate-200 text-slate-700">
-                <!-- Group Header Row per Kecamatan (Warna Gelap Slate-Navy Tegas & Kontras dengan Sel Apapun) -->
-                <tr class="bg-slate-800 text-white font-headline uppercase tracking-wider text-[11px] font-bold border-y-2 border-slate-900">
-                  <td :colspan="1 + bulanListShort.length" class="py-2 px-3.5 bg-slate-800">
+                <!-- Group Header Row per Kecamatan (Warna Abu-Abu Lebih Tua dari Sel Belum Wajib) -->
+                <tr class="bg-slate-300 text-slate-900 font-headline uppercase tracking-wider text-[11px] font-bold border-y-2 border-slate-400">
+                  <td :colspan="1 + bulanListShort.length" class="py-2 px-3.5 bg-slate-300">
                     <div class="flex items-center gap-2">
-                      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-700 text-slate-200 shadow-2xs border border-slate-600">
-                        <svg class="w-3.5 h-3.5 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-400 text-slate-800 shadow-2xs border border-slate-500">
+                        <svg class="w-3.5 h-3.5 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                       </span>
-                      <span class="font-bold text-white tracking-wide text-xs">Kecamatan <span x-text="group.kecamatan"></span></span>
-                      <span class="text-[10px] font-mono font-semibold text-slate-300 lowercase bg-slate-900 px-2.5 py-0.5 rounded-full border border-slate-700 shadow-2xs">(<span x-text="group.items.length"></span> SPPG)</span>
+                      <span class="font-bold text-slate-900 tracking-wide text-xs">Kecamatan <span x-text="group.kecamatan"></span></span>
+                      <span class="text-[10px] font-mono font-semibold text-slate-800 lowercase bg-white px-2.5 py-0.5 rounded-full border border-slate-400 shadow-2xs">(<span x-text="group.items.length"></span> SPPG)</span>
                     </div>
                   </td>
                 </tr>
@@ -511,7 +506,7 @@
                     <!-- 9 Cells with Popover Trigger -->
                     <template x-for="bln in bulanListShort" :key="bln">
                       <td 
-                        class="py-1.5 px-1 text-center border-b border-r border-slate-200 transition-colors font-mono cursor-pointer relative"
+                        class="py-2 px-1 text-center border-b border-r border-slate-200 transition-colors font-mono cursor-pointer relative"
                         :class="{
                           'bg-emerald-100/90 text-emerald-800 hover:bg-emerald-200': item.months[bln] === 'verified' || item.months[bln] === 'paid',
                           'bg-amber-100/90 text-amber-900 hover:bg-amber-200': item.months[bln] === 'pending',
@@ -520,40 +515,37 @@
                         }"
                         @click.stop="toggleCellPopover(item, bln, $event)">
                         
-                        <!-- 1. Terverifikasi (Lunas) - Centang Ringkas Proporsional -->
+                        <!-- 1. Terverifikasi (Lunas) - Centang Hijau Besar & Tegas -->
                         <template x-if="item.months[bln] === 'verified' || item.months[bln] === 'paid'">
                           <div class="flex items-center justify-center py-0.5" title="Setoran Terverifikasi (Lunas)">
-                            <svg class="w-3.5 h-3.5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <svg class="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                             </svg>
                           </div>
                         </template>
 
-                        <!-- 2. Menunggu Verifikasi - Ikon Berkas / Slip Proporsional Seragam -->
+                        <!-- 2. Menunggu Verifikasi - Centang Kuning Besar & Tegas (Sesuai Permintaan) -->
                         <template x-if="item.months[bln] === 'pending'">
                           <div class="flex items-center justify-center py-0.5" title="Form sudah disubmit, menunggu verifikasi Bendahara">
-                            <svg class="w-3.5 h-3.5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                              <polyline points="14 2 14 8 20 8" />
-                              <line x1="16" y1="13" x2="8" y2="13" />
-                              <line x1="16" y1="17" x2="8" y2="17" />
+                            <svg class="w-5 h-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                             </svg>
                           </div>
                         </template>
 
-                        <!-- 3. Belum Bayar - Silang Ringkas Proporsional -->
+                        <!-- 3. Belum Bayar - Silang Merah Besar & Tegas -->
                         <template x-if="item.months[bln] === 'unpaid'">
                           <div class="flex items-center justify-center py-0.5" title="Belum Bayar">
-                            <svg class="w-3.5 h-3.5 text-rose-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <svg class="w-5 h-5 text-rose-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                           </div>
                         </template>
 
-                        <!-- 4. Belum Wajib - Tanda Garis Ringkas -->
+                        <!-- 4. Belum Wajib - Tanda Garis Strip -->
                         <template x-if="item.months[bln] === 'not_required'">
                           <div class="flex items-center justify-center py-0.5">
-                            <span class="font-bold text-slate-400 text-xs leading-none select-none">-</span>
+                            <span class="font-bold text-slate-400 text-sm leading-none select-none">-</span>
                           </div>
                         </template>
 
@@ -603,7 +595,7 @@
               </template>
               <template x-if="popover.status === 'pending' || (!popover.isVerified && popover.status === 'paid')">
                 <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-pill text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                  <i data-lucide="file-text" class="w-3 h-3 text-amber-700"></i>
+                  <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3] text-amber-700"></i>
                   <span>Menunggu Verifikasi</span>
                 </span>
               </template>
