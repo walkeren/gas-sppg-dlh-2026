@@ -619,22 +619,23 @@ function uploadSlipToDrive(base64Data, fileName, mimeType, meta) {
 }
 
 /**
- * Login Petugas Bendahara
+ * Login Petugas Bendahara (Dapat menggunakan Email atau Username)
  */
-function loginBendahara(email, password) {
+function loginBendahara(emailOrUsername, password) {
   try {
     var sheet = getSheet(SHEETS.USERS);
     var data = sheet.getDataRange().getValues();
-    var inputEmail = String(email || '').trim().toLowerCase();
+    var input = String(emailOrUsername || '').trim().toLowerCase();
     var inputPass = String(password || '').trim();
 
     for (var i = 1; i < data.length; i++) {
       var row = data[i];
       var rowEmail = String(row[1] || '').trim().toLowerCase();
+      var rowUsername = rowEmail.split('@')[0];
       var rowPass = String(row[2] || '').trim();
       var rowStatus = String(row[5] || '').trim().toUpperCase();
 
-      if (rowEmail === inputEmail && rowPass === inputPass && (rowStatus === 'AKTIF' || rowStatus === '')) {
+      if ((rowEmail === input || rowUsername === input) && rowPass === inputPass && (rowStatus === 'AKTIF' || rowStatus === '')) {
         return {
           success: true,
           user: {
@@ -646,7 +647,7 @@ function loginBendahara(email, password) {
         };
       }
     }
-    return { success: false, message: 'Email atau kata sandi tidak cocok.' };
+    return { success: false, message: 'Email/username atau kata sandi tidak cocok.' };
   } catch (err) {
     return { success: false, error: err.toString() };
   }
