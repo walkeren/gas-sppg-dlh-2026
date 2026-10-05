@@ -456,7 +456,7 @@
             </div>
             
             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-100 text-amber-800 border border-amber-300" title="Laporan sudah dikirim oleh SPPG, menunggu verifikasi Bendahara">
-              <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-700"></i>
+              <i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-700"></i>
               <span>Menunggu Verifikasi</span>
             </div>
 
@@ -485,18 +485,18 @@
             </thead>
             <template x-for="group in matriksGrouped" :key="group.kecamatan">
               <tbody class="divide-y divide-slate-200 text-slate-700">
-                <!-- Group Header Row per Kecamatan (Warna Kuning / Soft Amber Kontras & Eksklusif) -->
-                <tr class="bg-amber-50 text-amber-950 font-headline uppercase tracking-wider text-[11px] font-bold border-y-2 border-amber-200/90">
-                  <td :colspan="1 + bulanListShort.length" class="py-2.5 px-3.5 bg-amber-50">
+                <!-- Group Header Row per Kecamatan (Warna Gelap Slate-Navy Tegas & Kontras dengan Sel Apapun) -->
+                <tr class="bg-slate-800 text-white font-headline uppercase tracking-wider text-[11px] font-bold border-y-2 border-slate-900">
+                  <td :colspan="1 + bulanListShort.length" class="py-2 px-3.5 bg-slate-800">
                     <div class="flex items-center gap-2">
-                      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-200 text-amber-800 shadow-2xs">
-                        <svg class="w-3.5 h-3.5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-700 text-slate-200 shadow-2xs border border-slate-600">
+                        <svg class="w-3.5 h-3.5 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                       </span>
-                      <span class="font-bold text-amber-950 tracking-wide text-xs">Kecamatan <span x-text="group.kecamatan"></span></span>
-                      <span class="text-[10px] font-mono font-semibold text-amber-900 lowercase bg-white px-2.5 py-0.5 rounded-full border border-amber-300 shadow-2xs">(<span x-text="group.items.length"></span> SPPG)</span>
+                      <span class="font-bold text-white tracking-wide text-xs">Kecamatan <span x-text="group.kecamatan"></span></span>
+                      <span class="text-[10px] font-mono font-semibold text-slate-300 lowercase bg-slate-900 px-2.5 py-0.5 rounded-full border border-slate-700 shadow-2xs">(<span x-text="group.items.length"></span> SPPG)</span>
                     </div>
                   </td>
                 </tr>
@@ -520,34 +520,40 @@
                         }"
                         @click.stop="toggleCellPopover(item, bln, $event)">
                         
+                        <!-- 1. Terverifikasi (Lunas) - Centang Ringkas Proporsional -->
                         <template x-if="item.months[bln] === 'verified' || item.months[bln] === 'paid'">
                           <div class="flex items-center justify-center py-0.5" title="Setoran Terverifikasi (Lunas)">
-                            <svg class="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            <svg class="w-3.5 h-3.5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                             </svg>
                           </div>
                         </template>
 
+                        <!-- 2. Menunggu Verifikasi - Ikon Berkas / Slip Proporsional Seragam -->
                         <template x-if="item.months[bln] === 'pending'">
                           <div class="flex items-center justify-center py-0.5" title="Form sudah disubmit, menunggu verifikasi Bendahara">
-                            <svg class="w-4.5 h-4.5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                              <circle cx="12" cy="12" r="9" />
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2" />
+                            <svg class="w-3.5 h-3.5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                              <polyline points="14 2 14 8 20 8" />
+                              <line x1="16" y1="13" x2="8" y2="13" />
+                              <line x1="16" y1="17" x2="8" y2="17" />
                             </svg>
                           </div>
                         </template>
 
+                        <!-- 3. Belum Bayar - Silang Ringkas Proporsional -->
                         <template x-if="item.months[bln] === 'unpaid'">
                           <div class="flex items-center justify-center py-0.5" title="Belum Bayar">
-                            <svg class="w-5 h-5 text-rose-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <svg class="w-3.5 h-3.5 text-rose-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                           </div>
                         </template>
 
+                        <!-- 4. Belum Wajib - Tanda Garis Ringkas -->
                         <template x-if="item.months[bln] === 'not_required'">
                           <div class="flex items-center justify-center py-0.5">
-                            <span class="font-bold text-slate-400 text-sm leading-none">-</span>
+                            <span class="font-bold text-slate-400 text-xs leading-none select-none">-</span>
                           </div>
                         </template>
 
@@ -597,7 +603,7 @@
               </template>
               <template x-if="popover.status === 'pending' || (!popover.isVerified && popover.status === 'paid')">
                 <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-pill text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                  <i data-lucide="clock" class="w-3 h-3 text-amber-700"></i>
+                  <i data-lucide="file-text" class="w-3 h-3 text-amber-700"></i>
                   <span>Menunggu Verifikasi</span>
                 </span>
               </template>
@@ -1030,10 +1036,10 @@
                   <th class="py-3 px-3 bg-slate-100 border-b border-r border-slate-200 sticky top-16 z-30 min-w-[125px]">Penyetor</th>
                   <th class="py-3 px-3 text-right bg-slate-100 border-b border-r border-slate-200 sticky top-16 z-30 min-w-[95px]">Nominal</th>
                   <th class="py-3 px-2 text-center bg-slate-100 border-b border-r border-slate-200 sticky top-16 z-30 w-14">Bukti</th>
-                  <th class="py-2.5 px-2 bg-emerald-50/90 border-b border-l border-slate-200 sticky top-16 z-30 w-[115px] min-w-[105px] max-w-[125px] text-[10.5px]">No. STS</th>
-                  <th class="py-2.5 px-2 bg-blue-50/90 border-b border-l border-slate-200 sticky top-16 z-30 w-[115px] min-w-[105px] max-w-[125px] text-[10.5px]">No. STBP</th>
-                  <th class="py-2.5 px-2 bg-purple-50/90 border-b border-l border-slate-200 sticky top-16 z-30 w-[115px] min-w-[105px] max-w-[125px] text-[10.5px]">ID Transaksi</th>
-                  <th class="py-2.5 px-2 text-center border-b border-l border-slate-200 w-[165px] min-w-[155px] bg-slate-100 sticky top-16 z-30 text-[10.5px]">Aksi</th>
+                  <th class="py-2.5 px-1.5 bg-emerald-50/90 border-b border-l border-slate-200 sticky top-16 z-30 w-[85px] min-w-[75px] max-w-[95px] text-[10.5px]">No. STS</th>
+                  <th class="py-2.5 px-1.5 bg-blue-50/90 border-b border-l border-slate-200 sticky top-16 z-30 w-[85px] min-w-[75px] max-w-[95px] text-[10.5px]">No. STBP</th>
+                  <th class="py-2.5 px-1.5 bg-purple-50/90 border-b border-l border-slate-200 sticky top-16 z-30 w-[85px] min-w-[75px] max-w-[95px] text-[10.5px]">ID Transaksi</th>
+                  <th class="py-2.5 px-2 text-center border-b border-l border-slate-200 w-[145px] min-w-[140px] bg-slate-100 sticky top-16 z-30 text-[10.5px]">Aksi</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-700">
@@ -1073,65 +1079,65 @@
                       </button>
                     </td>
 
-                    <!-- Kolom No. STS (Inline Editable - Ukuran Kompak) -->
-                    <td class="py-1.5 px-1.5 border-l border-slate-200 bg-emerald-50/15 max-w-[125px]">
+                    <!-- Kolom No. STS (Inline Editable - Ringkas & Kompak) -->
+                    <td class="py-1.5 px-1 border-l border-slate-200 bg-emerald-50/15 max-w-[95px]">
                       <div class="space-y-0.5">
                         <input 
                           type="text" 
                           x-model="trx.editNoSts" 
                           @input="trx.editNoSts = $event.target.value"
-                          placeholder="No. STS..."
-                          class="w-full bg-white border border-slate-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded px-1.5 py-1 text-[11px] font-mono text-slate-900 outline-none transition shadow-2xs">
+                          placeholder="No. STS"
+                          class="w-full bg-white border border-slate-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded px-1.5 py-0.5 text-[10.5px] font-mono text-slate-900 outline-none transition shadow-2xs">
                         <template x-if="trx.noSts && formatSTS(trx.noSts, trx.periodeBulan, trx.sppgId, trx.kecamatan) !== trx.noSts">
-                          <div class="text-[9px] text-emerald-700 font-mono truncate" :title="formatSTS(trx.noSts, trx.periodeBulan, trx.sppgId, trx.kecamatan)" x-text="formatSTS(trx.noSts, trx.periodeBulan, trx.sppgId, trx.kecamatan)"></div>
+                          <div class="text-[8.5px] text-emerald-700 font-mono truncate" :title="formatSTS(trx.noSts, trx.periodeBulan, trx.sppgId, trx.kecamatan)" x-text="formatSTS(trx.noSts, trx.periodeBulan, trx.sppgId, trx.kecamatan)"></div>
                         </template>
                       </div>
                     </td>
 
-                    <!-- Kolom No. STBP (Inline Editable - Ukuran Kompak) -->
-                    <td class="py-1.5 px-1.5 border-l border-slate-200 bg-blue-50/15 max-w-[125px]">
+                    <!-- Kolom No. STBP (Inline Editable - Ringkas & Kompak) -->
+                    <td class="py-1.5 px-1 border-l border-slate-200 bg-blue-50/15 max-w-[95px]">
                       <div class="space-y-0.5">
                         <input 
                           type="text" 
                           x-model="trx.editNoStbp" 
                           @input="trx.editNoStbp = $event.target.value"
-                          placeholder="No. STBP..."
-                          class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded px-1.5 py-1 text-[11px] font-mono text-slate-900 outline-none transition shadow-2xs">
+                          placeholder="No. STBP"
+                          class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded px-1.5 py-0.5 text-[10.5px] font-mono text-slate-900 outline-none transition shadow-2xs">
                         <template x-if="trx.noStbp && formatSTBP(trx.noStbp, trx.periodeBulan, trx.sppgId, trx.kecamatan) !== trx.noStbp">
-                          <div class="text-[9px] text-brand-700 font-mono truncate" :title="formatSTBP(trx.noStbp, trx.periodeBulan, trx.sppgId, trx.kecamatan)" x-text="formatSTBP(trx.noStbp, trx.periodeBulan, trx.sppgId, trx.kecamatan)"></div>
+                          <div class="text-[8.5px] text-brand-700 font-mono truncate" :title="formatSTBP(trx.noStbp, trx.periodeBulan, trx.sppgId, trx.kecamatan)" x-text="formatSTBP(trx.noStbp, trx.periodeBulan, trx.sppgId, trx.kecamatan)"></div>
                         </template>
                       </div>
                     </td>
 
-                    <!-- Kolom ID Transaksi (Inline Editable - Ukuran Kompak) -->
-                    <td class="py-1.5 px-1.5 border-l border-slate-200 bg-purple-50/15 max-w-[125px]">
+                    <!-- Kolom ID Transaksi (Inline Editable - Ringkas & Kompak) -->
+                    <td class="py-1.5 px-1 border-l border-slate-200 bg-purple-50/15 max-w-[95px]">
                       <div class="space-y-0.5">
                         <input 
                           type="text" 
                           x-model="trx.editNoTrxBank" 
                           @input="trx.editNoTrxBank = $event.target.value"
-                          placeholder="ID Transaksi..."
-                          class="w-full bg-white border border-slate-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded px-1.5 py-1 text-[11px] font-mono text-slate-900 outline-none transition shadow-2xs">
+                          placeholder="ID Trx"
+                          class="w-full bg-white border border-slate-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded px-1.5 py-0.5 text-[10.5px] font-mono text-slate-900 outline-none transition shadow-2xs">
                         <template x-if="trx.noTrxBank && formatTRX(trx.noTrxBank, trx.periodeBulan, trx.sppgId, trx.kecamatan) !== trx.noTrxBank">
-                          <div class="text-[9px] text-purple-700 font-mono truncate" :title="formatTRX(trx.noTrxBank, trx.periodeBulan, trx.sppgId, trx.kecamatan)" x-text="formatTRX(trx.noTrxBank, trx.periodeBulan, trx.sppgId, trx.kecamatan)"></div>
+                          <div class="text-[8.5px] text-purple-700 font-mono truncate" :title="formatTRX(trx.noTrxBank, trx.periodeBulan, trx.sppgId, trx.kecamatan)" x-text="formatTRX(trx.noTrxBank, trx.periodeBulan, trx.sppgId, trx.kecamatan)"></div>
                         </template>
                       </div>
                     </td>
 
                     <!-- Kolom Aksi: Tombol Verifikasi/Batal di sebelah kiri tombol Simpan -->
-                    <td class="py-1.5 px-2 text-center border-l border-slate-200 min-w-[155px]">
-                      <div class="flex items-center gap-1.5 justify-center">
+                    <td class="py-1.5 px-1.5 text-center border-l border-slate-200 min-w-[140px]">
+                      <div class="flex items-center gap-1 justify-center">
                         
-                        <!-- Tombol Verifikasi / Batal Verifikasi -->
+                        <!-- Tombol Verifikasi / Batal Verifikasi (Di sebelah kiri tombol Simpan) -->
                         <button 
                           type="button" 
                           @click="toggleVerifikasi(trx)"
                           :disabled="trx.isVerifying"
                           :class="trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI'
                             ? 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 hover:border-rose-400' 
-                            : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 hover:border-emerald-400'"
-                          class="px-2 py-1 rounded text-[10.5px] font-bold transition flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
-                          :title="trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI' ? 'Batalkan status verifikasi (Kembalikan ke Kuning)' : 'Verifikasi setoran ini (Status berubah Hijau / Lunas)'">
+                            : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs'"
+                          class="px-2 py-1 rounded text-[10px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                          :title="trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI' ? 'Batalkan status verifikasi (Kembalikan ke Kuning Menunggu Verifikasi)' : 'Verifikasi setoran ini (Status berubah Hijau / Lunas)'">
                           
                           <template x-if="trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI'">
                             <span class="inline-flex items-center gap-1">
@@ -1142,7 +1148,7 @@
 
                           <template x-if="trx.status !== 'SELESAI_STS' && trx.status !== 'TERVERIFIKASI'">
                             <span class="inline-flex items-center gap-1">
-                              <i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-600"></i>
+                              <i data-lucide="check-circle-2" class="w-3 h-3 text-white"></i>
                               <span>Verifikasi</span>
                             </span>
                           </template>
@@ -1154,7 +1160,7 @@
                           @click="saveInlineTransaksi(trx)"
                           :disabled="!isRowModified(trx) || trx.isSaving"
                           :class="isRowModified(trx) && !trx.isSaving ? 'bg-brand-600 hover:bg-brand-700 text-white cursor-pointer shadow-xs' : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed opacity-60'"
-                          class="px-2 py-1 rounded text-[10.5px] font-bold transition flex items-center justify-center gap-1 shadow-2xs"
+                          class="px-2 py-1 rounded text-[10px] font-bold transition flex items-center justify-center gap-1 shadow-2xs"
                           title="Simpan perubahan nomor STS / STBP / ID Transaksi">
                           <i data-lucide="save" class="w-3 h-3"></i>
                           <span x-text="trx.isSaving ? '...' : 'Simpan'"></span>
@@ -2201,7 +2207,8 @@
      * Masukkan URL Web App Deployment Google Apps Script Anda di bawah ini:
      * Contoh: "https://script.google.com/macros/s/AKfycbyxxxxxx/exec"
      */
-    const GAS_API_URL = "https://script.google.com/macros/s/GANTI_DENGAN_DEPLOYMENT_ID_ANDA/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxB0y5OJa-isgbFkUtUr3rPsLSGMDQRTf4y80q0-GwTbzK5-mDjMDfGgbXLHFx8ox94/exec";
+
 
     /**
      * Helper Universal API Caller
@@ -4167,7 +4174,12 @@
             const bShort = bulanFullToShort[bKey] || trx.periodeBulan;
             if (bShort) {
               const isVerified = (trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI' || trx.isVerified === true);
-              statusMap[sppgId][bShort] = isVerified ? 'verified' : 'pending';
+              const currentStatus = statusMap[sppgId][bShort];
+              if (isVerified) {
+                statusMap[sppgId][bShort] = 'verified';
+              } else if (!currentStatus) {
+                statusMap[sppgId][bShort] = 'pending';
+              }
             }
           });
 
@@ -4506,32 +4518,32 @@
           let noSts = '';
           let nominal = null;
 
-          if (status === 'paid') {
-            if (matchedTrx) {
-              tglSetor = matchedTrx.tanggalTransfer || ('2026-' + monthNumStr + '-15');
-              idTransaksi = matchedTrx.id || ('TRX-2026' + monthNumStr + '-' + sppgNumStr.padStart(4, '0'));
-              noStbp = matchedTrx.noStbp || ('STBP/DLH/2026/' + monthNumStr + '/' + sppgNumStr.padStart(3, '0'));
-              noSts = matchedTrx.noSts || ('STS/KASDA/2026/' + monthNumStr + '/' + (parseInt(sppgNumStr) + 100).toString().padStart(4, '0'));
-              nominal = matchedTrx.jumlahTransfer || 2000000;
-            } else {
-              tglSetor = '2026-' + monthNumStr + '-15';
-              idTransaksi = 'TRX-2026' + monthNumStr + '-' + sppgNumStr.padStart(4, '0');
-              noStbp = 'STBP/DLH/2026/' + monthNumStr + '/' + sppgNumStr.padStart(3, '0');
-              noSts = 'STS/KASDA/2026/' + monthNumStr + '/' + (parseInt(sppgNumStr) + 100).toString().padStart(4, '0');
-              nominal = 2000000;
-            }
+          if (matchedTrx) {
+            tglSetor = matchedTrx.tanggalTransfer || ('2026-' + monthNumStr + '-15');
+            idTransaksi = matchedTrx.noTrxBank || matchedTrx.id || ('TRX-2026' + monthNumStr + '-' + sppgNumStr.padStart(4, '0'));
+            noStbp = matchedTrx.noStbp || '';
+            noSts = matchedTrx.noSts || '';
+            nominal = matchedTrx.jumlahTransfer || 750000;
+          } else if (status === 'verified' || status === 'paid') {
+            tglSetor = '2026-' + monthNumStr + '-15';
+            idTransaksi = 'TRX-2026' + monthNumStr + '-' + sppgNumStr.padStart(4, '0');
+            noStbp = 'STBP/DLH/2026/' + monthNumStr + '/' + sppgNumStr.padStart(3, '0');
+            noSts = 'STS/KASDA/2026/' + monthNumStr + '/' + (parseInt(sppgNumStr) + 100).toString().padStart(4, '0');
+            nominal = 750000;
           }
 
-          // Syarat Terverifikasi: noSts, noStbp, dan idTransaksi sudah ada (lengkap)
-          const hasSts = Boolean(noSts && noSts !== '-' && noSts.trim() !== '');
-          const hasStbp = Boolean(noStbp && noStbp !== '-' && noStbp.trim() !== '');
-          const hasIdTrx = Boolean(idTransaksi && idTransaksi !== '-' && idTransaksi.trim() !== '');
-
-          const isVerified = Boolean(status === 'paid' && hasSts && hasStbp && hasIdTrx);
+          const isVerified = Boolean(
+            status === 'verified' || 
+            (matchedTrx && (matchedTrx.status === 'SELESAI_STS' || matchedTrx.status === 'TERVERIFIKASI' || matchedTrx.isVerified === true))
+          );
 
           let statusVerifikasi = 'Belum Bayar';
-          if (status === 'paid') {
-            statusVerifikasi = isVerified ? 'Terverifikasi' : 'Belum Terverifikasi';
+          if (status === 'verified' || status === 'paid' || isVerified) {
+            statusVerifikasi = 'Terverifikasi (Lunas)';
+          } else if (status === 'pending' || (matchedTrx && !isVerified)) {
+            statusVerifikasi = 'Menunggu Verifikasi';
+          } else if (status === 'not_required') {
+            statusVerifikasi = 'Belum Wajib';
           }
 
           const rect = event.currentTarget.getBoundingClientRect();
@@ -5168,6 +5180,73 @@
               this.notifySuccess('Data Disimpan', `Perubahan transaksi ${id} berhasil diperbarui.`);
               this.$nextTick(() => lucide.createIcons());
             }, 300);
+          }
+        },
+
+        async toggleVerifikasi(trx) {
+          if (!trx || trx.isVerifying) return;
+          trx.isVerifying = true;
+
+          const isCurrentlyVerified = (trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI' || trx.isVerified === true);
+          const targetStatus = isCurrentlyVerified ? 'MENUNGGU_VERIFIKASI' : 'SELESAI_STS';
+
+          if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+            try {
+              const res = await apiCall('toggleVerifikasiPembayaran', { idTrx: trx.id, status: targetStatus });
+              trx.isVerifying = false;
+              if (res && res.success) {
+                trx.status = res.status || targetStatus;
+                trx.isVerified = (trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI');
+                if (trx.isVerified) {
+                  this.notifySuccess('Terverifikasi', `Setoran ${trx.namaSppg} bulan ${trx.periodeBulan} telah diverifikasi (Status Lunas).`);
+                } else {
+                  this.notifyWarning('Status Dibatalkan', `Verifikasi ${trx.namaSppg} bulan ${trx.periodeBulan} dikembalikan ke Menunggu Verifikasi.`);
+                }
+              } else {
+                this.notifyError('Gagal Mengubah Status', res ? res.message || res.error : 'Terjadi kesalahan.');
+              }
+              this.$nextTick(() => lucide.createIcons());
+              return;
+            } catch (err) {
+              trx.isVerifying = false;
+              this.notifyError('Kesalahan Jaringan', err.toString());
+              return;
+            }
+          } else if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+              .withSuccessHandler((res) => {
+                trx.isVerifying = false;
+                if (res && res.success) {
+                  trx.status = res.status || targetStatus;
+                  trx.isVerified = (trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI');
+                  if (trx.isVerified) {
+                    this.notifySuccess('Terverifikasi', `Setoran ${trx.namaSppg} bulan ${trx.periodeBulan} telah diverifikasi (Status Lunas).`);
+                  } else {
+                    this.notifyWarning('Status Dibatalkan', `Verifikasi ${trx.namaSppg} bulan ${trx.periodeBulan} dikembalikan ke Menunggu Verifikasi.`);
+                  }
+                } else {
+                  this.notifyError('Gagal Mengubah Status', res ? res.message || res.error : 'Terjadi kesalahan.');
+                }
+                this.$nextTick(() => lucide.createIcons());
+              })
+              .withFailureHandler((err) => {
+                trx.isVerifying = false;
+                this.notifyError('Kesalahan Jaringan', err.toString());
+              })
+              .toggleVerifikasiPembayaran(trx.id, targetStatus);
+          } else {
+            // Mode Simulasi Lokal
+            setTimeout(() => {
+              trx.isVerifying = false;
+              trx.status = targetStatus;
+              trx.isVerified = (targetStatus === 'SELESAI_STS' || targetStatus === 'TERVERIFIKASI');
+              if (trx.isVerified) {
+                this.notifySuccess('Terverifikasi', `Setoran ${trx.namaSppg} bulan ${trx.periodeBulan} telah diverifikasi (Status Lunas).`);
+              } else {
+                this.notifyWarning('Status Dibatalkan', `Verifikasi ${trx.namaSppg} bulan ${trx.periodeBulan} dikembalikan ke Menunggu Verifikasi.`);
+              }
+              this.$nextTick(() => lucide.createIcons());
+            }, 250);
           }
         },
 
