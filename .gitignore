@@ -1,0 +1,25 @@
+# Dependencies & Environment
+node_modules/
+.env
+.env.local
+.env.*.local
+
+# Private & Sensitive Data
+*.vcf
+All Contacts.vcf
+*.xlsx
+transaksi.xlsx
+parsed_matrix.json
+parsed_transactions.json
+
+# Python Scripts & Temporary Files
+*.py
+__pycache__/
+*.pyc
+scratch/
+
+# OS & Editor Artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

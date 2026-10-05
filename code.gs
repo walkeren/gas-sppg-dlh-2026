@@ -790,7 +790,16 @@ function loginBendahara(emailOrUsername, password) {
       );
 
       // Cocokkan password (mendukung password di DB, serta bendahara123 / admin123 untuk akun default)
-      var isPassMatch = (rowPass === inputPass || rowPass === String(password || '').trim());
+      var inputPassHash = hashPassword(inputPass);
+      var isPassMatch = (
+        rowPass === inputPass || 
+        rowPass === inputPassHash || 
+        ((inputPass === 'bendahara123' || inputPass === 'admin123') && (rowPass === 'bendahara123' || rowPass === hashPassword('bendahara123')))
+      );
+      // Auto-migrate plaintext password to SHA-256 hash in sheet if matched
+      if (isUserMatch && isPassMatch && rowPass === inputPass && inputPass !== inputPassHash && colPass !== -1) {
+        try { sheet.getRange(i + 1, colPass + 1).setValue(inputPassHash); } catch(e){}
+      }
 
       var isStatusActive = (rowStatus === 'AKTIF' || rowStatus === '');
 
@@ -1012,4 +1021,22 @@ function saveAppConfig(configMap) {
   } catch (err) {
     return { success: false, error: err.toString() };
   }
+}
+
+
+/**
+ * Helper Hash Kata Sandi (SHA-256) untuk keamanan kredensial admin
+ */
+function hashPassword(str) {
+  if (!str) return '';
+  var rawHash = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(str).trim(), Utilities.Charset.UTF_8);
+  var txt = '';
+  for (var i = 0; i < rawHash.length; i++) {
+    var b = rawHash[i];
+    if (b < 0) b += 256;
+    var byteHex = b.toString(16);
+    if (byteHex.length === 1) byteHex = '0' + byteHex;
+    txt += byteHex;
+  }
+  return txt;
 }

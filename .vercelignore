@@ -1,0 +1,32 @@
+# Private & Sensitive Data
+*.vcf
+All Contacts.vcf
+*.xlsx
+transaksi.xlsx
+parsed_matrix.json
+parsed_transactions.json
+
+# Backend Scripts (Only run on GAS)
+*.gs
+appsscript.json
+
+# Python Scripts & Temporary Files
+*.py
+__pycache__/
+*.pyc
+scratch/
+
+# Documentation & Markdown
+*.md
+README.md
+PRD.md
+DESIGN.md
+
+# Dev / Mock files
+mock.html
+mockup.html
+
+# Git & OS
+.git*
+.DS_Store
+Thumbs.db
