@@ -341,22 +341,21 @@
                         <span class="font-semibold text-slate-800 text-xs sm:text-sm truncate block" x-text="item.nama"></span>
                       </div>
 
-                      <!-- 9 Columns Month Grid with Solid Continuous Bar -->
+                      <!-- 9 Columns Month Grid with Solid Blocks for All Reported/Paid Months -->
                       <div class="col-span-8 relative h-5 flex items-center">
-                        <!-- 9 Grid column background lines -->
-                        <div class="w-full h-full grid grid-cols-9 absolute inset-0 pointer-events-none">
-                          <template x-for="i in 9" :key="i">
-                            <div class="border-l border-slate-200/80 h-full"></div>
+                        <!-- 9 Grid columns with reported month bars -->
+                        <div class="w-full h-full grid grid-cols-9 absolute inset-0">
+                          <template x-for="bln in bulanListShort" :key="bln">
+                            <div class="border-l border-slate-200/80 h-full flex items-center justify-center px-0.5">
+                              <template x-if="item.paidMonths && item.paidMonths[bln]">
+                                <div 
+                                  class="w-full h-3.5 bg-amber-500 hover:bg-amber-600 rounded-[2px] shadow-2xs transition-colors"
+                                  :title="item.nama + ' — Setoran Bulan ' + bln + ' (Sudah Bayar/Lapor)'">
+                                </div>
+                              </template>
+                            </div>
                           </template>
                         </div>
-
-                        <!-- Solid Horizontal Span Bar -->
-                        <template x-if="item.spanLength > 0">
-                          <div 
-                            class="absolute h-3.5 bg-amber-500 hover:bg-amber-600 rounded-[3px] shadow-xs z-10 transition-all duration-200 pointer-events-none"
-                            :style="`left: ${(item.startIdx / 9) * 100}%; width: ${(item.spanLength / 9) * 100}%;`">
-                          </div>
-                        </template>
                       </div>
 
                     </div>
@@ -480,18 +479,18 @@
             </thead>
             <template x-for="group in matriksGrouped" :key="group.kecamatan">
               <tbody class="divide-y divide-slate-200 text-slate-700">
-                <!-- Group Header Row per Kecamatan (Warna Abu-Abu Lebih Tua dari Sel Belum Wajib) -->
-                <tr class="bg-slate-300 text-slate-900 font-headline uppercase tracking-wider text-[11px] font-bold border-y-2 border-slate-400">
-                  <td :colspan="1 + bulanListShort.length" class="py-2 px-3.5 bg-slate-300">
+                <!-- Group Header Row per Kecamatan (Warna Biru Tua Berwibawa & Kontras Tajam) -->
+                <tr class="bg-blue-900 text-white font-headline uppercase tracking-wider text-[11px] font-bold border-y-2 border-blue-950">
+                  <td :colspan="1 + bulanListShort.length" class="py-2 px-3.5 bg-blue-900">
                     <div class="flex items-center gap-2">
-                      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-400 text-slate-800 shadow-2xs border border-slate-500">
-                        <svg class="w-3.5 h-3.5 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-800 text-blue-100 shadow-2xs border border-blue-700">
+                        <svg class="w-3.5 h-3.5 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                       </span>
-                      <span class="font-bold text-slate-900 tracking-wide text-xs">Kecamatan <span x-text="group.kecamatan"></span></span>
-                      <span class="text-[10px] font-mono font-semibold text-slate-800 lowercase bg-white px-2.5 py-0.5 rounded-full border border-slate-400 shadow-2xs">(<span x-text="group.items.length"></span> SPPG)</span>
+                      <span class="font-bold text-white tracking-wide text-xs">Kecamatan <span x-text="group.kecamatan"></span></span>
+                      <span class="text-[10px] font-mono font-semibold text-blue-200 lowercase bg-blue-950 px-2.5 py-0.5 rounded-full border border-blue-800 shadow-2xs">(<span x-text="group.items.length"></span> SPPG)</span>
                     </div>
                   </td>
                 </tr>
@@ -503,17 +502,17 @@
                       <div class="font-bold text-slate-900 text-xs sm:text-sm truncate" x-text="item.nama.startsWith('SPPG') ? item.nama : 'SPPG ' + item.nama"></div>
                     </td>
 
-                    <!-- 9 Cells with Popover Trigger -->
+                    <!-- 9 Cells with Popover Trigger (Hanya untuk yang sudah bayar / disubmit, Merah & Abu-abu TIDAK BUKA Popover) -->
                     <template x-for="bln in bulanListShort" :key="bln">
                       <td 
-                        class="py-2 px-1 text-center border-b border-r border-slate-200 transition-colors font-mono cursor-pointer relative"
+                        class="py-2 px-1 text-center border-b border-r border-slate-200 transition-colors font-mono relative"
                         :class="{
-                          'bg-emerald-100/90 text-emerald-800 hover:bg-emerald-200': item.months[bln] === 'verified' || item.months[bln] === 'paid',
-                          'bg-amber-100/90 text-amber-900 hover:bg-amber-200': item.months[bln] === 'pending',
-                          'bg-rose-100/90 text-rose-800 hover:bg-rose-200': item.months[bln] === 'unpaid',
-                          'bg-slate-100/90 text-slate-400 hover:bg-slate-200/60': item.months[bln] === 'not_required'
+                          'bg-emerald-100/90 text-emerald-800 hover:bg-emerald-200 cursor-pointer': item.months[bln] === 'verified' || item.months[bln] === 'paid',
+                          'bg-amber-100/90 text-amber-900 hover:bg-amber-200 cursor-pointer': item.months[bln] === 'pending',
+                          'bg-rose-100/90 text-rose-800 hover:bg-rose-200/50 cursor-default': item.months[bln] === 'unpaid',
+                          'bg-slate-100/90 text-slate-400 hover:bg-slate-200/40 cursor-default': item.months[bln] === 'not_required'
                         }"
-                        @click.stop="toggleCellPopover(item, bln, $event)">
+                        @click.stop="(item.months[bln] === 'verified' || item.months[bln] === 'paid' || item.months[bln] === 'pending') ? toggleCellPopover(item, bln, $event) : null">
                         
                         <!-- 1. Terverifikasi (Lunas) - Centang Hijau Besar & Tegas -->
                         <template x-if="item.months[bln] === 'verified' || item.months[bln] === 'paid'">
@@ -524,7 +523,7 @@
                           </div>
                         </template>
 
-                        <!-- 2. Menunggu Verifikasi - Centang Kuning Besar & Tegas (Sesuai Permintaan) -->
+                        <!-- 2. Menunggu Verifikasi - Centang Kuning Besar & Tegas -->
                         <template x-if="item.months[bln] === 'pending'">
                           <div class="flex items-center justify-center py-0.5" title="Form sudah disubmit, menunggu verifikasi Bendahara">
                             <svg class="w-5 h-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -1031,7 +1030,7 @@
                   <th class="py-2.5 px-1.5 bg-emerald-50/90 border-b border-l border-slate-200 sticky top-16 z-30 w-[85px] min-w-[75px] max-w-[95px] text-[10.5px]">No. STS</th>
                   <th class="py-2.5 px-1.5 bg-blue-50/90 border-b border-l border-slate-200 sticky top-16 z-30 w-[85px] min-w-[75px] max-w-[95px] text-[10.5px]">No. STBP</th>
                   <th class="py-2.5 px-1.5 bg-purple-50/90 border-b border-l border-slate-200 sticky top-16 z-30 w-[85px] min-w-[75px] max-w-[95px] text-[10.5px]">ID Transaksi</th>
-                  <th class="py-2.5 px-2 text-center border-b border-l border-slate-200 w-[145px] min-w-[140px] bg-slate-100 sticky top-16 z-30 text-[10.5px]">Aksi</th>
+                  <th class="py-2.5 px-2 text-center border-b border-l border-slate-200 w-[165px] min-w-[160px] bg-slate-100 sticky top-16 z-30 text-[10.5px]">Aksi</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-700">
@@ -1117,44 +1116,50 @@
                     </td>
 
                     <!-- Kolom Aksi: Tombol Verifikasi/Batal di sebelah kiri tombol Simpan -->
-                    <td class="py-1.5 px-1.5 text-center border-l border-slate-200 min-w-[140px]">
-                      <div class="flex items-center gap-1 justify-center">
+                    <td class="py-1.5 px-1.5 text-center border-l border-slate-200 w-[165px] min-w-[160px]">
+                      <div class="flex items-center gap-1.5 justify-center">
                         
-                        <!-- Tombol Verifikasi / Batal Verifikasi (Di sebelah kiri tombol Simpan) -->
-                        <button 
-                          type="button" 
-                          @click="toggleVerifikasi(trx)"
-                          :disabled="trx.isVerifying"
-                          :class="trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI'
-                            ? 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 hover:border-rose-400' 
-                            : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs'"
-                          class="px-2 py-1 rounded text-[10px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
-                          :title="trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI' ? 'Batalkan status verifikasi (Kembalikan ke Kuning Menunggu Verifikasi)' : 'Verifikasi setoran ini (Status berubah Hijau / Lunas)'">
-                          
-                          <template x-if="trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI'">
-                            <span class="inline-flex items-center gap-1">
-                              <i data-lucide="rotate-ccw" class="w-3 h-3 text-rose-600"></i>
-                              <span>Batal</span>
-                            </span>
-                          </template>
+                        <!-- Tombol 1: Batal (Putih/Abu-abu) - Lebar Konsisten w-[76px] -->
+                        <template x-if="trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI'">
+                          <button 
+                            type="button" 
+                            @click="toggleVerifikasi(trx)"
+                            :disabled="trx.isVerifying"
+                            class="w-[76px] py-1 px-1.5 rounded text-[10.5px] font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 transition flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
+                            title="Batalkan status verifikasi (Kembalikan ke Menunggu Verifikasi)">
+                            <svg class="w-3 h-3 text-slate-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>
+                            <span>Batal</span>
+                          </button>
+                        </template>
 
-                          <template x-if="trx.status !== 'SELESAI_STS' && trx.status !== 'TERVERIFIKASI'">
-                            <span class="inline-flex items-center gap-1">
-                              <i data-lucide="check-circle-2" class="w-3 h-3 text-white"></i>
-                              <span>Verifikasi</span>
-                            </span>
-                          </template>
-                        </button>
+                        <!-- Tombol 1: Verifikasi (Hijau Muda) - Lebar Konsisten w-[76px] -->
+                        <template x-if="trx.status !== 'SELESAI_STS' && trx.status !== 'TERVERIFIKASI'">
+                          <button 
+                            type="button" 
+                            @click="toggleVerifikasi(trx)"
+                            :disabled="trx.isVerifying"
+                            class="w-[76px] py-1 px-1.5 rounded text-[10.5px] font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 transition flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
+                            title="Verifikasi setoran ini (Status berubah Hijau / Lunas)">
+                            <svg class="w-3 h-3 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                            <span>Verifikasi</span>
+                          </button>
+                        </template>
 
-                        <!-- Tombol Simpan Perubahan Kolom STS/STBP/ID Transaksi -->
+                        <!-- Tombol 2: Simpan (Biru Muda saat Aktif) - Lebar Konsisten w-[68px] -->
                         <button 
                           type="button" 
                           @click="saveInlineTransaksi(trx)"
                           :disabled="!isRowModified(trx) || trx.isSaving"
-                          :class="isRowModified(trx) && !trx.isSaving ? 'bg-brand-600 hover:bg-brand-700 text-white cursor-pointer shadow-xs' : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed opacity-60'"
-                          class="px-2 py-1 rounded text-[10px] font-bold transition flex items-center justify-center gap-1 shadow-2xs"
+                          :class="isRowModified(trx) && !trx.isSaving ? 'bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 cursor-pointer shadow-2xs' : 'bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed opacity-60'"
+                          class="w-[68px] py-1 px-1.5 rounded text-[10.5px] font-bold transition flex items-center justify-center gap-1 shadow-2xs"
                           title="Simpan perubahan nomor STS / STBP / ID Transaksi">
-                          <i data-lucide="save" class="w-3 h-3"></i>
+                          <svg class="w-3 h-3 shrink-0" :class="isRowModified(trx) && !trx.isSaving ? 'text-sky-700' : 'text-slate-400'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 21v-8H7v8M7 3v5h8V3M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                          </svg>
                           <span x-text="trx.isSaving ? '...' : 'Simpan'"></span>
                         </button>
 
@@ -4316,9 +4321,12 @@
             const sppgPaidSet = paidMap[sppg.id] || new Set();
             let startIdx = -1;
             let endIdx = -1;
+            const sppgPaidMonths = {};
 
             this.bulanListShort.forEach((bln, idx) => {
-              if (sppgPaidSet.has(bln)) {
+              const isPaid = sppgPaidSet.has(bln);
+              sppgPaidMonths[bln] = isPaid;
+              if (isPaid) {
                 if (startIdx === -1) startIdx = idx;
                 endIdx = idx;
               }
@@ -4337,6 +4345,7 @@
               endIdx: endIdx !== -1 ? endIdx : 0,
               spanLength: spanLength,
               paidCount: sppgPaidSet.size,
+              paidMonths: sppgPaidMonths,
               lastPaymentDate: lastPayment.raw,
               lastPaymentTs: lastPayment.ts
             };
@@ -4487,9 +4496,12 @@
           return this.formatToken(this.config.templateTrx, { no: noRef, bulan, sppgId, kec });
         },
 
-        // Popover Action on Dashboard Matrix Cell Click
+        // Popover Action on Dashboard Matrix Cell Click (Hanya untuk sel yang ada data setoran)
         toggleCellPopover(item, bln, event) {
           const status = item.months[bln];
+          if (status !== 'verified' && status !== 'paid' && status !== 'pending') {
+            return;
+          }
           const bulanFullMap = {
             'Apr': 'April', 'Mei': 'Mei', 'Jun': 'Juni', 'Jul': 'Juli',
             'Agu': 'Agustus', 'Sep': 'September', 'Okt': 'Oktober',
