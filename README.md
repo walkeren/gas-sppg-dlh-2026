@@ -39,9 +39,9 @@ Dengan arsitektur ini:
 Pilih salah satu cara berikut yang paling mudah bagi Anda:
 
 ### Opsi A: Menggunakan Vercel CLI (Sangat Cepat via Terminal)
-1. Buka terminal/PowerShell di folder `vercelapps`:
+1. Buka terminal/PowerShell di folder project:
    ```powershell
-   cd v:\GithubRepo\sppg-dlh-gas\vercelapps
+   cd v:\GithubRepo\gas-sppg-dlh-2026
    ```
 2. Jalankan perintah:
    ```bash

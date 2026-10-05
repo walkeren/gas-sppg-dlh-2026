@@ -32,7 +32,7 @@ Design system untuk **Portal Retribusi SPPG Dinas Lingkungan Hidup (DLH)** yang 
 ---
 
 ## 3. Tipografi
-- **Headline Font**: `Sora` (Bobot: 600 SemiBold, 700 Bold) — untuk judul hero, nama unit SPPG, dan header modal.
+- **Headline Font**: `Sora` (Bobot: 600 SemiBold, 700 Bold) — untuk judul hero, nama SPPG, dan header modal.
 - **Body Font**: `DM Sans` (Bobot: 400 Regular, 500 Medium, 600 SemiBold) — untuk label form, teks tabel, dan instruksi.
 - **Monospace Font**: `Fira Code` — untuk nomor registrasi (`TRX-...`), kode STS, tanggal, dan format nominal Rupiah.
 
@@ -45,8 +45,8 @@ Design system untuk **Portal Retribusi SPPG Dinas Lingkungan Hidup (DLH)** yang 
 - **Discreet Admin Access**: Akses login petugas ke Portal Bendahara **hanya berada di footer** berupa icon gembok minimalis tanpa tulisan.
 - **Portal Bendahara Submenu Layout (Dikelompokkan Berdasarkan Kemiripan Fungsi)**:
   1. `Pembayaran & Dokumen`: Tabel transaksi setoran, filter/pencarian, aksi input Tranx, STBP, STS, preview slip bukti, dan paginasi dinamis.
-  2. `Periode Wajib`: Matriks keteraturan kewajiban setor per unit SPPG $\times$ bulan dengan cekboks centang semua per kolom.
-  3. `Master Unit SPPG`: Pengelolaan terpadu daftar 30 SPPG, filter wilayah kecamatan, form inline registrasi SPPG baru, dan modal pengeditan.
+  2. `Periode Wajib`: Matriks keteraturan kewajiban setor per SPPG $\times$ bulan dengan cekboks centang semua per kolom.
+  3. `Master SPPG`: Pengelolaan terpadu daftar 30 SPPG, filter wilayah kecamatan, form inline registrasi SPPG baru, dan modal pengeditan.
   4. `Pengaturan Sistem (Halaman Penuh)`: Tata letak kartu fungsional untuk *Identitas & Upload Logo*, *Finansial & Dokumen Kasda*, serta *Integrasi Cloud & Helpdesk*.
 
 ### B. Mobile

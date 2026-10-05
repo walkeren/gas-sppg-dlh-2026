@@ -153,7 +153,7 @@ function getSheet(sheetName) {
  * inisialisasi database awal (bersih/kosong):
  * 1. Membuat 5 sheet utama terformat (master_sppg, users_bendahara, app_config, periode_wajib, pembayaran_retribusi)
  * 2. Mengisi akun admin default (bendahara@dlh.go.id / bendahara123)
- * 3. Mengisi 30 unit master SPPG Kabupaten Pangkep
+ * 3. Mengisi 30 master SPPG Kabupaten Pangkep
  * 4. Mengisi default matriks periode wajib (April - Desember)
  * (TIDAK menyertakan import data transaksi historis)
  */
@@ -212,7 +212,7 @@ function setupSheetMasterSppg(ss) {
 
 function setupSheetUsers(ss) {
   var sheet = ss.getSheetByName(SHEETS.USERS) || ss.insertSheet(SHEETS.USERS);
-  var headers = ['ID User', 'Email', 'Password', 'Nama Petugas', 'Role', 'Status Aktif', 'Created At'];
+  var headers = ['ID User', 'Username', 'Email', 'Password', 'Nama Petugas', 'Role', 'Status Aktif', 'Created At'];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   styleHeaderRow(sheet, headers.length);
 }
@@ -286,10 +286,50 @@ function insertDefaultAdmin() {
   }
 
   var adminData = [
-    ['USR-001', 'bendahara@dlh.go.id', 'admin123', 'Bendahara Retribusi DLH', 'ADMIN', 'AKTIF', new Date()]
+    ['USR-001', 'bendahara', 'bendahara@dlh.go.id', 'bendahara123', 'Bendahara Retribusi DLH', 'ADMIN', 'AKTIF', new Date()]
   ];
   sheet.getRange(2, 1, adminData.length, adminData[0].length).setValues(adminData);
-  Logger.log('Admin default bendahara@dlh.go.id berhasil ditambahkan.');
+  Logger.log('Admin default bendahara / bendahara@dlh.go.id berhasil ditambahkan.');
+}
+
+/**
+ * Jalankan fungsi ini jika database Google Sheets lama Anda belum memiliki kolom 'Username' di sheet users_bendahara.
+ * Fungsi ini otomatis menambahkan kolom 'Username' di kolom B dan mengisi nilai username dari email.
+ */
+function migrateAddUsernameColumn() {
+  var sheet = getSheet(SHEETS.USERS);
+  if (!sheet) return { status: 'error', message: 'Sheet users_bendahara tidak ditemukan.' };
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  
+  var usernameIdx = headers.indexOf('Username');
+  if (usernameIdx !== -1) {
+    Logger.log('Kolom Username sudah ada di database.');
+    return { status: 'info', message: 'Kolom Username sudah ada di database.' };
+  }
+
+  // Sisipkan kolom baru di posisi kolom B (setelah ID User)
+  sheet.insertColumnAfter(1);
+  sheet.getRange(1, 2).setValue('Username')
+       .setBackground('#1e3a8a')
+       .setFontColor('#ffffff')
+       .setFontWeight('bold')
+       .setHorizontalAlignment('center')
+       .setVerticalAlignment('middle');
+
+  // Isi data username dari email untuk baris yang ada
+  var lastRow = sheet.getLastRow();
+  if (lastRow > 1) {
+    var emailVals = sheet.getRange(2, 3, lastRow - 1, 1).getValues();
+    var usernames = emailVals.map(function(r) {
+      var email = String(r[0] || '').trim();
+      var uname = email.split('@')[0] || 'admin';
+      return [uname];
+    });
+    sheet.getRange(2, 2, usernames.length, 1).setValues(usernames);
+  }
+
+  Logger.log('Migrasi kolom Username pada database berhasil diselesaikan.');
+  return { status: 'success', message: 'Kolom Username berhasil ditambahkan ke database!' };
 }
 
 var MASTER_SPPG_LIST = [
@@ -338,7 +378,7 @@ function insertMasterSppg() {
   });
 
   sheet.getRange(2, 1, rows.length, rows[0].length).setValues(rows);
-  Logger.log('30 Unit Master SPPG berhasil ditambahkan.');
+  Logger.log('30 Master SPPG berhasil ditambahkan.');
 }
 
 function initPeriodeWajibDefault() {
@@ -625,29 +665,38 @@ function loginBendahara(emailOrUsername, password) {
   try {
     var sheet = getSheet(SHEETS.USERS);
     var data = sheet.getDataRange().getValues();
+    if (data.length < 2) return { success: false, message: 'Data pengguna tidak ditemukan.' };
+
+    var headers = data[0];
+    var hasUsernameCol = (headers[1] === 'Username');
+
     var input = String(emailOrUsername || '').trim().toLowerCase();
     var inputPass = String(password || '').trim();
 
     for (var i = 1; i < data.length; i++) {
       var row = data[i];
-      var rowEmail = String(row[1] || '').trim().toLowerCase();
-      var rowUsername = rowEmail.split('@')[0];
-      var rowPass = String(row[2] || '').trim();
-      var rowStatus = String(row[5] || '').trim().toUpperCase();
+      var rowUsername = hasUsernameCol ? String(row[1] || '').trim().toLowerCase() : String(row[1] || '').split('@')[0].toLowerCase();
+      var rowEmail = hasUsernameCol ? String(row[2] || '').trim().toLowerCase() : String(row[1] || '').trim().toLowerCase();
+      var rowPass = hasUsernameCol ? String(row[3] || '').trim() : String(row[2] || '').trim();
+      var rowNama = hasUsernameCol ? String(row[4] || '') : String(row[3] || '');
+      var rowRole = hasUsernameCol ? String(row[5] || 'ADMIN') : String(row[4] || 'ADMIN');
+      var rowStatus = hasUsernameCol ? String(row[6] || '').trim().toUpperCase() : String(row[5] || '').trim().toUpperCase();
 
-      if ((rowEmail === input || rowUsername === input) && rowPass === inputPass && (rowStatus === 'AKTIF' || rowStatus === '')) {
+      var isUserMatch = (rowUsername === input || rowEmail === input || rowEmail.split('@')[0] === input);
+      if (isUserMatch && rowPass === inputPass && (rowStatus === 'AKTIF' || rowStatus === '')) {
         return {
           success: true,
           user: {
             id: row[0],
-            email: row[1],
-            nama: row[3] || 'Bendahara DLH',
-            role: row[4] || 'ADMIN'
+            username: rowUsername,
+            email: rowEmail,
+            nama: rowNama || 'Bendahara DLH',
+            role: rowRole || 'ADMIN'
           }
         };
       }
     }
-    return { success: false, message: 'Email/username atau kata sandi tidak cocok.' };
+    return { success: false, message: 'Username/email atau kata sandi tidak cocok.' };
   } catch (err) {
     return { success: false, error: err.toString() };
   }

@@ -10,11 +10,11 @@ Sebuah aplikasi web modern berbasis **Google Apps Script (GAS)** dan **Google Sh
 
 **Prinsip Desain & Alur Kerja:**
 1. **Konfirmasi Pembayaran (Akses Publik Tanpa Login):** Pihak SPPG dapat langsung mengakses form konfirmasi penyetoran secara terbuka tanpa perlu membuat akun atau login. Cukup memilih Kecamatan $\rightarrow$ Nama SPPG, mengisi data penyetor, nominal, dan mengunggah slip bukti transfer bank.
-2. **Dashboard Publik Transparan:** Menampilkan visualisasi capaian setoran per unit SPPG (Apr - Des), daftar pembayaran terakhir (live), serta matriks tabular status pembayaran dengan popover detail (Tgl Setor, No. STS, No. STBP).
+2. **Dashboard Publik Transparan:** Menampilkan visualisasi capaian setoran per SPPG (Apr - Des), daftar pembayaran terakhir (live), serta matriks tabular status pembayaran dengan popover detail (Tgl Setor, No. STS, No. STBP).
 3. **Portal Khusus Bendahara (Dengan Login, 4 Sub-Menu & Pengaturan Sistem):** Staf Bendahara DLH mengakses portal internal dengan login khusus untuk:
    - Manajemen Pembayaran & Dokumen STS/STBP terpisah.
    - Penentuan Periode Wajib Bayar per SPPG dengan fitur *select all* per bulan.
-   - Manajemen Master Unit SPPG (Daftar & Tambah SPPG).
+   - Manajemen Master SPPG (Daftar & Tambah SPPG).
    - Pengaturan Konfigurasi Aplikasi dinamis (Logo, Nama App, `<title>`, Tagline, Tahun Anggaran, Footer, dan Parameter Teknis).
 
 ---
@@ -40,7 +40,7 @@ Sebuah aplikasi web modern berbasis **Google Apps Script (GAS)** dan **Google Sh
    - **Kanan (1 Bagian) - Penyetor Terbaru:** Menampilkan 5–6 data setoran terkini dengan indikator dokumen (**STBP** / **STS** jika sudah terbit; dikosongkan jika belum terbit) dan tombol aksi konfirmasi langsung.
 3. **Section 2 - Matriks Pembayaran Retribusi SPPG (Compact Layout)**
    - **Tampilan Compact:** Tinggi baris rapat (`py-1.5`), header `py-2`, dan icon proporsional (`w-3.5 h-3.5`) untuk efisiensi ruang pandang.
-   - **Baris & Kolom:** Nama Unit SPPG & Kecamatan x Periode 9 Bulan (`Apr` s.d. `Des`).
+   - **Baris & Kolom:** Nama SPPG & Kecamatan x Periode 9 Bulan (`Apr` s.d. `Des`).
    - **Latar Sel Utuh (2 Status):**
      - 🟩 **Sudah Bayar:** Background hijau soft (`bg-emerald-100`) + icon centang hijau.
      - 🟥 **Belum Bayar:** Background merah soft (`bg-rose-100`) + icon silang merah.
@@ -53,7 +53,7 @@ Sebuah aplikasi web modern berbasis **Google Apps Script (GAS)** dan **Google Sh
 
 ### B. Konfirmasi Pembayaran (Form Publik SPPG)
 - **Tanpa Nilai Default:** Form dimulai dalam keadaan kosong murni.
-- **Identitas Wilayah:** Dropdown Kecamatan $\rightarrow$ Nama Unit SPPG (tanpa kelurahan).
+- **Identitas Wilayah:** Dropdown Kecamatan $\rightarrow$ Nama SPPG (tanpa kelurahan).
 - **Pilihan Periode Bulan Dinamis:** Dropdown bulan otomatis menyesuaikan dengan SPPG yang dipilih dan **hanya menampilkan bulan yang belum terbayar** (bulan yang sudah lunas otomatis disembunyikan).
 - **Masking Otomatis:**
   - Masking Nomor Telepon/WhatsApp: Pola `08xx-xxxx-xxxx`.
@@ -69,8 +69,8 @@ Sebuah aplikasi web modern berbasis **Google Apps Script (GAS)** dan **Google Sh
 2. **Submenu 2: Periode Wajib**
    - Matriks checkbox SPPG x Bulan (`Apr` s.d. `Des`).
    - Cekboks **Centang Semua** di baris bawah setiap kolom bulan untuk aksi massal.
-3. **Submenu 3: Master Unit SPPG (Terpadu)**
-   - Menggabungkan daftar 30 unit SPPG, filter pencarian & kecamatan, formulir inline pendaftaran unit SPPG baru, serta dialog edit data SPPG.
+3. **Submenu 3: Master SPPG (Terpadu)**
+   - Menggabungkan daftar 30 SPPG, filter pencarian & kecamatan, formulir inline pendaftaran SPPG baru, serta dialog edit data SPPG.
 4. **Submenu 4: Pengaturan Sistem (Halaman Penuh / Bukan Modal)**
    - **Kelompok 1: Identitas & Upload Logo Instansi:** Upload berkas logo instansi (PNG/JPG/SVG) dengan *live thumbnail preview*, preset warna/gradien latar logo, Nama Aplikasi & `<title>`, Tagline, dan Teks Footer.
    - **Kelompok 2: Finansial & Penomoran Dokumen Kasda:** Tahun Anggaran Aktif, Format Prefix STBP, Format Prefix STS Kasda.
@@ -91,7 +91,7 @@ SPPG_RETRIBUSI_DB (Spreadsheet)
 
 ---
 
-## 5. Daftar 30 Unit SPPG Resmi (Kabupaten Pangkep)
+## 5. Daftar 30 SPPG Resmi (Kabupaten Pangkep)
 
 | No | Kecamatan | Nama SPPG | Kode SPPG |
 | :---: | :--- | :--- | :--- |
