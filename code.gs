@@ -738,10 +738,7 @@ function loginBendahara(emailOrUsername, password) {
       );
 
       // Cocokkan password (mendukung password di DB, serta bendahara123 / admin123 untuk akun default)
-      var isPassMatch = (
-        rowPass === inputPass ||
-        ((input === 'bendahara' || input === 'bendahara@dlh.go.id') && (inputPass === 'bendahara123' || inputPass === 'admin123'))
-      );
+      var isPassMatch = (rowPass === inputPass || rowPass === String(password || '').trim());
 
       var isStatusActive = (rowStatus === 'AKTIF' || rowStatus === '');
 
