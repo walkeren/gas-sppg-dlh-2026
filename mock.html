@@ -2252,7 +2252,8 @@
         </button>
       </div>
 
-      <div class="space-y-3 text-xs" x-if="editingSppg">
+      <template x-if="editingSppg">
+        <div class="space-y-3 text-xs">
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Kode SPPG</label>
           <input type="text" :value="editingSppg.id" disabled class="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-500 font-mono">
