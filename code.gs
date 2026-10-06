@@ -205,7 +205,7 @@ function styleHeaderRow(sheet, numCols) {
 
 function setupSheetMasterSppg(ss) {
   var sheet = ss.getSheetByName(SHEETS.MASTER_SPPG) || ss.insertSheet(SHEETS.MASTER_SPPG);
-  var headers = ['id_sppg', 'kecamatan', 'nama_sppg', 'status_aktif', 'created_at'];
+  var headers = ['id_sppg', 'kecamatan', 'nama_sppg', 'penanggung_jawab', 'kontak', 'status_aktif', 'created_at'];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   styleHeaderRow(sheet, headers.length);
 }
@@ -284,8 +284,8 @@ function migrateDatabaseHeaders() {
     // 1. master_sppg
     var s1 = ss.getSheetByName(SHEETS.MASTER_SPPG);
     if (s1) {
-      s1.getRange(1, 1, 1, 5).setValues([['id_sppg', 'kecamatan', 'nama_sppg', 'status_aktif', 'created_at']]);
-      styleHeaderRow(s1, 5);
+      s1.getRange(1, 1, 1, 7).setValues([['id_sppg', 'kecamatan', 'nama_sppg', 'penanggung_jawab', 'kontak', 'status_aktif', 'created_at']]);
+      styleHeaderRow(s1, 7);
     }
 
     // 2. users_bendahara
@@ -385,36 +385,36 @@ function migrateAddUsernameColumn() {
 }
 
 var MASTER_SPPG_LIST = [
-  { id: 'SPPG-001', kec: 'Balocci', nama: 'Kassi' },
-  { id: 'SPPG-002', kec: 'Balocci', nama: 'Kassi 2' },
-  { id: 'SPPG-003', kec: 'Bungoro', nama: 'Samalewa 1' },
-  { id: 'SPPG-004', kec: 'Bungoro', nama: 'Samalewa 2' },
-  { id: 'SPPG-005', kec: 'Bungoro', nama: 'Samalewa 3' },
-  { id: 'SPPG-006', kec: 'Bungoro', nama: 'Samalewa 4' },
-  { id: 'SPPG-007', kec: 'Bungoro', nama: 'Samalewa 5' },
-  { id: 'SPPG-008', kec: 'Labakkang', nama: 'Labakkang' },
-  { id: 'SPPG-009', kec: 'Labakkang', nama: 'Labakkang 2' },
-  { id: 'SPPG-010', kec: 'Labakkang', nama: 'Labakkang 3' },
-  { id: 'SPPG-011', kec: 'Labakkang', nama: 'Manakku' },
-  { id: 'SPPG-012', kec: 'Labakkang', nama: 'Mangallekana' },
-  { id: 'SPPG-013', kec: 'Labakkang', nama: 'Batara' },
-  { id: 'SPPG-014', kec: 'Mandalle', nama: 'Manggalung' },
-  { id: 'SPPG-015', kec: 'Mandalle', nama: 'Tamarupa' },
-  { id: 'SPPG-016', kec: 'Marang', nama: 'Talaka' },
-  { id: 'SPPG-017', kec: 'Marang', nama: 'Talaka 2' },
-  { id: 'SPPG-018', kec: 'Minasa Tene', nama: 'Bonto Langkasa' },
-  { id: 'SPPG-019', kec: 'Minasa Tene', nama: 'Kabba' },
-  { id: 'SPPG-020', kec: 'Minasa Tene', nama: 'Biraeng' },
-  { id: 'SPPG-021', kec: 'Pangkajene', nama: 'Bonto Perak 1' },
-  { id: 'SPPG-022', kec: 'Pangkajene', nama: 'Bonto Perak 2' },
-  { id: 'SPPG-023', kec: 'Pangkajene', nama: 'Mappasaile' },
-  { id: 'SPPG-024', kec: 'Pangkajene', nama: 'Mappasaile 2' },
-  { id: 'SPPG-025', kec: 'Pangkajene', nama: 'Padoang Doangan' },
-  { id: 'SPPG-026', kec: 'Pangkajene', nama: 'Tumampua' },
-  { id: 'SPPG-027', kec: 'Segeri', nama: 'Bone' },
-  { id: 'SPPG-028', kec: 'Segeri', nama: 'Segeri' },
-  { id: 'SPPG-029', kec: 'Segeri', nama: 'Segeri 2' },
-  { id: 'SPPG-030', kec: 'Tondong Tallasa', nama: 'Bantimurung' }
+  { id: 'SPPG-001', kec: 'Balocci', nama: 'Kassi', penanggung_jawab: 'Siti Zuraima SPPG Kassi1', kontak: '089501737683' },
+  { id: 'SPPG-002', kec: 'Balocci', nama: 'Kassi 2', penanggung_jawab: 'Darwan Muis SPPG Kassi2', kontak: '085393517300' },
+  { id: 'SPPG-003', kec: 'Bungoro', nama: 'Samalewa 1', penanggung_jawab: 'Haerul Fahresi SPPG Samalewa1', kontak: '087714145593' },
+  { id: 'SPPG-004', kec: 'Bungoro', nama: 'Samalewa 2', penanggung_jawab: 'Nurul Mutmainnah SPPG Samalewa 2', kontak: '085756416172' },
+  { id: 'SPPG-005', kec: 'Bungoro', nama: 'Samalewa 3', penanggung_jawab: 'Wahyuddin SPPG Samalewa3', kontak: '085342286433' },
+  { id: 'SPPG-006', kec: 'Bungoro', nama: 'Samalewa 4', penanggung_jawab: 'Musakkir SPPG Samalewa4', kontak: '082296461855' },
+  { id: 'SPPG-007', kec: 'Bungoro', nama: 'Samalewa 5', penanggung_jawab: 'Anugrahwan SPPG Samalewa 5', kontak: '081340075010' },
+  { id: 'SPPG-008', kec: 'Labakkang', nama: 'Labakkang', penanggung_jawab: 'Ardiansyah SPPG Labakkang', kontak: '085975073614' },
+  { id: 'SPPG-009', kec: 'Labakkang', nama: 'Labakkang 2', penanggung_jawab: 'Muammar SPPG Labakkang 2', kontak: '082349170976' },
+  { id: 'SPPG-010', kec: 'Labakkang', nama: 'Labakkang 3', penanggung_jawab: 'Heris SPPG Labakkang 3', kontak: '085343793941' },
+  { id: 'SPPG-011', kec: 'Labakkang', nama: 'Manakku', penanggung_jawab: 'Rabiullanda Kulsum SPPG Manakku', kontak: '085341370164' },
+  { id: 'SPPG-012', kec: 'Labakkang', nama: 'Mangallekana', penanggung_jawab: 'Nur Chaerunnisa SPPG Mangallekana', kontak: '082315045264' },
+  { id: 'SPPG-013', kec: 'Labakkang', nama: 'Batara', penanggung_jawab: 'Fatma Sri Fatimah SPPG Batara', kontak: '088744874889' },
+  { id: 'SPPG-014', kec: 'Mandalle', nama: 'Manggalung', penanggung_jawab: 'Adi Irwandi SPPG Manggalung', kontak: '085242761351' },
+  { id: 'SPPG-015', kec: 'Mandalle', nama: 'Tamarupa', penanggung_jawab: 'Agatha Febriandani SPPG Tamarupa', kontak: '085346164018' },
+  { id: 'SPPG-016', kec: 'Marang', nama: 'Talaka', penanggung_jawab: 'Awal Fajaruddin SPPG Talaka1', kontak: '089684444665' },
+  { id: 'SPPG-017', kec: 'Marang', nama: 'Talaka 2', penanggung_jawab: 'Nurul Afian SPPG Talaka2', kontak: '085397984559' },
+  { id: 'SPPG-018', kec: 'Minasa Tene', nama: 'Bonto Langkasa', penanggung_jawab: 'Indah Putri Humairah SPPG Bonto Langkasa', kontak: '087858320557' },
+  { id: 'SPPG-019', kec: 'Minasa Tene', nama: 'Kabba', penanggung_jawab: 'Fani Fajriani SPPG Kabba', kontak: '082318479896' },
+  { id: 'SPPG-020', kec: 'Minasa Tene', nama: 'Biraeng', penanggung_jawab: 'Muhammad Ardas Daruslam SPPG Biraeng', kontak: '082188224010' },
+  { id: 'SPPG-021', kec: 'Pangkajene', nama: 'Bonto Perak 1', penanggung_jawab: 'Fahmi Sofyan SPPG Bonto Perak1', kontak: '081244287373' },
+  { id: 'SPPG-022', kec: 'Pangkajene', nama: 'Bonto Perak 2', penanggung_jawab: 'Saharuddin SPPG Bonto Perak2', kontak: '085343693131' },
+  { id: 'SPPG-023', kec: 'Pangkajene', nama: 'Mappasaile', penanggung_jawab: 'Evi Irviyanti SPPG Mappasaile', kontak: '085870552736' },
+  { id: 'SPPG-024', kec: 'Pangkajene', nama: 'Mappasaile 2', penanggung_jawab: 'Akbar Tola SPPG Mappasaile 2', kontak: '085340312677' },
+  { id: 'SPPG-025', kec: 'Pangkajene', nama: 'Padoang Doangan', penanggung_jawab: 'Amran SPPG Padoang2an', kontak: '085230740101' },
+  { id: 'SPPG-026', kec: 'Pangkajene', nama: 'Tumampua', penanggung_jawab: "Mar'atul Islam SPPG Tumampua", kontak: '085338318156' },
+  { id: 'SPPG-027', kec: 'Segeri', nama: 'Bone', penanggung_jawab: 'Mawarni Utami SPPG Bone', kontak: '085346567732' },
+  { id: 'SPPG-028', kec: 'Segeri', nama: 'Segeri', penanggung_jawab: 'Ashar Saputra SPPG Segeri', kontak: '085259870711' },
+  { id: 'SPPG-029', kec: 'Segeri', nama: 'Segeri 2', penanggung_jawab: 'Amell Akuntan SPPG Segeri2', kontak: '082189423315' },
+  { id: 'SPPG-030', kec: 'Tondong Tallasa', nama: 'Bantimurung', penanggung_jawab: 'Hauliah SPPG Bantimurung', kontak: '085240966666' }
 ];
 
 function insertMasterSppg() {
@@ -426,7 +426,7 @@ function insertMasterSppg() {
   }
 
   var rows = MASTER_SPPG_LIST.map(function(item) {
-    return [item.id, item.kec, item.nama, 'AKTIF', new Date()];
+    return [item.id, item.kec, item.nama, item.penanggung_jawab || '', item.kontak || '', 'AKTIF', new Date()];
   });
 
   sheet.getRange(2, 1, rows.length, rows[0].length).setValues(rows);
@@ -500,9 +500,18 @@ function getPublicDashboardData() {
     var sppgSheet = ss.getSheetByName(SHEETS.MASTER_SPPG);
     var masterSppg = [];
     if (sppgSheet && sppgSheet.getLastRow() > 1) {
-      var sppgVals = sppgSheet.getRange(2, 1, sppgSheet.getLastRow() - 1, 4).getValues();
+      var sppgVals = sppgSheet.getRange(2, 1, sppgSheet.getLastRow() - 1, 6).getValues();
       masterSppg = sppgVals.map(function(r) {
-        return { id: r[0], kec: r[1], nama: r[2], active: r[3] === 'AKTIF' };
+        return { 
+          id: r[0], 
+          kec: r[1], 
+          nama: r[2], 
+          penanggung_jawab: r[3] || '',
+          penanggungJawab: r[3] || '',
+          pengurus: r[3] || '',
+          kontak: r[4] || '',
+          active: r[5] === 'AKTIF' 
+        };
       });
     } else {
       masterSppg = MASTER_SPPG_LIST;
@@ -979,7 +988,7 @@ function addMasterSppg(payload) {
     var count = sheet.getLastRow();
     var newId = 'SPPG-' + (count < 10 ? '00' : (count < 100 ? '0' : '')) + count;
 
-    var newRow = [newId, payload.kecamatan, payload.nama, 'AKTIF', new Date()];
+    var newRow = [newId, payload.kecamatan, payload.nama, payload.penanggung_jawab || payload.penanggungJawab || payload.pengurus || '', payload.kontak || '', 'AKTIF', new Date()];
     sheet.appendRow(newRow);
 
     // Tambahkan juga ke sheet periode_wajib

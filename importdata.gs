@@ -1681,5 +1681,117 @@ function clearTabelTransaksi() {
  */
 function resetAndImportTransaksiExcel() {
   clearTabelTransaksi();
-  return insertHistoricalTransactions();
+  var res = insertHistoricalTransactions();
+  updatePenanggungJawabDanKontakSppg();
+  return res;
 }
+
+/**
+ * ============================================================================
+ * SINKRONISASI PENANGGUNG JAWAB & KONTAK SPPG KE SHEET master_sppg
+ * ============================================================================
+ * Menambahkan kolom 'penanggung_jawab' dan 'kontak' ke tabel master_sppg
+ * lalu mencari data masing-masing penanggung jawab & kontak di sheet pembayaran_retribusi.
+ */
+function updatePenanggungJawabDanKontakSppg() {
+  var ss = getDb();
+  var sppgSheet = ss.getSheetByName(SHEETS.MASTER_SPPG);
+  var paySheet = ss.getSheetByName(SHEETS.PEMBAYARAN);
+
+  if (!sppgSheet) {
+    Logger.log("Sheet master_sppg tidak ditemukan!");
+    return { status: 'error', message: 'Sheet master_sppg tidak ditemukan.' };
+  }
+
+  // 1. Ekstrak data narahubung terbaru dari tabel pembayaran_retribusi
+  var contactMap = {};
+  if (paySheet && paySheet.getLastRow() > 1) {
+    var payData = paySheet.getRange(2, 1, paySheet.getLastRow() - 1, 6).getValues();
+    // Kolom pembayaran: [id_transaksi, id_sppg, nama_sppg, kecamatan, nama_pelapor, kontak_pelapor]
+    payData.forEach(function(row) {
+      var idSppg = String(row[1] || '').trim();
+      var namaPelapor = String(row[4] || '').trim();
+      var kontakPelapor = String(row[5] || '').trim();
+      if (idSppg && (namaPelapor || kontakPelapor)) {
+        contactMap[idSppg] = {
+          penanggung_jawab: namaPelapor,
+          kontak: kontakPelapor
+        };
+      }
+    });
+  }
+
+  // Fallback dari HISTORICAL_TRANSACTIONS_DATA jika tabel pembayaran belum terisi
+  if (Object.keys(contactMap).length === 0 && typeof HISTORICAL_TRANSACTIONS_DATA !== 'undefined') {
+    HISTORICAL_TRANSACTIONS_DATA.forEach(function(item) {
+      if (item.id_sppg && (item.nama_pelapor || item.kontak_pelapor)) {
+        contactMap[item.id_sppg] = {
+          penanggung_jawab: item.nama_pelapor,
+          kontak: item.kontak_pelapor
+        };
+      }
+    });
+  }
+
+  // Fallback kontak resmi untuk unit yang belum ada transaksi pembayaran
+  if (!contactMap['SPPG-029']) {
+    contactMap['SPPG-029'] = { penanggung_jawab: 'Amell Akuntan SPPG Segeri2', kontak: '082189423315' };
+  }
+  if (!contactMap['SPPG-030']) {
+    contactMap['SPPG-030'] = { penanggung_jawab: 'Hauliah SPPG Bantimurung', kontak: '085240966666' };
+  }
+
+  // 2. Periksa & Perbarui Header master_sppg
+  var lastRow = sppgSheet.getLastRow();
+  var lastCol = Math.max(sppgSheet.getLastColumn(), 5);
+  var headerValues = sppgSheet.getRange(1, 1, 1, lastCol).getValues()[0];
+
+  var pjColIdx = headerValues.indexOf('penanggung_jawab') + 1;
+  var kontakColIdx = headerValues.indexOf('kontak') + 1;
+
+  if (pjColIdx === 0 || kontakColIdx === 0) {
+    var newHeaders = ['id_sppg', 'kecamatan', 'nama_sppg', 'penanggung_jawab', 'kontak', 'status_aktif', 'created_at'];
+    sppgSheet.getRange(1, 1, 1, newHeaders.length).setValues([newHeaders]);
+    styleHeaderRow(sppgSheet, newHeaders.length);
+    pjColIdx = 4;
+    kontakColIdx = 5;
+  }
+
+  // 3. Isi nilai penanggung_jawab dan kontak untuk setiap baris SPPG
+  var updatedCount = 0;
+  if (lastRow > 1) {
+    var numRows = lastRow - 1;
+    var sppgIds = sppgSheet.getRange(2, 1, numRows, 1).getValues();
+    var updateRange = sppgSheet.getRange(2, pjColIdx, numRows, 2);
+    var newValues = [];
+
+    for (var i = 0; i < numRows; i++) {
+      var id = String(sppgIds[i][0] || '').trim();
+      var info = contactMap[id] || { penanggung_jawab: '', kontak: '' };
+      newValues.push([info.penanggung_jawab, info.kontak]);
+      if (info.penanggung_jawab || info.kontak) updatedCount++;
+    }
+
+    updateRange.setValues(newValues);
+    Logger.log('Berhasil mengisi ' + updatedCount + ' data penanggung jawab & kontak ke sheet master_sppg.');
+  }
+
+  return {
+    status: 'success',
+    updatedCount: updatedCount,
+    totalRows: lastRow > 1 ? lastRow - 1 : 0,
+    message: 'Kolom penanggungjawab dan kontak berhasil ditambahkan dan diisi dari tabel pembayaran.'
+  };
+}
+
+/**
+ * Alias fungsi untuk eksekusi fleksibel dari Google Apps Script Editor
+ */
+function syncPenanggungJawabDanKontakSppg() {
+  return updatePenanggungJawabDanKontakSppg();
+}
+
+function isiPenanggungJawabDanKontak() {
+  return updatePenanggungJawabDanKontakSppg();
+}
+
