@@ -494,60 +494,78 @@
                 </template>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-200 text-slate-700">
-              <template x-for="item in matriksData" :key="item.id">
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                  
-                  <!-- Kolom Nama SPPG & Kecamatan -->
-                  <td class="py-2.5 px-3.5 border-b border-r border-slate-200 bg-white">
-                    <div class="font-bold text-slate-900 text-xs sm:text-sm truncate" x-text="item.nama.startsWith('SPPG') ? item.nama : 'SPPG ' + item.nama"></div>
-                    <div class="text-[10px] text-slate-400 font-medium" x-text="'Kec. ' + (item.kecamatan || item.kec)"></div>
+            <template x-for="group in matriksGrouped" :key="group.kecamatan">
+              <tbody class="divide-y divide-slate-200 text-slate-700">
+                <!-- Baris Header Pengelompokan Kecamatan (A-Z) -->
+                <tr class="bg-slate-100/90 border-y border-slate-200">
+                  <td :colspan="bulanListShort.length + 1" class="py-2 px-3.5 bg-slate-100/90 border-b border-slate-200 font-headline font-bold text-xs text-slate-800 tracking-wide select-none">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-brand-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                        </svg>
+                        <span class="uppercase tracking-wider font-bold text-slate-900 text-xs" x-text="'Kecamatan ' + group.kecamatan"></span>
+                      </div>
+                      <span class="text-[10px] font-sans font-semibold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full shadow-2xs" x-text="group.items.length + ' SPPG'"></span>
+                    </div>
                   </td>
-
-                  <!-- 9 Cells with Popover Trigger (Hanya untuk yang sudah bayar / disubmit, Merah & Abu-abu TIDAK BUKA Popover) -->
-                  <template x-for="bln in bulanListShort" :key="bln">
-                    <td 
-                      class="py-2 px-1 text-center border-b border-r border-slate-200 font-mono relative select-none"
-                      :class="{
-                        'bg-emerald-100/90 text-emerald-800 hover:bg-emerald-200 cursor-pointer': item.months && (item.months[bln] === 'verified' || item.months[bln] === 'paid'),
-                        'bg-amber-100/90 text-amber-900 hover:bg-amber-200 cursor-pointer': item.months && item.months[bln] === 'pending',
-                        'bg-rose-100/90 text-rose-800 hover:bg-rose-200/50 cursor-default': item.months && item.months[bln] === 'unpaid',
-                        'bg-slate-100/90 text-slate-400 hover:bg-slate-200/40 cursor-default': !item.months || item.months[bln] === 'not_required'
-                      }"
-                      @click.stop="item.months && (item.months[bln] === 'verified' || item.months[bln] === 'paid' || item.months[bln] === 'pending') ? toggleCellPopover(item, bln, $event) : null">
-                      
-                      <!-- 1. Terverifikasi (Lunas) - Centang Hijau Besar & Tegas -->
-                      <div x-show="item.months && (item.months[bln] === 'verified' || item.months[bln] === 'paid')" class="flex items-center justify-center py-0.5" title="Setoran Terverifikasi (Lunas) - Klik untuk lihat rincian">
-                        <svg class="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                        </svg>
-                      </div>
-
-                      <!-- 2. Menunggu Verifikasi - Centang Kuning Besar & Tegas -->
-                      <div x-show="item.months && item.months[bln] === 'pending'" class="flex items-center justify-center py-0.5" title="Form sudah disubmit, menunggu verifikasi - Klik untuk lihat rincian">
-                        <svg class="w-5 h-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                        </svg>
-                      </div>
-
-                      <!-- 3. Belum Bayar - Silang Merah Besar & Tegas -->
-                      <div x-show="item.months && item.months[bln] === 'unpaid'" class="flex items-center justify-center py-0.5" title="Belum Bayar">
-                        <svg class="w-5 h-5 text-rose-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </div>
-
-                      <!-- 4. Belum Wajib - Tanda Garis Strip -->
-                      <div x-show="!item.months || item.months[bln] === 'not_required'" class="flex items-center justify-center py-0.5" title="Belum Wajib">
-                        <span class="font-bold text-slate-400 text-sm leading-none select-none">-</span>
-                      </div>
-
-                    </td>
-                  </template>
-
                 </tr>
-              </template>
-            </tbody>
+
+                <!-- Baris Data SPPG dalam Kecamatan (A-Z) -->
+                <template x-for="item in group.items" :key="item.id">
+                  <tr class="hover:bg-slate-50/50 transition-colors">
+                    
+                    <!-- Kolom Nama SPPG -->
+                    <td class="py-2 px-3.5 border-b border-r border-slate-200 bg-white">
+                      <div class="font-bold text-slate-900 text-xs sm:text-sm truncate pl-2" x-text="item.nama.startsWith('SPPG') ? item.nama : 'SPPG ' + item.nama"></div>
+                    </td>
+
+                    <!-- 9 Cells with Popover Trigger (Hanya untuk yang sudah bayar / disubmit, Merah & Abu-abu TIDAK BUKA Popover) -->
+                    <template x-for="bln in bulanListShort" :key="bln">
+                      <td 
+                        class="py-2 px-1 text-center border-b border-r border-slate-200 font-mono relative select-none"
+                        :class="{
+                          'bg-emerald-100/90 text-emerald-800 hover:bg-emerald-200 cursor-pointer': item.months && (item.months[bln] === 'verified' || item.months[bln] === 'paid'),
+                          'bg-amber-100/90 text-amber-900 hover:bg-amber-200 cursor-pointer': item.months && item.months[bln] === 'pending',
+                          'bg-rose-100/90 text-rose-800 hover:bg-rose-200/50 cursor-default': item.months && item.months[bln] === 'unpaid',
+                          'bg-slate-100/90 text-slate-400 hover:bg-slate-200/40 cursor-default': !item.months || item.months[bln] === 'not_required'
+                        }"
+                        @click.stop="item.months && (item.months[bln] === 'verified' || item.months[bln] === 'paid' || item.months[bln] === 'pending') ? toggleCellPopover(item, bln, $event) : null">
+                        
+                        <!-- 1. Terverifikasi (Lunas) - Centang Hijau Besar & Tegas -->
+                        <div x-show="item.months && (item.months[bln] === 'verified' || item.months[bln] === 'paid')" class="flex items-center justify-center py-0.5" title="Setoran Terverifikasi (Lunas) - Klik untuk lihat rincian">
+                          <svg class="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                          </svg>
+                        </div>
+
+                        <!-- 2. Menunggu Verifikasi - Centang Kuning Besar & Tegas -->
+                        <div x-show="item.months && item.months[bln] === 'pending'" class="flex items-center justify-center py-0.5" title="Form sudah disubmit, menunggu verifikasi - Klik untuk lihat rincian">
+                          <svg class="w-5 h-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                          </svg>
+                        </div>
+
+                        <!-- 3. Belum Bayar - Silang Merah Besar & Tegas -->
+                        <div x-show="item.months && item.months[bln] === 'unpaid'" class="flex items-center justify-center py-0.5" title="Belum Bayar">
+                          <svg class="w-5 h-5 text-rose-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </div>
+
+                        <!-- 4. Belum Wajib - Tanda Garis Strip -->
+                        <div x-show="!item.months || item.months[bln] === 'not_required'" class="flex items-center justify-center py-0.5" title="Belum Wajib">
+                          <span class="font-bold text-slate-400 text-sm leading-none select-none">-</span>
+                        </div>
+
+                      </td>
+                    </template>
+
+                  </tr>
+                </template>
+              </tbody>
+            </template>
           </table>
         </div>
 
@@ -2266,6 +2284,7 @@
           </select>
         </div>
       </div>
+      </template>
 
       <div class="pt-2 flex justify-end gap-2">
         <button @click="showEditSppgModal = false" class="px-3.5 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600">Batal</button>
