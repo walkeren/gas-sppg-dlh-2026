@@ -2019,12 +2019,23 @@
 
               <div class="space-y-3 text-xs">
                 <div>
-                  <label class="block font-semibold text-slate-700 mb-1">Google Drive Folder ID (Slip Setor)</label>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="block font-semibold text-slate-700">Google Drive Folder (Slip Setor)</label>
+                    <span class="text-[10px] text-slate-400">ID atau Link Folder</span>
+                  </div>
                   <input 
                     type="text" 
                     x-model="config.driveFolderId" 
-                    placeholder="1AbC_dlh_retribusi_sppg_drive_folder"
+                    @input="config.driveFolderId = cleanDriveFolderId(config.driveFolderId)"
+                    placeholder="Contoh: 1w7u9hJ8_... atau link folder Drive"
                     class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-mono outline-none">
+                  <div x-show="config.driveFolderId && config.driveFolderId !== '1AbC_dlh_retribusi_sppg_drive_folder'" class="mt-1 flex items-center justify-between text-[11px]">
+                    <span class="text-slate-400">ID Aktif: <code class="font-mono text-slate-600" x-text="cleanDriveFolderId(config.driveFolderId)"></code></span>
+                    <a :href="'https://drive.google.com/drive/folders/' + cleanDriveFolderId(config.driveFolderId)" target="_blank" rel="noopener noreferrer" class="text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1 font-medium">
+                      <span>Buka Folder</span>
+                      <i data-lucide="external-link" class="w-3 h-3"></i>
+                    </a>
+                  </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -2487,17 +2498,28 @@
         </button>
       </div>
 
-      <div class="p-4 overflow-y-auto flex items-center justify-center bg-slate-100/50 min-h-[250px]">
+      <div class="p-4 overflow-y-auto flex flex-col items-center justify-center bg-slate-100/50 min-h-[250px]">
         <template x-if="activeTrx && activeTrx.buktiUrl">
-          <img :src="activeTrx.buktiUrl" alt="Slip Bukti Transfer" class="max-h-[55vh] max-w-full rounded-lg shadow-sm border border-slate-200 object-contain">
+          <img :src="getSlipPreviewUrl(activeTrx.buktiUrl)" alt="Slip Bukti Transfer" class="max-h-[55vh] max-w-full rounded-lg shadow-sm border border-slate-200 object-contain">
+        </template>
+        <template x-if="!activeTrx || !activeTrx.buktiUrl">
+          <div class="text-xs text-slate-400 italic">Belum ada lampiran bukti transfer.</div>
         </template>
       </div>
 
       <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
         <div>Nominal: <span class="font-mono font-bold text-slate-900" x-text="activeTrx ? formatRupiah(activeTrx.jumlahTransfer) : ''"></span></div>
-        <button @click="showBuktiModal = false" class="px-4 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium">
-          Tutup
-        </button>
+        <div class="flex items-center gap-2">
+          <template x-if="activeTrx && activeTrx.buktiUrl && activeTrx.buktiUrl.includes('drive.google.com')">
+            <a :href="activeTrx.buktiUrl" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-brand-50 hover:bg-brand-100 text-brand-700 font-semibold flex items-center gap-1.5 transition">
+              <span>Buka di Drive</span>
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </a>
+          </template>
+          <button @click="showBuktiModal = false" class="px-4 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium">
+            Tutup
+          </button>
+        </div>
       </div>
 
     </div>
@@ -2567,7 +2589,7 @@
      * Masukkan URL Web App Deployment Google Apps Script Anda di bawah ini:
      * Contoh: "https://script.google.com/macros/s/AKfycbyxxxxxx/exec"
      */
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxB0y5OJa-isgbFkUtUr3rPsLSGMDQRTf4y80q0-GwTbzK5-mDjMDfGgbXLHFx8ox94/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbz2Sia5_x3nYX-OMZzAhGusl64BUF53pydmKG_zO8jOUL_62IPKtiAvuj1AzOg-Vt99/exec";
 
 
     /**
@@ -2621,84 +2643,63 @@
           this.initTrxEditFields();
           this.ensurePeriodeWajibMap();
 
-          // 1. Sinkronisasi Data via Vercel REST API (GAS)
-          if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
-            this.isSyncing = true;
-            try {
-              const res = await apiCall('getPublicDashboardData');
-              this.isSyncing = false;
-              if (res && res.success) {
-                if (res.config) Object.assign(this.config, res.config);
-                if (res.masterSppg && res.masterSppg.length) {
-                  this.masterData = res.masterSppg.map(s => ({
-                    id: s.id,
-                    kec: s.kec || s.kecamatan || '',
-                    kecamatan: s.kec || s.kecamatan || '',
-                    nama: s.nama,
-                    active: s.active !== false
-                  }));
-                }
-                if (res.periodeWajibMap && Object.keys(res.periodeWajibMap).length) this.periodeWajibMap = res.periodeWajibMap;
-                if (res.transaksiList !== undefined && Array.isArray(res.transaksiList)) {
-                  this.transaksiList = res.transaksiList.map(t => ({
-                    ...t,
-                    noSts: t.noSts !== undefined && t.noSts !== null ? String(t.noSts) : '',
-                    noStbp: t.noStbp !== undefined && t.noStbp !== null ? String(t.noStbp) : '',
-                    noTrxBank: t.noTrxBank !== undefined && t.noTrxBank !== null ? String(t.noTrxBank) : '',
-                    kontakPelapor: t.kontakPelapor !== undefined && t.kontakPelapor !== null ? String(t.kontakPelapor) : '',
-                    tanggalTransfer: t.tanggalTransfer ? String(t.tanggalTransfer) : '',
-                    jumlahTransfer: typeof t.jumlahTransfer === 'number' ? t.jumlahTransfer : (Number(t.jumlahTransfer) || 750000)
-                  }));
-                  this.initTrxEditFields();
-                }
-                this.$nextTick(() => {
-                  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-                });
-              }
-            } catch (err) {
-              this.isSyncing = false;
-              console.warn('Vercel API sync warning:', err);
+          const applyData = (res) => {
+            if (!res || !res.success) return;
+            if (res.config) Object.assign(this.config, res.config);
+            if (res.masterSppg && res.masterSppg.length) {
+              this.masterData = res.masterSppg.map(s => ({
+                id: s.id,
+                kec: s.kec || s.kecamatan || '',
+                kecamatan: s.kec || s.kecamatan || '',
+                nama: s.nama,
+                penanggung_jawab: s.penanggung_jawab || s.penanggungJawab || s.pengurus || '',
+                penanggungJawab: s.penanggung_jawab || s.penanggungJawab || s.pengurus || '',
+                kontak: s.kontak || '',
+                active: s.active !== false
+              }));
             }
-          } else if (typeof google !== 'undefined' && google.script && google.script.run) {
-            // 2. Direct GAS Environment
+            if (res.periodeWajibMap && Object.keys(res.periodeWajibMap).length) this.periodeWajibMap = res.periodeWajibMap;
+            if (res.transaksiList !== undefined && Array.isArray(res.transaksiList)) {
+              this.transaksiList = res.transaksiList.map(t => ({
+                ...t,
+                noSts: t.noSts !== undefined && t.noSts !== null ? String(t.noSts) : '',
+                noStbp: t.noStbp !== undefined && t.noStbp !== null ? String(t.noStbp) : '',
+                noTrxBank: t.noTrxBank !== undefined && t.noTrxBank !== null ? String(t.noTrxBank) : '',
+                kontakPelapor: t.kontakPelapor !== undefined && t.kontakPelapor !== null ? String(t.kontakPelapor) : '',
+                tanggalTransfer: t.tanggalTransfer ? String(t.tanggalTransfer) : '',
+                jumlahTransfer: typeof t.jumlahTransfer === 'number' ? t.jumlahTransfer : (Number(t.jumlahTransfer) || 750000)
+              }));
+              this.initTrxEditFields();
+            }
+            this.$nextTick(() => {
+              if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+            });
+          };
+
+          // 1. Direct GAS Environment (prioritas utama saat dijalankan di Google Apps Script)
+          if (typeof google !== 'undefined' && google.script && google.script.run) {
             this.isSyncing = true;
             google.script.run
               .withSuccessHandler((res) => {
                 this.isSyncing = false;
-                if (res && res.success) {
-                  if (res.config) Object.assign(this.config, res.config);
-                  if (res.masterSppg && res.masterSppg.length) {
-                    this.masterData = res.masterSppg.map(s => ({
-                      id: s.id,
-                      kec: s.kec || s.kecamatan || '',
-                      kecamatan: s.kec || s.kecamatan || '',
-                      nama: s.nama,
-                      active: s.active !== false
-                    }));
-                  }
-                  if (res.periodeWajibMap && Object.keys(res.periodeWajibMap).length) this.periodeWajibMap = res.periodeWajibMap;
-                  if (res.transaksiList !== undefined && Array.isArray(res.transaksiList)) {
-                    this.transaksiList = res.transaksiList.map(t => ({
-                      ...t,
-                      noSts: t.noSts !== undefined && t.noSts !== null ? String(t.noSts) : '',
-                      noStbp: t.noStbp !== undefined && t.noStbp !== null ? String(t.noStbp) : '',
-                      noTrxBank: t.noTrxBank !== undefined && t.noTrxBank !== null ? String(t.noTrxBank) : '',
-                      kontakPelapor: t.kontakPelapor !== undefined && t.kontakPelapor !== null ? String(t.kontakPelapor) : '',
-                      tanggalTransfer: t.tanggalTransfer ? String(t.tanggalTransfer) : '',
-                      jumlahTransfer: typeof t.jumlahTransfer === 'number' ? t.jumlahTransfer : (Number(t.jumlahTransfer) || 750000)
-                    }));
-                    this.initTrxEditFields();
-                  }
-                  this.$nextTick(() => {
-                    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-                  });
-                }
+                applyData(res);
               })
               .withFailureHandler((err) => {
                 this.isSyncing = false;
-                console.warn('GAS sync warning:', err);
+                console.warn('GAS sync error:', err);
               })
               .getPublicDashboardData();
+          } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+            // 2. Vercel / External REST API (fallback jika di hosting luar)
+            this.isSyncing = true;
+            try {
+              const res = await apiCall('getPublicDashboardData');
+              this.isSyncing = false;
+              applyData(res);
+            } catch (err) {
+              this.isSyncing = false;
+              console.warn('Vercel API sync warning:', err);
+            }
           }
           this.$nextTick(() => lucide.createIcons());
         },
@@ -3249,1592 +3250,1592 @@
 
         // Transaksi Data (88 Data Real dari Excel)
         transaksiList: [
-          {
-                    "id": "TRX-202604-0001",
-                    "sppgId": "SPPG-001",
-                    "namaSppg": "Kassi",
-                    "kecamatan": "Balocci",
-                    "namaPelapor": "Siti Zuraima SPPG Kassi1",
-                    "kontakPelapor": "089501737683",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "14 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "4635",
-                    "noStbp": "0084",
-                    "noSts": "034",
-                    "tanggalSts": "14 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0002",
-                    "sppgId": "SPPG-001",
-                    "namaSppg": "Kassi",
-                    "kecamatan": "Balocci",
-                    "namaPelapor": "Siti Zuraima SPPG Kassi1",
-                    "kontakPelapor": "089501737683",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "08 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "5870",
-                    "noStbp": "",
-                    "noSts": "084",
-                    "tanggalSts": "08 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0003",
-                    "sppgId": "SPPG-001",
-                    "namaSppg": "Kassi",
-                    "kecamatan": "Balocci",
-                    "namaPelapor": "Siti Zuraima SPPG Kassi1",
-                    "kontakPelapor": "089501737683",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "28 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "8350",
-                    "noStbp": "",
-                    "noSts": "116",
-                    "tanggalSts": "28 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0004",
-                    "sppgId": "SPPG-002",
-                    "namaSppg": "Kassi 2",
-                    "kecamatan": "Balocci",
-                    "namaPelapor": "Darwan Muis SPPG Kassi2",
-                    "kontakPelapor": "085393517300",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "14 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "8618",
-                    "noStbp": "0085",
-                    "noSts": "035",
-                    "tanggalSts": "14 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0005",
-                    "sppgId": "SPPG-002",
-                    "namaSppg": "Kassi 2",
-                    "kecamatan": "Balocci",
-                    "namaPelapor": "Darwan Muis SPPG Kassi2",
-                    "kontakPelapor": "085393517300",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "10 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "7839",
-                    "noStbp": "",
-                    "noSts": "087",
-                    "tanggalSts": "10 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0006",
-                    "sppgId": "SPPG-002",
-                    "namaSppg": "Kassi 2",
-                    "kecamatan": "Balocci",
-                    "namaPelapor": "Darwan Muis SPPG Kassi2",
-                    "kontakPelapor": "085393517300",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "10 Ags 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "6417",
-                    "noStbp": "",
-                    "noSts": "131",
-                    "tanggalSts": "10 Ags 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0007",
-                    "sppgId": "SPPG-003",
-                    "namaSppg": "Samalewa 1",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Haerul Fahresi SPPG Samalewa1",
-                    "kontakPelapor": "087714145593",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "14 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2626",
-                    "noStbp": "0086",
-                    "noSts": "036",
-                    "tanggalSts": "14 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0008",
-                    "sppgId": "SPPG-003",
-                    "namaSppg": "Samalewa 1",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Haerul Fahresi SPPG Samalewa1",
-                    "kontakPelapor": "087714145593",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "2 JuLi 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "5122",
-                    "noStbp": "",
-                    "noSts": "075",
-                    "tanggalSts": "2 JuLi 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0009",
-                    "sppgId": "SPPG-003",
-                    "namaSppg": "Samalewa 1",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Haerul Fahresi SPPG Samalewa1",
-                    "kontakPelapor": "087714145593",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "17 JuLi 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "0098",
-                    "noStbp": "",
-                    "noSts": "103",
-                    "tanggalSts": "17 JuLi 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0010",
-                    "sppgId": "SPPG-004",
-                    "namaSppg": "Samalewa 2",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Nurul Mutmainnah SPPG Samalewa 2",
-                    "kontakPelapor": "085756416172",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "14 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "3976",
-                    "noStbp": "0087",
-                    "noSts": "037",
-                    "tanggalSts": "14 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0011",
-                    "sppgId": "SPPG-004",
-                    "namaSppg": "Samalewa 2",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Nurul Mutmainnah SPPG Samalewa 2",
-                    "kontakPelapor": "085756416172",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "30 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "5456",
-                    "noStbp": "",
-                    "noSts": "069",
-                    "tanggalSts": "30 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0012",
-                    "sppgId": "SPPG-004",
-                    "namaSppg": "Samalewa 2",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Nurul Mutmainnah SPPG Samalewa 2",
-                    "kontakPelapor": "085756416172",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "23 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "4717",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "23 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0013",
-                    "sppgId": "SPPG-005",
-                    "namaSppg": "Samalewa 3",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Wahyuddin SPPG Samalewa3",
-                    "kontakPelapor": "085342286433",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "16 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "0518",
-                    "noStbp": "0091",
-                    "noSts": "041",
-                    "tanggalSts": "16 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0014",
-                    "sppgId": "SPPG-005",
-                    "namaSppg": "Samalewa 3",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Wahyuddin SPPG Samalewa3",
-                    "kontakPelapor": "085342286433",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "25 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "1936",
-                    "noStbp": "",
-                    "noSts": "065",
-                    "tanggalSts": "25 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0015",
-                    "sppgId": "SPPG-005",
-                    "namaSppg": "Samalewa 3",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Wahyuddin SPPG Samalewa3",
-                    "kontakPelapor": "085342286433",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "15 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "0259",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "15 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0016",
-                    "sppgId": "SPPG-006",
-                    "namaSppg": "Samalewa 4",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Musakkir SPPG Samalewa4",
-                    "kontakPelapor": "082296461855",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "19 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "1172",
-                    "noStbp": "",
-                    "noSts": "045",
-                    "tanggalSts": "19 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0017",
-                    "sppgId": "SPPG-006",
-                    "namaSppg": "Samalewa 4",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Musakkir SPPG Samalewa4",
-                    "kontakPelapor": "082296461855",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "19 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "6424",
-                    "noStbp": "",
-                    "noSts": "062",
-                    "tanggalSts": "19 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0018",
-                    "sppgId": "SPPG-006",
-                    "namaSppg": "Samalewa 4",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Musakkir SPPG Samalewa4",
-                    "kontakPelapor": "082296461855",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "11 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2527",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "11 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0019",
-                    "sppgId": "SPPG-007",
-                    "namaSppg": "Samalewa 5",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Anugrahwan SPPG Samalewa 5",
-                    "kontakPelapor": "081340075010",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "03 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2970",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "03 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0020",
-                    "sppgId": "SPPG-007",
-                    "namaSppg": "Samalewa 5",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Anugrahwan SPPG Samalewa 5",
-                    "kontakPelapor": "081340075010",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "19 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "6887",
-                    "noStbp": "",
-                    "noSts": "063",
-                    "tanggalSts": "19 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0021",
-                    "sppgId": "SPPG-007",
-                    "namaSppg": "Samalewa 5",
-                    "kecamatan": "Bungoro",
-                    "namaPelapor": "Anugrahwan SPPG Samalewa 5",
-                    "kontakPelapor": "081340075010",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "13 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "5266",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "13 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0022",
-                    "sppgId": "SPPG-008",
-                    "namaSppg": "Labakkang",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Ardiansyah SPPG Labakkang",
-                    "kontakPelapor": "085975073614",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "16 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "1570",
-                    "noStbp": "0092",
-                    "noSts": "042",
-                    "tanggalSts": "16 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0023",
-                    "sppgId": "SPPG-008",
-                    "namaSppg": "Labakkang",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Ardiansyah SPPG Labakkang",
-                    "kontakPelapor": "085975073614",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "14 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "8472",
-                    "noStbp": "",
-                    "noSts": "093",
-                    "tanggalSts": "14 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0024",
-                    "sppgId": "SPPG-008",
-                    "namaSppg": "Labakkang",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Ardiansyah SPPG Labakkang",
-                    "kontakPelapor": "085975073614",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "21 Jul 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2419",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "21 Jul 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202607-0025",
-                    "sppgId": "SPPG-008",
-                    "namaSppg": "Labakkang",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Ardiansyah SPPG Labakkang",
-                    "kontakPelapor": "085975073614",
-                    "periodeBulan": "Juli",
-                    "tanggalTransfer": "15 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "1226",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0026",
-                    "sppgId": "SPPG-009",
-                    "namaSppg": "Labakkang 2",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Muammar SPPG Labakkang 2",
-                    "kontakPelapor": "082349170976",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "15 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "5299",
-                    "noStbp": "0089",
-                    "noSts": "039",
-                    "tanggalSts": "15 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0027",
-                    "sppgId": "SPPG-009",
-                    "namaSppg": "Labakkang 2",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Muammar SPPG Labakkang 2",
-                    "kontakPelapor": "082349170976",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "30 Jul 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2536",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "30 Jul 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0028",
-                    "sppgId": "SPPG-009",
-                    "namaSppg": "Labakkang 2",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Muammar SPPG Labakkang 2",
-                    "kontakPelapor": "082349170976",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "30 Jul 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2537",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "30 Jul 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0029",
-                    "sppgId": "SPPG-010",
-                    "namaSppg": "Labakkang 3",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Heris SPPG Labakkang 3",
-                    "kontakPelapor": "085343793941",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "29 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "6780",
-                    "noStbp": "",
-                    "noSts": "050",
-                    "tanggalSts": "29 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0030",
-                    "sppgId": "SPPG-010",
-                    "namaSppg": "Labakkang 3",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Heris SPPG Labakkang 3",
-                    "kontakPelapor": "085343793941",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "17 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "4062",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "17 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0031",
-                    "sppgId": "SPPG-010",
-                    "namaSppg": "Labakkang 3",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Heris SPPG Labakkang 3",
-                    "kontakPelapor": "085343793941",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "27 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "6240",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "27 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202607-0032",
-                    "sppgId": "SPPG-010",
-                    "namaSppg": "Labakkang 3",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Heris SPPG Labakkang 3",
-                    "kontakPelapor": "085343793941",
-                    "periodeBulan": "Juli",
-                    "tanggalTransfer": "27 Agus 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "7567",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "27 Agus 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0033",
-                    "sppgId": "SPPG-011",
-                    "namaSppg": "Manakku",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Rabiullanda Kulsum SPPG Manakku",
-                    "kontakPelapor": "085341370164",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "13 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "6534",
-                    "noStbp": "0077",
-                    "noSts": "027",
-                    "tanggalSts": "13 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0034",
-                    "sppgId": "SPPG-011",
-                    "namaSppg": "Manakku",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Rabiullanda Kulsum SPPG Manakku",
-                    "kontakPelapor": "085341370164",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "08 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "5847",
-                    "noStbp": "",
-                    "noSts": "082",
-                    "tanggalSts": "08 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0035",
-                    "sppgId": "SPPG-011",
-                    "namaSppg": "Manakku",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Rabiullanda Kulsum SPPG Manakku",
-                    "kontakPelapor": "085341370164",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "14 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "9153",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "14 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0036",
-                    "sppgId": "SPPG-012",
-                    "namaSppg": "Mangallekana",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Nur Chaerunnisa SPPG Mangallekana",
-                    "kontakPelapor": "082315045264",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "15 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "1973",
-                    "noStbp": "0090",
-                    "noSts": "040",
-                    "tanggalSts": "15 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0037",
-                    "sppgId": "SPPG-012",
-                    "namaSppg": "Mangallekana",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Nur Chaerunnisa SPPG Mangallekana",
-                    "kontakPelapor": "082315045264",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "29 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "4680",
-                    "noStbp": "",
-                    "noSts": "066",
-                    "tanggalSts": "29 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0038",
-                    "sppgId": "SPPG-012",
-                    "namaSppg": "Mangallekana",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Nur Chaerunnisa SPPG Mangallekana",
-                    "kontakPelapor": "082315045264",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "27 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "3233",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "27 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0039",
-                    "sppgId": "SPPG-013",
-                    "namaSppg": "Batara",
-                    "kecamatan": "Labakkang",
-                    "namaPelapor": "Fatma Sri Fatimah SPPG Batara",
-                    "kontakPelapor": "088744874889",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "25 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "3870",
-                    "noStbp": "",
-                    "noSts": "064",
-                    "tanggalSts": "25 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0040",
-                    "sppgId": "SPPG-014",
-                    "namaSppg": "Manggalung",
-                    "kecamatan": "Mandalle",
-                    "namaPelapor": "Adi Irwandi SPPG Manggalung",
-                    "kontakPelapor": "085242761351",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "16 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2076",
-                    "noStbp": "0093",
-                    "noSts": "043",
-                    "tanggalSts": "16 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0041",
-                    "sppgId": "SPPG-014",
-                    "namaSppg": "Manggalung",
-                    "kecamatan": "Mandalle",
-                    "namaPelapor": "Adi Irwandi SPPG Manggalung",
-                    "kontakPelapor": "085242761351",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "07 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "07 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0042",
-                    "sppgId": "SPPG-014",
-                    "namaSppg": "Manggalung",
-                    "kecamatan": "Mandalle",
-                    "namaPelapor": "Adi Irwandi SPPG Manggalung",
-                    "kontakPelapor": "085242761351",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "20 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "1010",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "20 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0043",
-                    "sppgId": "SPPG-015",
-                    "namaSppg": "Tamarupa",
-                    "kecamatan": "Mandalle",
-                    "namaPelapor": "Agatha Febriandani SPPG Tamarupa",
-                    "kontakPelapor": "085346164018",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "13 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "8308",
-                    "noStbp": "0078",
-                    "noSts": "028",
-                    "tanggalSts": "13 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0044",
-                    "sppgId": "SPPG-015",
-                    "namaSppg": "Tamarupa",
-                    "kecamatan": "Mandalle",
-                    "namaPelapor": "Agatha Febriandani SPPG Tamarupa",
-                    "kontakPelapor": "085346164018",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "07 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "0991",
-                    "noStbp": "",
-                    "noSts": "078",
-                    "tanggalSts": "07 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0045",
-                    "sppgId": "SPPG-015",
-                    "namaSppg": "Tamarupa",
-                    "kecamatan": "Mandalle",
-                    "namaPelapor": "Agatha Febriandani SPPG Tamarupa",
-                    "kontakPelapor": "085346164018",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "16 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "8920",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "16 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0046",
-                    "sppgId": "SPPG-016",
-                    "namaSppg": "Talaka",
-                    "kecamatan": "Marang",
-                    "namaPelapor": "Awal Fajaruddin SPPG Talaka1",
-                    "kontakPelapor": "089684444665",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "18 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "18 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0047",
-                    "sppgId": "SPPG-016",
-                    "namaSppg": "Talaka",
-                    "kecamatan": "Marang",
-                    "namaPelapor": "Awal Fajaruddin SPPG Talaka1",
-                    "kontakPelapor": "089684444665",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "16 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "1404",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "16 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0048",
-                    "sppgId": "SPPG-016",
-                    "namaSppg": "Talaka",
-                    "kecamatan": "Marang",
-                    "namaPelapor": "Awal Fajaruddin SPPG Talaka1",
-                    "kontakPelapor": "089684444665",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "16 Juli 2025",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "9649",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "16 Juli 2025",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0049",
-                    "sppgId": "SPPG-017",
-                    "namaSppg": "Talaka 2",
-                    "kecamatan": "Marang",
-                    "namaPelapor": "Nurul Afian SPPG Talaka2",
-                    "kontakPelapor": "085397984559",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "13 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "1130",
-                    "noStbp": "0079",
-                    "noSts": "029",
-                    "tanggalSts": "13 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0050",
-                    "sppgId": "SPPG-017",
-                    "namaSppg": "Talaka 2",
-                    "kecamatan": "Marang",
-                    "namaPelapor": "Nurul Afian SPPG Talaka2",
-                    "kontakPelapor": "085397984559",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "05 JuLi 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "0724",
-                    "noStbp": "",
-                    "noSts": "076",
-                    "tanggalSts": "05 JuLi 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0051",
-                    "sppgId": "SPPG-017",
-                    "namaSppg": "Talaka 2",
-                    "kecamatan": "Marang",
-                    "namaPelapor": "Nurul Afian SPPG Talaka2",
-                    "kontakPelapor": "085397984559",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "24 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2517",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "24 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0052",
-                    "sppgId": "SPPG-018",
-                    "namaSppg": "Bonto Langkasa",
-                    "kecamatan": "Minasa Tene",
-                    "namaPelapor": "Indah Putri Humairah SPPG Bonto Langkasa",
-                    "kontakPelapor": "087858320557",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "15 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2679",
-                    "noStbp": "0099",
-                    "noSts": "",
-                    "tanggalSts": "15 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0053",
-                    "sppgId": "SPPG-018",
-                    "namaSppg": "Bonto Langkasa",
-                    "kecamatan": "Minasa Tene",
-                    "namaPelapor": "Indah Putri Humairah SPPG Bonto Langkasa",
-                    "kontakPelapor": "087858320557",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "15 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0054",
-                    "sppgId": "SPPG-018",
-                    "namaSppg": "Bonto Langkasa",
-                    "kecamatan": "Minasa Tene",
-                    "namaPelapor": "Indah Putri Humairah SPPG Bonto Langkasa",
-                    "kontakPelapor": "087858320557",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "22 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "4561",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "22 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0055",
-                    "sppgId": "SPPG-019",
-                    "namaSppg": "Kabba",
-                    "kecamatan": "Minasa Tene",
-                    "namaPelapor": "Fani Fajriani SPPG Kabba",
-                    "kontakPelapor": "082318479896",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "14 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "6036",
-                    "noStbp": "0088",
-                    "noSts": "038",
-                    "tanggalSts": "14 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0056",
-                    "sppgId": "SPPG-019",
-                    "namaSppg": "Kabba",
-                    "kecamatan": "Minasa Tene",
-                    "namaPelapor": "Fani Fajriani SPPG Kabba",
-                    "kontakPelapor": "082318479896",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "06 JuLi 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "4598",
-                    "noStbp": "",
-                    "noSts": "077",
-                    "tanggalSts": "06 JuLi 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0057",
-                    "sppgId": "SPPG-019",
-                    "namaSppg": "Kabba",
-                    "kecamatan": "Minasa Tene",
-                    "namaPelapor": "Fani Fajriani SPPG Kabba",
-                    "kontakPelapor": "082318479896",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "31 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2407",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "31 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0058",
-                    "sppgId": "SPPG-020",
-                    "namaSppg": "Biraeng",
-                    "kecamatan": "Minasa Tene",
-                    "namaPelapor": "Muhammad Ardas Daruslam SPPG Biraeng",
-                    "kontakPelapor": "082188224010",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "12 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "1100",
-                    "noStbp": "0075",
-                    "noSts": "025",
-                    "tanggalSts": "12 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0059",
-                    "sppgId": "SPPG-020",
-                    "namaSppg": "Biraeng",
-                    "kecamatan": "Minasa Tene",
-                    "namaPelapor": "Muhammad Ardas Daruslam SPPG Biraeng",
-                    "kontakPelapor": "082188224010",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "30 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "6903",
-                    "noStbp": "",
-                    "noSts": "068",
-                    "tanggalSts": "30 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0060",
-                    "sppgId": "SPPG-020",
-                    "namaSppg": "Biraeng",
-                    "kecamatan": "Minasa Tene",
-                    "namaPelapor": "Muhammad Ardas Daruslam SPPG Biraeng",
-                    "kontakPelapor": "082188224010",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "10 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "4993",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "10 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202607-0061",
-                    "sppgId": "SPPG-020",
-                    "namaSppg": "Biraeng",
-                    "kecamatan": "Minasa Tene",
-                    "namaPelapor": "Muhammad Ardas Daruslam SPPG Biraeng",
-                    "kontakPelapor": "082188224010",
-                    "periodeBulan": "Juli",
-                    "tanggalTransfer": "20 JuLi 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "3912",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "20 JuLi 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0062",
-                    "sppgId": "SPPG-021",
-                    "namaSppg": "Bonto Perak 1",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Fahmi Sofyan SPPG Bonto Perak1",
-                    "kontakPelapor": "081244287373",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "13 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "9043",
-                    "noStbp": "0080",
-                    "noSts": "030",
-                    "tanggalSts": "13 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0063",
-                    "sppgId": "SPPG-021",
-                    "namaSppg": "Bonto Perak 1",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Fahmi Sofyan SPPG Bonto Perak1",
-                    "kontakPelapor": "081244287373",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "10 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "4991",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "10 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0064",
-                    "sppgId": "SPPG-021",
-                    "namaSppg": "Bonto Perak 1",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Fahmi Sofyan SPPG Bonto Perak1",
-                    "kontakPelapor": "081244287373",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "20 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "3912",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "20 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0065",
-                    "sppgId": "SPPG-022",
-                    "namaSppg": "Bonto Perak 2",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Saharuddin SPPG Bonto Perak2",
-                    "kontakPelapor": "085343693131",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "13 Mei 2025",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "1053",
-                    "noStbp": "0081",
-                    "noSts": "031",
-                    "tanggalSts": "13 Mei 2025",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0066",
-                    "sppgId": "SPPG-022",
-                    "namaSppg": "Bonto Perak 2",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Saharuddin SPPG Bonto Perak2",
-                    "kontakPelapor": "085343693131",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "30 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2039",
-                    "noStbp": "",
-                    "noSts": "067",
-                    "tanggalSts": "30 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0067",
-                    "sppgId": "SPPG-022",
-                    "namaSppg": "Bonto Perak 2",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Saharuddin SPPG Bonto Perak2",
-                    "kontakPelapor": "085343693131",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "29 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "0608",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "29 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0068",
-                    "sppgId": "SPPG-023",
-                    "namaSppg": "Mappasaile",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Evi Irviyanti SPPG Mappasaile",
-                    "kontakPelapor": "085870552736",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "16 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "4284",
-                    "noStbp": "0094",
-                    "noSts": "044",
-                    "tanggalSts": "16 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0069",
-                    "sppgId": "SPPG-023",
-                    "namaSppg": "Mappasaile",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Evi Irviyanti SPPG Mappasaile",
-                    "kontakPelapor": "085870552736",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "30 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "5314",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "30 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0070",
-                    "sppgId": "SPPG-023",
-                    "namaSppg": "Mappasaile",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Evi Irviyanti SPPG Mappasaile",
-                    "kontakPelapor": "085870552736",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "23 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "7977",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "23 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0071",
-                    "sppgId": "SPPG-024",
-                    "namaSppg": "Mappasaile 2",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Akbar Tola SPPG Mappasaile 2",
-                    "kontakPelapor": "085340312677",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "13 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "7536",
-                    "noStbp": "0082",
-                    "noSts": "032",
-                    "tanggalSts": "13 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0072",
-                    "sppgId": "SPPG-024",
-                    "namaSppg": "Mappasaile 2",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Akbar Tola SPPG Mappasaile 2",
-                    "kontakPelapor": "085340312677",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "30 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "0979",
-                    "noStbp": "",
-                    "noSts": "061",
-                    "tanggalSts": "30 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0073",
-                    "sppgId": "SPPG-024",
-                    "namaSppg": "Mappasaile 2",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Akbar Tola SPPG Mappasaile 2",
-                    "kontakPelapor": "085340312677",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "30 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2948",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "30 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0074",
-                    "sppgId": "SPPG-025",
-                    "namaSppg": "Padoang Doangan",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Amran SPPG Padoang2an",
-                    "kontakPelapor": "085230740101",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "13 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "6525",
-                    "noStbp": "0083",
-                    "noSts": "033",
-                    "tanggalSts": "13 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0075",
-                    "sppgId": "SPPG-025",
-                    "namaSppg": "Padoang Doangan",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Amran SPPG Padoang2an",
-                    "kontakPelapor": "085230740101",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "30 Juni 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "0652",
-                    "noStbp": "",
-                    "noSts": "070",
-                    "tanggalSts": "30 Juni 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0076",
-                    "sppgId": "SPPG-025",
-                    "namaSppg": "Padoang Doangan",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Amran SPPG Padoang2an",
-                    "kontakPelapor": "085230740101",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "24 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "6610",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "24 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202607-0077",
-                    "sppgId": "SPPG-025",
-                    "namaSppg": "Padoang Doangan",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Amran SPPG Padoang2an",
-                    "kontakPelapor": "085230740101",
-                    "periodeBulan": "Juli",
-                    "tanggalTransfer": "28 Agus 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2088",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "28 Agus 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0078",
-                    "sppgId": "SPPG-026",
-                    "namaSppg": "Tumampua",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Mar'atul Islam SPPG Tumampua",
-                    "kontakPelapor": "085338318156",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "13 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "0581",
-                    "noStbp": "0076",
-                    "noSts": "026",
-                    "tanggalSts": "13 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0079",
-                    "sppgId": "SPPG-026",
-                    "namaSppg": "Tumampua",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Mar'atul Islam SPPG Tumampua",
-                    "kontakPelapor": "085338318156",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "08 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "8584",
-                    "noStbp": "",
-                    "noSts": "081",
-                    "tanggalSts": "08 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0080",
-                    "sppgId": "SPPG-026",
-                    "namaSppg": "Tumampua",
-                    "kecamatan": "Pangkajene",
-                    "namaPelapor": "Mar'atul Islam SPPG Tumampua",
-                    "kontakPelapor": "085338318156",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "08 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "8585",
-                    "noStbp": "",
-                    "noSts": "082",
-                    "tanggalSts": "08 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0081",
-                    "sppgId": "SPPG-027",
-                    "namaSppg": "Bone",
-                    "kecamatan": "Segeri",
-                    "namaPelapor": "Mawarni Utami SPPG Bone",
-                    "kontakPelapor": "085346567732",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "20 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "0764",
-                    "noStbp": "0096",
-                    "noSts": "046",
-                    "tanggalSts": "20 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0082",
-                    "sppgId": "SPPG-027",
-                    "namaSppg": "Bone",
-                    "kecamatan": "Segeri",
-                    "namaPelapor": "Mawarni Utami SPPG Bone",
-                    "kontakPelapor": "085346567732",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "21 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "2499",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "21 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0083",
-                    "sppgId": "SPPG-027",
-                    "namaSppg": "Bone",
-                    "kecamatan": "Segeri",
-                    "namaPelapor": "Mawarni Utami SPPG Bone",
-                    "kontakPelapor": "085346567732",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "21 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "5234",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "21 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202607-0084",
-                    "sppgId": "SPPG-027",
-                    "namaSppg": "Bone",
-                    "kecamatan": "Segeri",
-                    "namaPelapor": "Mawarni Utami SPPG Bone",
-                    "kontakPelapor": "085346567732",
-                    "periodeBulan": "Juli",
-                    "tanggalTransfer": "24 Agus 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "8393",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "24 Agus 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202604-0085",
-                    "sppgId": "SPPG-028",
-                    "namaSppg": "Segeri",
-                    "kecamatan": "Segeri",
-                    "namaPelapor": "Ashar Saputra SPPG Segeri",
-                    "kontakPelapor": "085259870711",
-                    "periodeBulan": "April",
-                    "tanggalTransfer": "20 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "4752",
-                    "noStbp": "0097",
-                    "noSts": "047",
-                    "tanggalSts": "20 Mei 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202605-0086",
-                    "sppgId": "SPPG-028",
-                    "namaSppg": "Segeri",
-                    "kecamatan": "Segeri",
-                    "namaPelapor": "Ashar Saputra SPPG Segeri",
-                    "kontakPelapor": "085259870711",
-                    "periodeBulan": "Mei",
-                    "tanggalTransfer": "15 Mei 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202606-0087",
-                    "sppgId": "SPPG-028",
-                    "namaSppg": "Segeri",
-                    "kecamatan": "Segeri",
-                    "namaPelapor": "Ashar Saputra SPPG Segeri",
-                    "kontakPelapor": "085259870711",
-                    "periodeBulan": "Juni",
-                    "tanggalTransfer": "23 Juli 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "8367",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "23 Juli 2026",
-                    "catatan": "Data Historis Excel"
-          },
-          {
-                    "id": "TRX-202607-0088",
-                    "sppgId": "SPPG-028",
-                    "namaSppg": "Segeri",
-                    "kecamatan": "Segeri",
-                    "namaPelapor": "Ashar Saputra SPPG Segeri",
-                    "kontakPelapor": "085259870711",
-                    "periodeBulan": "Juli",
-                    "tanggalTransfer": "10 Agus 2026",
-                    "jumlahTransfer": 750000,
-                    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-                    "status": "SELESAI_STS",
-                    "noTrxBank": "1256",
-                    "noStbp": "",
-                    "noSts": "",
-                    "tanggalSts": "10 Agus 2026",
-                    "catatan": "Data Historis Excel"
-          }
-],
-
+  {
+    "id": "TRX-202604-0001",
+    "sppgId": "SPPG-001",
+    "namaSppg": "Kassi",
+    "kecamatan": "Balocci",
+    "namaPelapor": "Siti Zuraima SPPG Kassi1",
+    "kontakPelapor": "089501737683",
+    "periodeBulan": "April",
+    "tanggalTransfer": "14 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "4635",
+    "noStbp": "0084",
+    "noSts": "034",
+    "tanggalSts": "14 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0002",
+    "sppgId": "SPPG-001",
+    "namaSppg": "Kassi",
+    "kecamatan": "Balocci",
+    "namaPelapor": "Siti Zuraima SPPG Kassi1",
+    "kontakPelapor": "089501737683",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "08 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "5870",
+    "noStbp": "",
+    "noSts": "084",
+    "tanggalSts": "08 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0003",
+    "sppgId": "SPPG-001",
+    "namaSppg": "Kassi",
+    "kecamatan": "Balocci",
+    "namaPelapor": "Siti Zuraima SPPG Kassi1",
+    "kontakPelapor": "089501737683",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "28 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "8350",
+    "noStbp": "",
+    "noSts": "116",
+    "tanggalSts": "28 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0004",
+    "sppgId": "SPPG-002",
+    "namaSppg": "Kassi 2",
+    "kecamatan": "Balocci",
+    "namaPelapor": "Darwan Muis SPPG Kassi2",
+    "kontakPelapor": "085393517300",
+    "periodeBulan": "April",
+    "tanggalTransfer": "14 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "8618",
+    "noStbp": "0085",
+    "noSts": "035",
+    "tanggalSts": "14 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0005",
+    "sppgId": "SPPG-002",
+    "namaSppg": "Kassi 2",
+    "kecamatan": "Balocci",
+    "namaPelapor": "Darwan Muis SPPG Kassi2",
+    "kontakPelapor": "085393517300",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "10 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "7839",
+    "noStbp": "",
+    "noSts": "087",
+    "tanggalSts": "10 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0006",
+    "sppgId": "SPPG-002",
+    "namaSppg": "Kassi 2",
+    "kecamatan": "Balocci",
+    "namaPelapor": "Darwan Muis SPPG Kassi2",
+    "kontakPelapor": "085393517300",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "10 Ags 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "6417",
+    "noStbp": "",
+    "noSts": "131",
+    "tanggalSts": "10 Ags 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0007",
+    "sppgId": "SPPG-003",
+    "namaSppg": "Samalewa 1",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Haerul Fahresi SPPG Samalewa1",
+    "kontakPelapor": "087714145593",
+    "periodeBulan": "April",
+    "tanggalTransfer": "14 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2626",
+    "noStbp": "0086",
+    "noSts": "036",
+    "tanggalSts": "14 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0008",
+    "sppgId": "SPPG-003",
+    "namaSppg": "Samalewa 1",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Haerul Fahresi SPPG Samalewa1",
+    "kontakPelapor": "087714145593",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "2 JuLi 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "5122",
+    "noStbp": "",
+    "noSts": "075",
+    "tanggalSts": "2 JuLi 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0009",
+    "sppgId": "SPPG-003",
+    "namaSppg": "Samalewa 1",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Haerul Fahresi SPPG Samalewa1",
+    "kontakPelapor": "087714145593",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "17 JuLi 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "0098",
+    "noStbp": "",
+    "noSts": "103",
+    "tanggalSts": "17 JuLi 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0010",
+    "sppgId": "SPPG-004",
+    "namaSppg": "Samalewa 2",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Nurul Mutmainnah SPPG Samalewa 2",
+    "kontakPelapor": "085756416172",
+    "periodeBulan": "April",
+    "tanggalTransfer": "14 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "3976",
+    "noStbp": "0087",
+    "noSts": "037",
+    "tanggalSts": "14 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0011",
+    "sppgId": "SPPG-004",
+    "namaSppg": "Samalewa 2",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Nurul Mutmainnah SPPG Samalewa 2",
+    "kontakPelapor": "085756416172",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "30 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "5456",
+    "noStbp": "",
+    "noSts": "069",
+    "tanggalSts": "30 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0012",
+    "sppgId": "SPPG-004",
+    "namaSppg": "Samalewa 2",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Nurul Mutmainnah SPPG Samalewa 2",
+    "kontakPelapor": "085756416172",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "23 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "4717",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "23 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0013",
+    "sppgId": "SPPG-005",
+    "namaSppg": "Samalewa 3",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Wahyuddin SPPG Samalewa3",
+    "kontakPelapor": "085342286433",
+    "periodeBulan": "April",
+    "tanggalTransfer": "16 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "0518",
+    "noStbp": "0091",
+    "noSts": "041",
+    "tanggalSts": "16 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0014",
+    "sppgId": "SPPG-005",
+    "namaSppg": "Samalewa 3",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Wahyuddin SPPG Samalewa3",
+    "kontakPelapor": "085342286433",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "25 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "1936",
+    "noStbp": "",
+    "noSts": "065",
+    "tanggalSts": "25 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0015",
+    "sppgId": "SPPG-005",
+    "namaSppg": "Samalewa 3",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Wahyuddin SPPG Samalewa3",
+    "kontakPelapor": "085342286433",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "15 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "0259",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "15 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0016",
+    "sppgId": "SPPG-006",
+    "namaSppg": "Samalewa 4",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Musakkir SPPG Samalewa4",
+    "kontakPelapor": "082296461855",
+    "periodeBulan": "April",
+    "tanggalTransfer": "19 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "1172",
+    "noStbp": "",
+    "noSts": "045",
+    "tanggalSts": "19 Mei 2026",
+    "catatan": "743.500 (kurang 6.500)"
+  },
+  {
+    "id": "TRX-202605-0017",
+    "sppgId": "SPPG-006",
+    "namaSppg": "Samalewa 4",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Musakkir SPPG Samalewa4",
+    "kontakPelapor": "082296461855",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "19 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "6424",
+    "noStbp": "",
+    "noSts": "062",
+    "tanggalSts": "19 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0018",
+    "sppgId": "SPPG-006",
+    "namaSppg": "Samalewa 4",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Musakkir SPPG Samalewa4",
+    "kontakPelapor": "082296461855",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "11 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2527",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "11 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0019",
+    "sppgId": "SPPG-007",
+    "namaSppg": "Samalewa 5",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Anugrahwan SPPG Samalewa 5",
+    "kontakPelapor": "081340075010",
+    "periodeBulan": "April",
+    "tanggalTransfer": "03 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2970",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "03 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0020",
+    "sppgId": "SPPG-007",
+    "namaSppg": "Samalewa 5",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Anugrahwan SPPG Samalewa 5",
+    "kontakPelapor": "081340075010",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "19 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "6887",
+    "noStbp": "",
+    "noSts": "063",
+    "tanggalSts": "19 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0021",
+    "sppgId": "SPPG-007",
+    "namaSppg": "Samalewa 5",
+    "kecamatan": "Bungoro",
+    "namaPelapor": "Anugrahwan SPPG Samalewa 5",
+    "kontakPelapor": "081340075010",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "13 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "5266",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "13 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0022",
+    "sppgId": "SPPG-008",
+    "namaSppg": "Labakkang",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Ardiansyah SPPG Labakkang",
+    "kontakPelapor": "085975073614",
+    "periodeBulan": "April",
+    "tanggalTransfer": "16 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "1570",
+    "noStbp": "0092",
+    "noSts": "042",
+    "tanggalSts": "16 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0023",
+    "sppgId": "SPPG-008",
+    "namaSppg": "Labakkang",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Ardiansyah SPPG Labakkang",
+    "kontakPelapor": "085975073614",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "14 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "8472",
+    "noStbp": "",
+    "noSts": "093",
+    "tanggalSts": "14 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0024",
+    "sppgId": "SPPG-008",
+    "namaSppg": "Labakkang",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Ardiansyah SPPG Labakkang",
+    "kontakPelapor": "085975073614",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "21 Jul 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2419",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "21 Jul 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202607-0025",
+    "sppgId": "SPPG-008",
+    "namaSppg": "Labakkang",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Ardiansyah SPPG Labakkang",
+    "kontakPelapor": "085975073614",
+    "periodeBulan": "Juli",
+    "tanggalTransfer": "21/8/2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "1226",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "21/8/2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0026",
+    "sppgId": "SPPG-009",
+    "namaSppg": "Labakkang 2",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Muammar SPPG Labakkang 2",
+    "kontakPelapor": "082349170976",
+    "periodeBulan": "April",
+    "tanggalTransfer": "15 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "5299",
+    "noStbp": "0089",
+    "noSts": "039",
+    "tanggalSts": "15 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0027",
+    "sppgId": "SPPG-009",
+    "namaSppg": "Labakkang 2",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Muammar SPPG Labakkang 2",
+    "kontakPelapor": "082349170976",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "30 Jul 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2536",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "30 Jul 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0028",
+    "sppgId": "SPPG-009",
+    "namaSppg": "Labakkang 2",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Muammar SPPG Labakkang 2",
+    "kontakPelapor": "082349170976",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "30 Jul 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2537",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "30 Jul 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0029",
+    "sppgId": "SPPG-010",
+    "namaSppg": "Labakkang 3",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Heris SPPG Labakkang 3",
+    "kontakPelapor": "085343793941",
+    "periodeBulan": "April",
+    "tanggalTransfer": "29 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "6780",
+    "noStbp": "",
+    "noSts": "050",
+    "tanggalSts": "29 Mei 2026",
+    "catatan": "Bukti TF: 29/05/2026 rek.koran 03/06/2026 747.500 (kurang 2.500)"
+  },
+  {
+    "id": "TRX-202605-0030",
+    "sppgId": "SPPG-010",
+    "namaSppg": "Labakkang 3",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Heris SPPG Labakkang 3",
+    "kontakPelapor": "085343793941",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "17 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "4062",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "17 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0031",
+    "sppgId": "SPPG-010",
+    "namaSppg": "Labakkang 3",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Heris SPPG Labakkang 3",
+    "kontakPelapor": "085343793941",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "27 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "6240",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "27 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202607-0032",
+    "sppgId": "SPPG-010",
+    "namaSppg": "Labakkang 3",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Heris SPPG Labakkang 3",
+    "kontakPelapor": "085343793941",
+    "periodeBulan": "Juli",
+    "tanggalTransfer": "27 Agus 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "7567",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "27 Agus 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0033",
+    "sppgId": "SPPG-011",
+    "namaSppg": "Manakku",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Rabiullanda Kulsum SPPG Manakku",
+    "kontakPelapor": "085341370164",
+    "periodeBulan": "April",
+    "tanggalTransfer": "13 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "6534",
+    "noStbp": "0077",
+    "noSts": "027",
+    "tanggalSts": "13 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0034",
+    "sppgId": "SPPG-011",
+    "namaSppg": "Manakku",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Rabiullanda Kulsum SPPG Manakku",
+    "kontakPelapor": "085341370164",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "08 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "5847",
+    "noStbp": "",
+    "noSts": "082",
+    "tanggalSts": "08 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0035",
+    "sppgId": "SPPG-011",
+    "namaSppg": "Manakku",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Rabiullanda Kulsum SPPG Manakku",
+    "kontakPelapor": "085341370164",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "14 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "9153",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "14 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0036",
+    "sppgId": "SPPG-012",
+    "namaSppg": "Mangallekana",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Nur Chaerunnisa SPPG Mangallekana",
+    "kontakPelapor": "082315045264",
+    "periodeBulan": "April",
+    "tanggalTransfer": "15 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "1973",
+    "noStbp": "0090",
+    "noSts": "040",
+    "tanggalSts": "15 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0037",
+    "sppgId": "SPPG-012",
+    "namaSppg": "Mangallekana",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Nur Chaerunnisa SPPG Mangallekana",
+    "kontakPelapor": "082315045264",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "29 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "4680",
+    "noStbp": "",
+    "noSts": "066",
+    "tanggalSts": "29 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0038",
+    "sppgId": "SPPG-012",
+    "namaSppg": "Mangallekana",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Nur Chaerunnisa SPPG Mangallekana",
+    "kontakPelapor": "082315045264",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "27 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "3233",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "27 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0039",
+    "sppgId": "SPPG-013",
+    "namaSppg": "Batara",
+    "kecamatan": "Labakkang",
+    "namaPelapor": "Fatma Sri Fatimah SPPG Batara",
+    "kontakPelapor": "088744874889",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "25 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "3870",
+    "noStbp": "",
+    "noSts": "064",
+    "tanggalSts": "25 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0040",
+    "sppgId": "SPPG-014",
+    "namaSppg": "Manggalung",
+    "kecamatan": "Mandalle",
+    "namaPelapor": "Adi Irwandi SPPG Manggalung",
+    "kontakPelapor": "085242761351",
+    "periodeBulan": "April",
+    "tanggalTransfer": "16 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2076",
+    "noStbp": "0093",
+    "noSts": "043",
+    "tanggalSts": "16 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0041",
+    "sppgId": "SPPG-014",
+    "namaSppg": "Manggalung",
+    "kecamatan": "Mandalle",
+    "namaPelapor": "Adi Irwandi SPPG Manggalung",
+    "kontakPelapor": "085242761351",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "07 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "07 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0042",
+    "sppgId": "SPPG-014",
+    "namaSppg": "Manggalung",
+    "kecamatan": "Mandalle",
+    "namaPelapor": "Adi Irwandi SPPG Manggalung",
+    "kontakPelapor": "085242761351",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "20 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "1010",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "20 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0043",
+    "sppgId": "SPPG-015",
+    "namaSppg": "Tamarupa",
+    "kecamatan": "Mandalle",
+    "namaPelapor": "Agatha Febriandani SPPG Tamarupa",
+    "kontakPelapor": "085346164018",
+    "periodeBulan": "April",
+    "tanggalTransfer": "13 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "8308",
+    "noStbp": "0078",
+    "noSts": "028",
+    "tanggalSts": "13 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0044",
+    "sppgId": "SPPG-015",
+    "namaSppg": "Tamarupa",
+    "kecamatan": "Mandalle",
+    "namaPelapor": "Agatha Febriandani SPPG Tamarupa",
+    "kontakPelapor": "085346164018",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "07 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "0991",
+    "noStbp": "",
+    "noSts": "078",
+    "tanggalSts": "07 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0045",
+    "sppgId": "SPPG-015",
+    "namaSppg": "Tamarupa",
+    "kecamatan": "Mandalle",
+    "namaPelapor": "Agatha Febriandani SPPG Tamarupa",
+    "kontakPelapor": "085346164018",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "16 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "8920",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "16 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0046",
+    "sppgId": "SPPG-016",
+    "namaSppg": "Talaka",
+    "kecamatan": "Marang",
+    "namaPelapor": "Awal Fajaruddin SPPG Talaka1",
+    "kontakPelapor": "089684444665",
+    "periodeBulan": "April",
+    "tanggalTransfer": "18 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "18 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0047",
+    "sppgId": "SPPG-016",
+    "namaSppg": "Talaka",
+    "kecamatan": "Marang",
+    "namaPelapor": "Awal Fajaruddin SPPG Talaka1",
+    "kontakPelapor": "089684444665",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "16 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "1404",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "16 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0048",
+    "sppgId": "SPPG-016",
+    "namaSppg": "Talaka",
+    "kecamatan": "Marang",
+    "namaPelapor": "Awal Fajaruddin SPPG Talaka1",
+    "kontakPelapor": "089684444665",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "16 Juli 2025",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "9649",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "16 Juli 2025",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0049",
+    "sppgId": "SPPG-017",
+    "namaSppg": "Talaka 2",
+    "kecamatan": "Marang",
+    "namaPelapor": "Nurul Afian SPPG Talaka2",
+    "kontakPelapor": "085397984559",
+    "periodeBulan": "April",
+    "tanggalTransfer": "13 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "1130",
+    "noStbp": "0079",
+    "noSts": "029",
+    "tanggalSts": "13 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0050",
+    "sppgId": "SPPG-017",
+    "namaSppg": "Talaka 2",
+    "kecamatan": "Marang",
+    "namaPelapor": "Nurul Afian SPPG Talaka2",
+    "kontakPelapor": "085397984559",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "05 JuLi 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "0724",
+    "noStbp": "",
+    "noSts": "076",
+    "tanggalSts": "05 JuLi 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0051",
+    "sppgId": "SPPG-017",
+    "namaSppg": "Talaka 2",
+    "kecamatan": "Marang",
+    "namaPelapor": "Nurul Afian SPPG Talaka2",
+    "kontakPelapor": "085397984559",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "24 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2517",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "24 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0052",
+    "sppgId": "SPPG-018",
+    "namaSppg": "Bonto Langkasa",
+    "kecamatan": "Minasa Tene",
+    "namaPelapor": "Indah Putri Humairah SPPG Bonto Langkasa",
+    "kontakPelapor": "087858320557",
+    "periodeBulan": "April",
+    "tanggalTransfer": "15 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2679",
+    "noStbp": "0099",
+    "noSts": "051",
+    "tanggalSts": "15 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0053",
+    "sppgId": "SPPG-018",
+    "namaSppg": "Bonto Langkasa",
+    "kecamatan": "Minasa Tene",
+    "namaPelapor": "Indah Putri Humairah SPPG Bonto Langkasa",
+    "kontakPelapor": "087858320557",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "15 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "15 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0054",
+    "sppgId": "SPPG-018",
+    "namaSppg": "Bonto Langkasa",
+    "kecamatan": "Minasa Tene",
+    "namaPelapor": "Indah Putri Humairah SPPG Bonto Langkasa",
+    "kontakPelapor": "087858320557",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "22 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "4561",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "22 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0055",
+    "sppgId": "SPPG-019",
+    "namaSppg": "Kabba",
+    "kecamatan": "Minasa Tene",
+    "namaPelapor": "Fani Fajriani SPPG Kabba",
+    "kontakPelapor": "082318479896",
+    "periodeBulan": "April",
+    "tanggalTransfer": "14 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "6036",
+    "noStbp": "0088",
+    "noSts": "038",
+    "tanggalSts": "14 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0056",
+    "sppgId": "SPPG-019",
+    "namaSppg": "Kabba",
+    "kecamatan": "Minasa Tene",
+    "namaPelapor": "Fani Fajriani SPPG Kabba",
+    "kontakPelapor": "082318479896",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "06 JuLi 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "4598",
+    "noStbp": "",
+    "noSts": "077",
+    "tanggalSts": "06 JuLi 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0057",
+    "sppgId": "SPPG-019",
+    "namaSppg": "Kabba",
+    "kecamatan": "Minasa Tene",
+    "namaPelapor": "Fani Fajriani SPPG Kabba",
+    "kontakPelapor": "082318479896",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "31 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2407",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "31 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0058",
+    "sppgId": "SPPG-021",
+    "namaSppg": "Bonto Perak 1",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Fahmi Sofyan SPPG Bonto Perak1",
+    "kontakPelapor": "081244287373",
+    "periodeBulan": "April",
+    "tanggalTransfer": "12 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "1100",
+    "noStbp": "0075",
+    "noSts": "025",
+    "tanggalSts": "12 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0059",
+    "sppgId": "SPPG-021",
+    "namaSppg": "Bonto Perak 1",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Fahmi Sofyan SPPG Bonto Perak1",
+    "kontakPelapor": "081244287373",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "30 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "6903",
+    "noStbp": "",
+    "noSts": "068",
+    "tanggalSts": "30 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0060",
+    "sppgId": "SPPG-021",
+    "namaSppg": "Bonto Perak 1",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Fahmi Sofyan SPPG Bonto Perak1",
+    "kontakPelapor": "081244287373",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "10 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "4993",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "10 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202607-0061",
+    "sppgId": "SPPG-021",
+    "namaSppg": "Bonto Perak 1",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Fahmi Sofyan SPPG Bonto Perak1",
+    "kontakPelapor": "081244287373",
+    "periodeBulan": "Juli",
+    "tanggalTransfer": "20 JuLi 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "3912",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "20 JuLi 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0062",
+    "sppgId": "SPPG-022",
+    "namaSppg": "Bonto Perak 2",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Saharuddin SPPG Bonto Perak2",
+    "kontakPelapor": "085343693131",
+    "periodeBulan": "April",
+    "tanggalTransfer": "13 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "9043",
+    "noStbp": "0080",
+    "noSts": "030",
+    "tanggalSts": "13 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0063",
+    "sppgId": "SPPG-022",
+    "namaSppg": "Bonto Perak 2",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Saharuddin SPPG Bonto Perak2",
+    "kontakPelapor": "085343693131",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "10 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "4991",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "10 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0064",
+    "sppgId": "SPPG-022",
+    "namaSppg": "Bonto Perak 2",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Saharuddin SPPG Bonto Perak2",
+    "kontakPelapor": "085343693131",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "20 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "3912",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "20 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0065",
+    "sppgId": "SPPG-023",
+    "namaSppg": "Mappasaile",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Evi Irviyanti SPPG Mappasaile",
+    "kontakPelapor": "085870552736",
+    "periodeBulan": "April",
+    "tanggalTransfer": "13 Mei 2025",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "1053",
+    "noStbp": "0081",
+    "noSts": "031",
+    "tanggalSts": "13 Mei 2025",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0066",
+    "sppgId": "SPPG-023",
+    "namaSppg": "Mappasaile",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Evi Irviyanti SPPG Mappasaile",
+    "kontakPelapor": "085870552736",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "30 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2039",
+    "noStbp": "",
+    "noSts": "067",
+    "tanggalSts": "30 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0067",
+    "sppgId": "SPPG-023",
+    "namaSppg": "Mappasaile",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Evi Irviyanti SPPG Mappasaile",
+    "kontakPelapor": "085870552736",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "29 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "0608",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "29 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0068",
+    "sppgId": "SPPG-024",
+    "namaSppg": "Mappasaile 2",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Akbar Tola SPPG Mappasaile 2",
+    "kontakPelapor": "085340312677",
+    "periodeBulan": "April",
+    "tanggalTransfer": "16 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "4284",
+    "noStbp": "0094",
+    "noSts": "044",
+    "tanggalSts": "16 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0069",
+    "sppgId": "SPPG-024",
+    "namaSppg": "Mappasaile 2",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Akbar Tola SPPG Mappasaile 2",
+    "kontakPelapor": "085340312677",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "30 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "30 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0070",
+    "sppgId": "SPPG-024",
+    "namaSppg": "Mappasaile 2",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Akbar Tola SPPG Mappasaile 2",
+    "kontakPelapor": "085340312677",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "23 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "7977",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "23 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0071",
+    "sppgId": "SPPG-025",
+    "namaSppg": "Padoang Doangan",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Amran SPPG Padoang2an",
+    "kontakPelapor": "085230740101",
+    "periodeBulan": "April",
+    "tanggalTransfer": "13 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "7536",
+    "noStbp": "0082",
+    "noSts": "032",
+    "tanggalSts": "13 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0072",
+    "sppgId": "SPPG-025",
+    "namaSppg": "Padoang Doangan",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Amran SPPG Padoang2an",
+    "kontakPelapor": "085230740101",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "30 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "0979",
+    "noStbp": "",
+    "noSts": "061",
+    "tanggalSts": "30 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0073",
+    "sppgId": "SPPG-025",
+    "namaSppg": "Padoang Doangan",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Amran SPPG Padoang2an",
+    "kontakPelapor": "085230740101",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "30 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2948",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "30 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0074",
+    "sppgId": "SPPG-026",
+    "namaSppg": "Tumampua",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Mar'atul Islam SPPG Tumampua",
+    "kontakPelapor": "085338318156",
+    "periodeBulan": "April",
+    "tanggalTransfer": "13 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "6525",
+    "noStbp": "0083",
+    "noSts": "033",
+    "tanggalSts": "13 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0075",
+    "sppgId": "SPPG-026",
+    "namaSppg": "Tumampua",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Mar'atul Islam SPPG Tumampua",
+    "kontakPelapor": "085338318156",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "30 Juni 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "0652",
+    "noStbp": "",
+    "noSts": "070",
+    "tanggalSts": "30 Juni 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0076",
+    "sppgId": "SPPG-026",
+    "namaSppg": "Tumampua",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Mar'atul Islam SPPG Tumampua",
+    "kontakPelapor": "085338318156",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "24 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "6610",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "24 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202607-0077",
+    "sppgId": "SPPG-026",
+    "namaSppg": "Tumampua",
+    "kecamatan": "Pangkajene",
+    "namaPelapor": "Mar'atul Islam SPPG Tumampua",
+    "kontakPelapor": "085338318156",
+    "periodeBulan": "Juli",
+    "tanggalTransfer": "28 Agus 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2088",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "28 Agus 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0078",
+    "sppgId": "SPPG-027",
+    "namaSppg": "Bone",
+    "kecamatan": "Segeri",
+    "namaPelapor": "Mawarni Utami SPPG Bone",
+    "kontakPelapor": "085346567732",
+    "periodeBulan": "April",
+    "tanggalTransfer": "13 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "0581",
+    "noStbp": "0076",
+    "noSts": "026",
+    "tanggalSts": "13 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0079",
+    "sppgId": "SPPG-027",
+    "namaSppg": "Bone",
+    "kecamatan": "Segeri",
+    "namaPelapor": "Mawarni Utami SPPG Bone",
+    "kontakPelapor": "085346567732",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "08 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "8584",
+    "noStbp": "",
+    "noSts": "081",
+    "tanggalSts": "08 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0080",
+    "sppgId": "SPPG-027",
+    "namaSppg": "Bone",
+    "kecamatan": "Segeri",
+    "namaPelapor": "Mawarni Utami SPPG Bone",
+    "kontakPelapor": "085346567732",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "08 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "8585",
+    "noStbp": "",
+    "noSts": "082",
+    "tanggalSts": "08 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0081",
+    "sppgId": "SPPG-028",
+    "namaSppg": "Segeri",
+    "kecamatan": "Segeri",
+    "namaPelapor": "Ashar Saputra SPPG Segeri",
+    "kontakPelapor": "085259870711",
+    "periodeBulan": "April",
+    "tanggalTransfer": "20 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "0764",
+    "noStbp": "0096",
+    "noSts": "046",
+    "tanggalSts": "20 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0082",
+    "sppgId": "SPPG-028",
+    "namaSppg": "Segeri",
+    "kecamatan": "Segeri",
+    "namaPelapor": "Ashar Saputra SPPG Segeri",
+    "kontakPelapor": "085259870711",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "21 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "2499",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "21 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0083",
+    "sppgId": "SPPG-028",
+    "namaSppg": "Segeri",
+    "kecamatan": "Segeri",
+    "namaPelapor": "Ashar Saputra SPPG Segeri",
+    "kontakPelapor": "085259870711",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "21 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "5234",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "21 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202607-0084",
+    "sppgId": "SPPG-028",
+    "namaSppg": "Segeri",
+    "kecamatan": "Segeri",
+    "namaPelapor": "Ashar Saputra SPPG Segeri",
+    "kontakPelapor": "085259870711",
+    "periodeBulan": "Juli",
+    "tanggalTransfer": "24 Agus 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "8393",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "24 Agus 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202604-0085",
+    "sppgId": "SPPG-029",
+    "namaSppg": "Segeri 2",
+    "kecamatan": "Segeri",
+    "namaPelapor": "Amell Akuntan SPPG Segeri2",
+    "kontakPelapor": "082189423315",
+    "periodeBulan": "April",
+    "tanggalTransfer": "20 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "4752",
+    "noStbp": "0097",
+    "noSts": "047",
+    "tanggalSts": "20 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202605-0086",
+    "sppgId": "SPPG-029",
+    "namaSppg": "Segeri 2",
+    "kecamatan": "Segeri",
+    "namaPelapor": "Amell Akuntan SPPG Segeri2",
+    "kontakPelapor": "082189423315",
+    "periodeBulan": "Mei",
+    "tanggalTransfer": "15 Mei 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "15 Mei 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202606-0087",
+    "sppgId": "SPPG-029",
+    "namaSppg": "Segeri 2",
+    "kecamatan": "Segeri",
+    "namaPelapor": "Amell Akuntan SPPG Segeri2",
+    "kontakPelapor": "082189423315",
+    "periodeBulan": "Juni",
+    "tanggalTransfer": "23 Juli 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "8367",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "23 Juli 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  },
+  {
+    "id": "TRX-202607-0088",
+    "sppgId": "SPPG-029",
+    "namaSppg": "Segeri 2",
+    "kecamatan": "Segeri",
+    "namaPelapor": "Amell Akuntan SPPG Segeri2",
+    "kontakPelapor": "082189423315",
+    "periodeBulan": "Juli",
+    "tanggalTransfer": "10 Agus 2026",
+    "jumlahTransfer": 750000,
+    "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
+    "status": "SELESAI_STS",
+    "noTrxBank": "1256",
+    "noStbp": "",
+    "noSts": "",
+    "tanggalSts": "10 Agus 2026",
+    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+  }
+],
+
         // Matriks Data: DIHITUNG DINAMIS DARI DATA TRANSAKSI & DIURUTKAN SESUAI ABJAD
         get matriksData() {
           const bulanFullToShort = {
@@ -5208,20 +5209,27 @@
         },
 
         async savePageSettings() {
+          if (this.config.driveFolderId) {
+            this.config.driveFolderId = this.cleanDriveFolderId(this.config.driveFolderId);
+          }
           document.title = this.config.appName + ' - ' + this.config.tagline;
-          if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+
+          if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+              .withSuccessHandler((res) => {
+                this.notifySuccess('Pengaturan Disimpan', 'Konfigurasi aplikasi berhasil disimpan di database Google Sheets.');
+              })
+              .withFailureHandler((err) => {
+                this.notifyError('Gagal Menyimpan', err.toString());
+              })
+              .saveAppConfig(this.config);
+          } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
             try {
               await apiCall('saveAppConfig', { configMap: this.config });
               this.notifySuccess('Pengaturan Disimpan', 'Konfigurasi aplikasi berhasil disimpan di database Google Sheets.');
             } catch (err) {
               this.notifyError('Gagal Menyimpan', err.toString());
             }
-          } else if (typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run
-              .withSuccessHandler((res) => {
-                this.notifySuccess('Pengaturan Disimpan', 'Konfigurasi aplikasi berhasil disimpan di database Google Sheets.');
-              })
-              .saveAppConfig(this.config);
           } else {
             this.notifySuccess('Pengaturan Disimpan', 'Konfigurasi logo, nama instansi, tahun anggaran, dan parameter sistem berhasil disimpan.');
           }
@@ -5316,6 +5324,28 @@
 
         formatTRX(noRef, bulan, sppgId, kec) {
           return this.formatToken(this.config.templateTrx, { no: noRef, bulan, sppgId, kec });
+        },
+
+        cleanDriveFolderId(input) {
+          if (!input) return '';
+          const str = String(input).trim().replace(/["']/g, '');
+          let match = str.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+          if (match && match[1]) return match[1];
+          match = str.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+          if (match && match[1]) return match[1];
+          match = str.match(/\/d\/([a-zA-Z0-9_-]+)/);
+          if (match && match[1]) return match[1];
+          return str.replace(/[?&#\/].*$/, '').trim();
+        },
+
+        getSlipPreviewUrl(url) {
+          if (!url) return '';
+          if (url.startsWith('data:image')) return url;
+          const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+          if (match && match[1]) {
+            return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+          }
+          return url;
         },
 
         // Popover Action on Dashboard Matrix Cell Click (Hanya untuk sel yang ada data setoran)
@@ -5420,19 +5450,22 @@
         },
 
         async savePeriodeWajib() {
-          if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+          if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+              .withSuccessHandler((res) => {
+                this.notifySuccess('Periode Wajib Disimpan', 'Matriks kewajiban setor per SPPG berhasil disimpan ke Google Sheets.');
+              })
+              .withFailureHandler((err) => {
+                this.notifyError('Gagal Menyimpan', err.toString());
+              })
+              .savePeriodeWajib(this.periodeWajibMap);
+          } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
             try {
               await apiCall('savePeriodeWajib', { periodeMap: this.periodeWajibMap });
               this.notifySuccess('Periode Wajib Disimpan', 'Matriks kewajiban setor per SPPG berhasil disimpan ke Google Sheets.');
             } catch (err) {
               this.notifyError('Gagal Menyimpan', err.toString());
             }
-          } else if (typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run
-              .withSuccessHandler((res) => {
-                this.notifySuccess('Periode Wajib Disimpan', 'Matriks kewajiban setor per SPPG berhasil disimpan ke Google Sheets.');
-              })
-              .savePeriodeWajib(this.periodeWajibMap);
           } else {
             this.notifySuccess('Periode Wajib Disimpan', 'Pengaturan kewajiban setor per SPPG berhasil disinkronkan.');
           }
@@ -5564,6 +5597,7 @@
           }
 
           this.fileName = file.name;
+          this.fileType = file.type || 'image/jpeg';
           this.fileSize = sizeInMB.toFixed(2) + ' MB';
           
           const reader = new FileReader();
@@ -5576,6 +5610,7 @@
 
         removeFile() {
           this.fileName = '';
+          this.fileType = '';
           this.fileSize = '';
           this.filePreview = null;
           if (this.$refs.fileInput) this.$refs.fileInput.value = '';
@@ -5772,12 +5807,33 @@
 
           if (typeof google !== 'undefined' && google.script && google.script.run) {
             google.script.run
-              .withSuccessHandler(handleSuccess)
+              .withSuccessHandler((res) => {
+                if (res && res.success) {
+                  handleSuccess(res);
+                } else {
+                  this.inputBayar.isSubmitting = false;
+                  this.notifyError('Gagal Menyimpan', (res && (res.message || res.error)) || 'Terjadi kesalahan sistem saat menyimpan ke Google Sheets/Drive.');
+                }
+              })
               .withFailureHandler((err) => {
                 this.inputBayar.isSubmitting = false;
                 this.notifyError('Kesalahan Jaringan', err.toString());
               })
               .submitKonfirmasiPembayaran(payload);
+          } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+            apiCall('submitKonfirmasiPembayaran', payload)
+              .then((res) => {
+                if (res && res.success) {
+                  handleSuccess(res);
+                } else {
+                  this.inputBayar.isSubmitting = false;
+                  this.notifyError('Gagal Menyimpan', (res && (res.message || res.error)) || 'Terjadi kesalahan sistem.');
+                }
+              })
+              .catch((err) => {
+                this.inputBayar.isSubmitting = false;
+                this.notifyError('Kesalahan Jaringan', err.toString());
+              });
           } else {
             setTimeout(() => handleSuccess({ success: true }), 300);
           }
@@ -5853,8 +5909,7 @@
           this.isSubmitting = true;
           const selectedSppgObj = this.masterData.find(d => d.id === this.form.sppgId);
 
-          if (typeof google !== 'undefined' && google.script && google.script.run) {
-            const payload = {
+          const payload = {
               sppgId: this.form.sppgId,
               namaSppg: selectedSppgObj ? selectedSppgObj.nama : 'SPPG',
               kecamatan: this.form.kecamatan,
@@ -5869,41 +5924,62 @@
               noTrxBank: ''
             };
 
+          const handleFormSuccess = (res) => {
+            this.isSubmitting = false;
+            const newId = (res && res.idTrx) ? res.idTrx : ('TRX-' + new Date().getFullYear() + String(new Date().getMonth()+1).padStart(2, '0') + '-' + String(Math.floor(1000 + Math.random() * 9000)));
+            const newRecord = {
+              id: newId,
+              sppgId: this.form.sppgId,
+              namaSppg: selectedSppgObj ? selectedSppgObj.nama : 'SPPG',
+              kecamatan: this.form.kecamatan,
+              namaPelapor: this.form.namaPelapor,
+              kontakPelapor: this.form.kontakPelapor,
+              periodeBulan: this.form.periodeBulan,
+              tanggalTransfer: this.form.tanggalTransfer,
+              jumlahTransfer: this.form.jumlahTransfer,
+              buktiUrl: (res && res.buktiUrl) ? res.buktiUrl : this.filePreview,
+              status: 'MENUNGGU_VERIFIKASI',
+              noTrxBank: '',
+              noStbp: '',
+              noSts: '',
+              tanggalSts: '',
+            };
+            this.transaksiList.unshift(newRecord);
+            this.submittedData = { ...newRecord };
+            this.showSuccessModal = true;
+            this.notifySuccess('Laporan Terkirim', 'Setoran retribusi dan bukti transfer berhasil disimpan ke Google Drive DLH.');
+            this.$nextTick(() => lucide.createIcons());
+          };
+
+          if (typeof google !== 'undefined' && google.script && google.script.run) {
             google.script.run
               .withSuccessHandler((res) => {
-                this.isSubmitting = false;
                 if (res && res.success) {
-                  const newRecord = {
-                    id: res.idTrx,
-                    sppgId: this.form.sppgId,
-                    namaSppg: selectedSppgObj ? selectedSppgObj.nama : 'SPPG',
-                    kecamatan: this.form.kecamatan,
-                    namaPelapor: this.form.namaPelapor,
-                    kontakPelapor: this.form.kontakPelapor,
-                    periodeBulan: this.form.periodeBulan,
-                    tanggalTransfer: this.form.tanggalTransfer,
-                    jumlahTransfer: this.form.jumlahTransfer,
-                    buktiUrl: res.buktiUrl || this.filePreview,
-                    status: 'MENUNGGU_VERIFIKASI',
-                    noTrxBank: '',
-                    noStbp: '',
-                    noSts: '',
-                    tanggalSts: '',
-                  };
-                  this.transaksiList.unshift(newRecord);
-                  this.submittedData = { ...newRecord };
-                  this.showSuccessModal = true;
-                  this.notifySuccess('Laporan Terkirim', 'Setoran retribusi berhasil dicatat di Google Sheets DLH.');
+                  handleFormSuccess(res);
                 } else {
-                  this.notifyError('Gagal Menyimpan', res ? res.error : 'Terjadi kesalahan sistem.');
+                  this.isSubmitting = false;
+                  this.notifyError('Gagal Menyimpan', (res && (res.message || res.error)) || 'Terjadi kesalahan sistem.');
                 }
-                this.$nextTick(() => lucide.createIcons());
               })
               .withFailureHandler((err) => {
                 this.isSubmitting = false;
                 this.notifyError('Kesalahan Jaringan', err.toString());
               })
               .submitKonfirmasiPembayaran(payload);
+          } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+            apiCall('submitKonfirmasiPembayaran', payload)
+              .then((res) => {
+                if (res && res.success) {
+                  handleFormSuccess(res);
+                } else {
+                  this.isSubmitting = false;
+                  this.notifyError('Gagal Menyimpan', (res && (res.message || res.error)) || 'Terjadi kesalahan sistem.');
+                }
+              })
+              .catch((err) => {
+                this.isSubmitting = false;
+                this.notifyError('Kesalahan Jaringan', err.toString());
+              });
           } else {
             // Mode Simulasi Lokal
             setTimeout(() => {
@@ -6007,34 +6083,7 @@
 
           this.isLoggingIn = true;
 
-          if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
-            try {
-              const res = await apiCall('loginBendahara', { email: this.loginEmail, password: this.loginPassword });
-              this.isLoggingIn = false;
-              if (res && res.success) {
-                this.isLoggedIn = true;
-                try {
-                  localStorage.setItem('sppg_bendahara_session', JSON.stringify({
-                    isLoggedIn: true,
-                    user: res.user || { nama: 'Bendahara DLH', role: 'ADMIN' },
-                    timestamp: new Date().getTime()
-                  }));
-                } catch (e) {}
-                this.showLoginModal = false;
-                this.currentView = 'admin';
-                this.adminSubmenu = 'pembayaran';
-                this.notifySuccess('Login Berhasil', `Selamat datang, ${res.user ? res.user.nama : 'Bendahara DLH'}.`);
-              } else {
-                this.notifyError('Login Gagal', res ? res.message : 'Email/username atau password salah.');
-              }
-              this.$nextTick(() => lucide.createIcons());
-              return;
-            } catch (err) {
-              this.isLoggingIn = false;
-              this.notifyError('Kesalahan Jaringan', err.toString());
-              return;
-            }
-          } else if (typeof google !== 'undefined' && google.script && google.script.run) {
+          if (typeof google !== 'undefined' && google.script && google.script.run) {
             google.script.run
               .withSuccessHandler((res) => {
                 this.isLoggingIn = false;
@@ -6061,6 +6110,33 @@
                 this.notifyError('Koneksi Gagal', err.toString());
               })
               .loginBendahara(this.loginEmail, this.loginPassword);
+          } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+            try {
+              const res = await apiCall('loginBendahara', { email: this.loginEmail, password: this.loginPassword });
+              this.isLoggingIn = false;
+              if (res && res.success) {
+                this.isLoggedIn = true;
+                try {
+                  localStorage.setItem('sppg_bendahara_session', JSON.stringify({
+                    isLoggedIn: true,
+                    user: res.user || { nama: 'Bendahara DLH', role: 'ADMIN' },
+                    timestamp: new Date().getTime()
+                  }));
+                } catch (e) {}
+                this.showLoginModal = false;
+                this.currentView = 'admin';
+                this.adminSubmenu = 'pembayaran';
+                this.notifySuccess('Login Berhasil', `Selamat datang, ${res.user ? res.user.nama : 'Bendahara DLH'}.`);
+              } else {
+                this.notifyError('Login Gagal', res ? res.message : 'Email/username atau password salah.');
+              }
+              this.$nextTick(() => lucide.createIcons());
+              return;
+            } catch (err) {
+              this.isLoggingIn = false;
+              this.notifyError('Kesalahan Jaringan', err.toString());
+              return;
+            }
           } else {
             // Mode Lokal / Simulasi Offline
             setTimeout(() => {
@@ -6220,33 +6296,7 @@
 
           trx.isSaving = true;
 
-          if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
-            try {
-              const res = await apiCall('saveTransaksiInline', { idTrx: id, noSts: noSts, noStbp: noStbp, idTransaksi: noTrxBank });
-              trx.isSaving = false;
-              if (res && res.success) {
-                trx.noSts = noSts;
-                trx.noStbp = noStbp;
-                trx.noTrxBank = noTrxBank;
-                if (noSts) {
-                  trx.status = 'SELESAI_STS';
-                } else if (noStbp) {
-                  trx.status = 'PROSES_STBP';
-                } else {
-                  trx.status = 'MENUNGGU_VERIFIKASI';
-                }
-                this.notifySuccess('Data Disimpan', `Perubahan transaksi ${id} berhasil disimpan ke database Google Sheets.`);
-              } else {
-                this.notifyError('Gagal Menyimpan', res ? res.error || res.message : 'Terjadi kesalahan saat menyimpan.');
-              }
-              this.$nextTick(() => lucide.createIcons());
-              return;
-            } catch (err) {
-              trx.isSaving = false;
-              this.notifyError('Kesalahan Jaringan', err.toString());
-              return;
-            }
-          } else if (typeof google !== 'undefined' && google.script && google.script.run) {
+          if (typeof google !== 'undefined' && google.script && google.script.run) {
             google.script.run
               .withSuccessHandler((res) => {
                 trx.isSaving = false;
@@ -6272,6 +6322,32 @@
                 this.notifyError('Kesalahan Jaringan', err.toString());
               })
               .saveTransaksiInline(id, noSts, noStbp, noTrxBank);
+          } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+            try {
+              const res = await apiCall('saveTransaksiInline', { idTrx: id, noSts: noSts, noStbp: noStbp, idTransaksi: noTrxBank });
+              trx.isSaving = false;
+              if (res && res.success) {
+                trx.noSts = noSts;
+                trx.noStbp = noStbp;
+                trx.noTrxBank = noTrxBank;
+                if (noSts) {
+                  trx.status = 'SELESAI_STS';
+                } else if (noStbp) {
+                  trx.status = 'PROSES_STBP';
+                } else {
+                  trx.status = 'MENUNGGU_VERIFIKASI';
+                }
+                this.notifySuccess('Data Disimpan', `Perubahan transaksi ${id} berhasil disimpan ke database Google Sheets.`);
+              } else {
+                this.notifyError('Gagal Menyimpan', res ? res.error || res.message : 'Terjadi kesalahan saat menyimpan.');
+              }
+              this.$nextTick(() => lucide.createIcons());
+              return;
+            } catch (err) {
+              trx.isSaving = false;
+              this.notifyError('Kesalahan Jaringan', err.toString());
+              return;
+            }
           } else {
             // Mode Simulasi Lokal
             setTimeout(() => {
@@ -6299,29 +6375,7 @@
           const isCurrentlyVerified = (trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI' || trx.isVerified === true);
           const targetStatus = isCurrentlyVerified ? 'MENUNGGU_VERIFIKASI' : 'SELESAI_STS';
 
-          if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
-            try {
-              const res = await apiCall('toggleVerifikasiPembayaran', { idTrx: trx.id, status: targetStatus });
-              trx.isVerifying = false;
-              if (res && res.success) {
-                trx.status = res.status || targetStatus;
-                trx.isVerified = (trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI');
-                if (trx.isVerified) {
-                  this.notifySuccess('Terverifikasi', `Setoran ${trx.namaSppg} bulan ${trx.periodeBulan} telah diverifikasi (Status Lunas).`);
-                } else {
-                  this.notifyWarning('Unverifikasi Berhasil', `Verifikasi ${trx.namaSppg} bulan ${trx.periodeBulan} dikembalikan ke Menunggu Verifikasi.`);
-                }
-              } else {
-                this.notifyError('Gagal Mengubah Status', res ? res.message || res.error : 'Terjadi kesalahan.');
-              }
-              this.$nextTick(() => lucide.createIcons());
-              return;
-            } catch (err) {
-              trx.isVerifying = false;
-              this.notifyError('Kesalahan Jaringan', err.toString());
-              return;
-            }
-          } else if (typeof google !== 'undefined' && google.script && google.script.run) {
+          if (typeof google !== 'undefined' && google.script && google.script.run) {
             google.script.run
               .withSuccessHandler((res) => {
                 trx.isVerifying = false;
@@ -6343,6 +6397,28 @@
                 this.notifyError('Kesalahan Jaringan', err.toString());
               })
               .toggleVerifikasiPembayaran(trx.id, targetStatus);
+          } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+            try {
+              const res = await apiCall('toggleVerifikasiPembayaran', { idTrx: trx.id, status: targetStatus });
+              trx.isVerifying = false;
+              if (res && res.success) {
+                trx.status = res.status || targetStatus;
+                trx.isVerified = (trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI');
+                if (trx.isVerified) {
+                  this.notifySuccess('Terverifikasi', `Setoran ${trx.namaSppg} bulan ${trx.periodeBulan} telah diverifikasi (Status Lunas).`);
+                } else {
+                  this.notifyWarning('Unverifikasi Berhasil', `Verifikasi ${trx.namaSppg} bulan ${trx.periodeBulan} dikembalikan ke Menunggu Verifikasi.`);
+                }
+              } else {
+                this.notifyError('Gagal Mengubah Status', res ? res.message || res.error : 'Terjadi kesalahan.');
+              }
+              this.$nextTick(() => lucide.createIcons());
+              return;
+            } catch (err) {
+              trx.isVerifying = false;
+              this.notifyError('Kesalahan Jaringan', err.toString());
+              return;
+            }
           } else {
             // Mode Simulasi Lokal
             setTimeout(() => {

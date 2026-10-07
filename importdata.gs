@@ -299,7 +299,7 @@ var HISTORICAL_TRANSACTIONS_DATA = [
     "no_stbp": "",
     "id_transaksi_bank": "1172",
     "tanggal_sts": "19 Mei 2026",
-    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+    "catatan": "743.500 (kurang 6.500)"
   },
   {
     "id_transaksi": "TRX-202605-0017",
@@ -453,14 +453,14 @@ var HISTORICAL_TRANSACTIONS_DATA = [
     "nama_pelapor": "Ardiansyah SPPG Labakkang",
     "kontak_pelapor": "085975073614",
     "periode_bulan": "Juli",
-    "tanggal_transfer": "15 Juli 2026",
+    "tanggal_transfer": "21/8/2026",
     "jumlah_transfer": 750000,
     "bukti_slip_url": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
     "status_verifikasi": "SELESAI_STS",
     "no_sts": "",
     "no_stbp": "",
     "id_transaksi_bank": "1226",
-    "tanggal_sts": "",
+    "tanggal_sts": "21/8/2026",
     "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
   },
   {
@@ -533,7 +533,7 @@ var HISTORICAL_TRANSACTIONS_DATA = [
     "no_stbp": "",
     "id_transaksi_bank": "6780",
     "tanggal_sts": "29 Mei 2026",
-    "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
+    "catatan": "Bukti TF: 29/05/2026 rek.koran 03/06/2026 747.500 (kurang 2.500)"
   },
   {
     "id_transaksi": "TRX-202605-0030",
@@ -943,7 +943,7 @@ var HISTORICAL_TRANSACTIONS_DATA = [
     "jumlah_transfer": 750000,
     "bukti_slip_url": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
     "status_verifikasi": "SELESAI_STS",
-    "no_sts": "",
+    "no_sts": "051",
     "no_stbp": "0099",
     "id_transaksi_bank": "2679",
     "tanggal_sts": "15 Mei 2026",
@@ -964,7 +964,7 @@ var HISTORICAL_TRANSACTIONS_DATA = [
     "no_sts": "",
     "no_stbp": "",
     "id_transaksi_bank": "",
-    "tanggal_sts": "",
+    "tanggal_sts": "15 Mei 2026",
     "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
   },
   {
@@ -1041,11 +1041,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202604-0058",
-    "id_sppg": "SPPG-020",
-    "nama_sppg": "Biraeng",
-    "kecamatan": "Minasa Tene",
-    "nama_pelapor": "Muhammad Ardas Daruslam SPPG Biraeng",
-    "kontak_pelapor": "082188224010",
+    "id_sppg": "SPPG-021",
+    "nama_sppg": "Bonto Perak 1",
+    "kecamatan": "Pangkajene",
+    "nama_pelapor": "Fahmi Sofyan SPPG Bonto Perak1",
+    "kontak_pelapor": "081244287373",
     "periode_bulan": "April",
     "tanggal_transfer": "12 Mei 2026",
     "jumlah_transfer": 750000,
@@ -1059,11 +1059,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202605-0059",
-    "id_sppg": "SPPG-020",
-    "nama_sppg": "Biraeng",
-    "kecamatan": "Minasa Tene",
-    "nama_pelapor": "Muhammad Ardas Daruslam SPPG Biraeng",
-    "kontak_pelapor": "082188224010",
+    "id_sppg": "SPPG-021",
+    "nama_sppg": "Bonto Perak 1",
+    "kecamatan": "Pangkajene",
+    "nama_pelapor": "Fahmi Sofyan SPPG Bonto Perak1",
+    "kontak_pelapor": "081244287373",
     "periode_bulan": "Mei",
     "tanggal_transfer": "30 Juni 2026",
     "jumlah_transfer": 750000,
@@ -1077,11 +1077,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202606-0060",
-    "id_sppg": "SPPG-020",
-    "nama_sppg": "Biraeng",
-    "kecamatan": "Minasa Tene",
-    "nama_pelapor": "Muhammad Ardas Daruslam SPPG Biraeng",
-    "kontak_pelapor": "082188224010",
+    "id_sppg": "SPPG-021",
+    "nama_sppg": "Bonto Perak 1",
+    "kecamatan": "Pangkajene",
+    "nama_pelapor": "Fahmi Sofyan SPPG Bonto Perak1",
+    "kontak_pelapor": "081244287373",
     "periode_bulan": "Juni",
     "tanggal_transfer": "10 Juli 2026",
     "jumlah_transfer": 750000,
@@ -1095,11 +1095,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202607-0061",
-    "id_sppg": "SPPG-020",
-    "nama_sppg": "Biraeng",
-    "kecamatan": "Minasa Tene",
-    "nama_pelapor": "Muhammad Ardas Daruslam SPPG Biraeng",
-    "kontak_pelapor": "082188224010",
+    "id_sppg": "SPPG-021",
+    "nama_sppg": "Bonto Perak 1",
+    "kecamatan": "Pangkajene",
+    "nama_pelapor": "Fahmi Sofyan SPPG Bonto Perak1",
+    "kontak_pelapor": "081244287373",
     "periode_bulan": "Juli",
     "tanggal_transfer": "20 JuLi 2026",
     "jumlah_transfer": 750000,
@@ -1113,11 +1113,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202604-0062",
-    "id_sppg": "SPPG-021",
-    "nama_sppg": "Bonto Perak 1",
+    "id_sppg": "SPPG-022",
+    "nama_sppg": "Bonto Perak 2",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Fahmi Sofyan SPPG Bonto Perak1",
-    "kontak_pelapor": "081244287373",
+    "nama_pelapor": "Saharuddin SPPG Bonto Perak2",
+    "kontak_pelapor": "085343693131",
     "periode_bulan": "April",
     "tanggal_transfer": "13 Mei 2026",
     "jumlah_transfer": 750000,
@@ -1131,11 +1131,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202605-0063",
-    "id_sppg": "SPPG-021",
-    "nama_sppg": "Bonto Perak 1",
+    "id_sppg": "SPPG-022",
+    "nama_sppg": "Bonto Perak 2",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Fahmi Sofyan SPPG Bonto Perak1",
-    "kontak_pelapor": "081244287373",
+    "nama_pelapor": "Saharuddin SPPG Bonto Perak2",
+    "kontak_pelapor": "085343693131",
     "periode_bulan": "Mei",
     "tanggal_transfer": "10 Juli 2026",
     "jumlah_transfer": 750000,
@@ -1149,11 +1149,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202606-0064",
-    "id_sppg": "SPPG-021",
-    "nama_sppg": "Bonto Perak 1",
+    "id_sppg": "SPPG-022",
+    "nama_sppg": "Bonto Perak 2",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Fahmi Sofyan SPPG Bonto Perak1",
-    "kontak_pelapor": "081244287373",
+    "nama_pelapor": "Saharuddin SPPG Bonto Perak2",
+    "kontak_pelapor": "085343693131",
     "periode_bulan": "Juni",
     "tanggal_transfer": "20 Juli 2026",
     "jumlah_transfer": 750000,
@@ -1167,11 +1167,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202604-0065",
-    "id_sppg": "SPPG-022",
-    "nama_sppg": "Bonto Perak 2",
+    "id_sppg": "SPPG-023",
+    "nama_sppg": "Mappasaile",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Saharuddin SPPG Bonto Perak2",
-    "kontak_pelapor": "085343693131",
+    "nama_pelapor": "Evi Irviyanti SPPG Mappasaile",
+    "kontak_pelapor": "085870552736",
     "periode_bulan": "April",
     "tanggal_transfer": "13 Mei 2025",
     "jumlah_transfer": 750000,
@@ -1185,11 +1185,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202605-0066",
-    "id_sppg": "SPPG-022",
-    "nama_sppg": "Bonto Perak 2",
+    "id_sppg": "SPPG-023",
+    "nama_sppg": "Mappasaile",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Saharuddin SPPG Bonto Perak2",
-    "kontak_pelapor": "085343693131",
+    "nama_pelapor": "Evi Irviyanti SPPG Mappasaile",
+    "kontak_pelapor": "085870552736",
     "periode_bulan": "Mei",
     "tanggal_transfer": "30 Juni 2026",
     "jumlah_transfer": 750000,
@@ -1203,11 +1203,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202606-0067",
-    "id_sppg": "SPPG-022",
-    "nama_sppg": "Bonto Perak 2",
+    "id_sppg": "SPPG-023",
+    "nama_sppg": "Mappasaile",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Saharuddin SPPG Bonto Perak2",
-    "kontak_pelapor": "085343693131",
+    "nama_pelapor": "Evi Irviyanti SPPG Mappasaile",
+    "kontak_pelapor": "085870552736",
     "periode_bulan": "Juni",
     "tanggal_transfer": "29 Juli 2026",
     "jumlah_transfer": 750000,
@@ -1221,11 +1221,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202604-0068",
-    "id_sppg": "SPPG-023",
-    "nama_sppg": "Mappasaile",
+    "id_sppg": "SPPG-024",
+    "nama_sppg": "Mappasaile 2",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Evi Irviyanti SPPG Mappasaile",
-    "kontak_pelapor": "085870552736",
+    "nama_pelapor": "Akbar Tola SPPG Mappasaile 2",
+    "kontak_pelapor": "085340312677",
     "periode_bulan": "April",
     "tanggal_transfer": "16 Mei 2026",
     "jumlah_transfer": 750000,
@@ -1239,11 +1239,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202605-0069",
-    "id_sppg": "SPPG-023",
-    "nama_sppg": "Mappasaile",
+    "id_sppg": "SPPG-024",
+    "nama_sppg": "Mappasaile 2",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Evi Irviyanti SPPG Mappasaile",
-    "kontak_pelapor": "085870552736",
+    "nama_pelapor": "Akbar Tola SPPG Mappasaile 2",
+    "kontak_pelapor": "085340312677",
     "periode_bulan": "Mei",
     "tanggal_transfer": "30 Juni 2026",
     "jumlah_transfer": 750000,
@@ -1251,17 +1251,17 @@ var HISTORICAL_TRANSACTIONS_DATA = [
     "status_verifikasi": "SELESAI_STS",
     "no_sts": "",
     "no_stbp": "",
-    "id_transaksi_bank": "5314",
+    "id_transaksi_bank": "",
     "tanggal_sts": "30 Juni 2026",
     "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
   },
   {
     "id_transaksi": "TRX-202606-0070",
-    "id_sppg": "SPPG-023",
-    "nama_sppg": "Mappasaile",
+    "id_sppg": "SPPG-024",
+    "nama_sppg": "Mappasaile 2",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Evi Irviyanti SPPG Mappasaile",
-    "kontak_pelapor": "085870552736",
+    "nama_pelapor": "Akbar Tola SPPG Mappasaile 2",
+    "kontak_pelapor": "085340312677",
     "periode_bulan": "Juni",
     "tanggal_transfer": "23 Juli 2026",
     "jumlah_transfer": 750000,
@@ -1275,11 +1275,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202604-0071",
-    "id_sppg": "SPPG-024",
-    "nama_sppg": "Mappasaile 2",
+    "id_sppg": "SPPG-025",
+    "nama_sppg": "Padoang Doangan",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Akbar Tola SPPG Mappasaile 2",
-    "kontak_pelapor": "085340312677",
+    "nama_pelapor": "Amran SPPG Padoang2an",
+    "kontak_pelapor": "085230740101",
     "periode_bulan": "April",
     "tanggal_transfer": "13 Mei 2026",
     "jumlah_transfer": 750000,
@@ -1293,11 +1293,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202605-0072",
-    "id_sppg": "SPPG-024",
-    "nama_sppg": "Mappasaile 2",
+    "id_sppg": "SPPG-025",
+    "nama_sppg": "Padoang Doangan",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Akbar Tola SPPG Mappasaile 2",
-    "kontak_pelapor": "085340312677",
+    "nama_pelapor": "Amran SPPG Padoang2an",
+    "kontak_pelapor": "085230740101",
     "periode_bulan": "Mei",
     "tanggal_transfer": "30 Juni 2026",
     "jumlah_transfer": 750000,
@@ -1311,11 +1311,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202606-0073",
-    "id_sppg": "SPPG-024",
-    "nama_sppg": "Mappasaile 2",
+    "id_sppg": "SPPG-025",
+    "nama_sppg": "Padoang Doangan",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Akbar Tola SPPG Mappasaile 2",
-    "kontak_pelapor": "085340312677",
+    "nama_pelapor": "Amran SPPG Padoang2an",
+    "kontak_pelapor": "085230740101",
     "periode_bulan": "Juni",
     "tanggal_transfer": "30 Juli 2026",
     "jumlah_transfer": 750000,
@@ -1329,11 +1329,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202604-0074",
-    "id_sppg": "SPPG-025",
-    "nama_sppg": "Padoang Doangan",
+    "id_sppg": "SPPG-026",
+    "nama_sppg": "Tumampua",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Amran SPPG Padoang2an",
-    "kontak_pelapor": "085230740101",
+    "nama_pelapor": "Mar'atul Islam SPPG Tumampua",
+    "kontak_pelapor": "085338318156",
     "periode_bulan": "April",
     "tanggal_transfer": "13 Mei 2026",
     "jumlah_transfer": 750000,
@@ -1347,11 +1347,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202605-0075",
-    "id_sppg": "SPPG-025",
-    "nama_sppg": "Padoang Doangan",
+    "id_sppg": "SPPG-026",
+    "nama_sppg": "Tumampua",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Amran SPPG Padoang2an",
-    "kontak_pelapor": "085230740101",
+    "nama_pelapor": "Mar'atul Islam SPPG Tumampua",
+    "kontak_pelapor": "085338318156",
     "periode_bulan": "Mei",
     "tanggal_transfer": "30 Juni 2026",
     "jumlah_transfer": 750000,
@@ -1365,11 +1365,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202606-0076",
-    "id_sppg": "SPPG-025",
-    "nama_sppg": "Padoang Doangan",
+    "id_sppg": "SPPG-026",
+    "nama_sppg": "Tumampua",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Amran SPPG Padoang2an",
-    "kontak_pelapor": "085230740101",
+    "nama_pelapor": "Mar'atul Islam SPPG Tumampua",
+    "kontak_pelapor": "085338318156",
     "periode_bulan": "Juni",
     "tanggal_transfer": "24 Juli 2026",
     "jumlah_transfer": 750000,
@@ -1383,11 +1383,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202607-0077",
-    "id_sppg": "SPPG-025",
-    "nama_sppg": "Padoang Doangan",
+    "id_sppg": "SPPG-026",
+    "nama_sppg": "Tumampua",
     "kecamatan": "Pangkajene",
-    "nama_pelapor": "Amran SPPG Padoang2an",
-    "kontak_pelapor": "085230740101",
+    "nama_pelapor": "Mar'atul Islam SPPG Tumampua",
+    "kontak_pelapor": "085338318156",
     "periode_bulan": "Juli",
     "tanggal_transfer": "28 Agus 2026",
     "jumlah_transfer": 750000,
@@ -1401,11 +1401,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202604-0078",
-    "id_sppg": "SPPG-026",
-    "nama_sppg": "Tumampua",
-    "kecamatan": "Pangkajene",
-    "nama_pelapor": "Mar'atul Islam SPPG Tumampua",
-    "kontak_pelapor": "085338318156",
+    "id_sppg": "SPPG-027",
+    "nama_sppg": "Bone",
+    "kecamatan": "Segeri",
+    "nama_pelapor": "Mawarni Utami SPPG Bone",
+    "kontak_pelapor": "085346567732",
     "periode_bulan": "April",
     "tanggal_transfer": "13 Mei 2026",
     "jumlah_transfer": 750000,
@@ -1419,11 +1419,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202605-0079",
-    "id_sppg": "SPPG-026",
-    "nama_sppg": "Tumampua",
-    "kecamatan": "Pangkajene",
-    "nama_pelapor": "Mar'atul Islam SPPG Tumampua",
-    "kontak_pelapor": "085338318156",
+    "id_sppg": "SPPG-027",
+    "nama_sppg": "Bone",
+    "kecamatan": "Segeri",
+    "nama_pelapor": "Mawarni Utami SPPG Bone",
+    "kontak_pelapor": "085346567732",
     "periode_bulan": "Mei",
     "tanggal_transfer": "08 Juli 2026",
     "jumlah_transfer": 750000,
@@ -1437,11 +1437,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202606-0080",
-    "id_sppg": "SPPG-026",
-    "nama_sppg": "Tumampua",
-    "kecamatan": "Pangkajene",
-    "nama_pelapor": "Mar'atul Islam SPPG Tumampua",
-    "kontak_pelapor": "085338318156",
+    "id_sppg": "SPPG-027",
+    "nama_sppg": "Bone",
+    "kecamatan": "Segeri",
+    "nama_pelapor": "Mawarni Utami SPPG Bone",
+    "kontak_pelapor": "085346567732",
     "periode_bulan": "Juni",
     "tanggal_transfer": "08 Juli 2026",
     "jumlah_transfer": 750000,
@@ -1455,11 +1455,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202604-0081",
-    "id_sppg": "SPPG-027",
-    "nama_sppg": "Bone",
+    "id_sppg": "SPPG-028",
+    "nama_sppg": "Segeri",
     "kecamatan": "Segeri",
-    "nama_pelapor": "Mawarni Utami SPPG Bone",
-    "kontak_pelapor": "085346567732",
+    "nama_pelapor": "Ashar Saputra SPPG Segeri",
+    "kontak_pelapor": "085259870711",
     "periode_bulan": "April",
     "tanggal_transfer": "20 Mei 2026",
     "jumlah_transfer": 750000,
@@ -1473,11 +1473,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202605-0082",
-    "id_sppg": "SPPG-027",
-    "nama_sppg": "Bone",
+    "id_sppg": "SPPG-028",
+    "nama_sppg": "Segeri",
     "kecamatan": "Segeri",
-    "nama_pelapor": "Mawarni Utami SPPG Bone",
-    "kontak_pelapor": "085346567732",
+    "nama_pelapor": "Ashar Saputra SPPG Segeri",
+    "kontak_pelapor": "085259870711",
     "periode_bulan": "Mei",
     "tanggal_transfer": "21 Juli 2026",
     "jumlah_transfer": 750000,
@@ -1491,11 +1491,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202606-0083",
-    "id_sppg": "SPPG-027",
-    "nama_sppg": "Bone",
+    "id_sppg": "SPPG-028",
+    "nama_sppg": "Segeri",
     "kecamatan": "Segeri",
-    "nama_pelapor": "Mawarni Utami SPPG Bone",
-    "kontak_pelapor": "085346567732",
+    "nama_pelapor": "Ashar Saputra SPPG Segeri",
+    "kontak_pelapor": "085259870711",
     "periode_bulan": "Juni",
     "tanggal_transfer": "21 Juli 2026",
     "jumlah_transfer": 750000,
@@ -1509,11 +1509,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202607-0084",
-    "id_sppg": "SPPG-027",
-    "nama_sppg": "Bone",
+    "id_sppg": "SPPG-028",
+    "nama_sppg": "Segeri",
     "kecamatan": "Segeri",
-    "nama_pelapor": "Mawarni Utami SPPG Bone",
-    "kontak_pelapor": "085346567732",
+    "nama_pelapor": "Ashar Saputra SPPG Segeri",
+    "kontak_pelapor": "085259870711",
     "periode_bulan": "Juli",
     "tanggal_transfer": "24 Agus 2026",
     "jumlah_transfer": 750000,
@@ -1527,11 +1527,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202604-0085",
-    "id_sppg": "SPPG-028",
-    "nama_sppg": "Segeri",
+    "id_sppg": "SPPG-029",
+    "nama_sppg": "Segeri 2",
     "kecamatan": "Segeri",
-    "nama_pelapor": "Ashar Saputra SPPG Segeri",
-    "kontak_pelapor": "085259870711",
+    "nama_pelapor": "Amell Akuntan SPPG Segeri2",
+    "kontak_pelapor": "082189423315",
     "periode_bulan": "April",
     "tanggal_transfer": "20 Mei 2026",
     "jumlah_transfer": 750000,
@@ -1545,11 +1545,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202605-0086",
-    "id_sppg": "SPPG-028",
-    "nama_sppg": "Segeri",
+    "id_sppg": "SPPG-029",
+    "nama_sppg": "Segeri 2",
     "kecamatan": "Segeri",
-    "nama_pelapor": "Ashar Saputra SPPG Segeri",
-    "kontak_pelapor": "085259870711",
+    "nama_pelapor": "Amell Akuntan SPPG Segeri2",
+    "kontak_pelapor": "082189423315",
     "periode_bulan": "Mei",
     "tanggal_transfer": "15 Mei 2026",
     "jumlah_transfer": 750000,
@@ -1558,16 +1558,16 @@ var HISTORICAL_TRANSACTIONS_DATA = [
     "no_sts": "",
     "no_stbp": "",
     "id_transaksi_bank": "",
-    "tanggal_sts": "",
+    "tanggal_sts": "15 Mei 2026",
     "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
   },
   {
     "id_transaksi": "TRX-202606-0087",
-    "id_sppg": "SPPG-028",
-    "nama_sppg": "Segeri",
+    "id_sppg": "SPPG-029",
+    "nama_sppg": "Segeri 2",
     "kecamatan": "Segeri",
-    "nama_pelapor": "Ashar Saputra SPPG Segeri",
-    "kontak_pelapor": "085259870711",
+    "nama_pelapor": "Amell Akuntan SPPG Segeri2",
+    "kontak_pelapor": "082189423315",
     "periode_bulan": "Juni",
     "tanggal_transfer": "23 Juli 2026",
     "jumlah_transfer": 750000,
@@ -1581,11 +1581,11 @@ var HISTORICAL_TRANSACTIONS_DATA = [
   },
   {
     "id_transaksi": "TRX-202607-0088",
-    "id_sppg": "SPPG-028",
-    "nama_sppg": "Segeri",
+    "id_sppg": "SPPG-029",
+    "nama_sppg": "Segeri 2",
     "kecamatan": "Segeri",
-    "nama_pelapor": "Ashar Saputra SPPG Segeri",
-    "kontak_pelapor": "085259870711",
+    "nama_pelapor": "Amell Akuntan SPPG Segeri2",
+    "kontak_pelapor": "082189423315",
     "periode_bulan": "Juli",
     "tanggal_transfer": "10 Agus 2026",
     "jumlah_transfer": 750000,
@@ -1793,5 +1793,208 @@ function syncPenanggungJawabDanKontakSppg() {
 
 function isiPenanggungJawabDanKontak() {
   return updatePenanggungJawabDanKontakSppg();
+}
+
+/**
+ * ============================================================================
+ * SINKRONISASI & GENERATE BUKTI TRANSFER KE GOOGLE DRIVE
+ * ============================================================================
+ * Struktur Folder Sesuai Permintaan:
+ * [Folder Utama] / periode (mm yyyy) / bayar (tgl setor, Mmm) / (kecamatan) (nama sppg) (periode Mmmm).(extensi file)
+ * Contoh: [Folder Utama] / periode 04 2026 / bayar 14, Mei / Balocci Kassi Periode April.jpg
+ * 
+ * Jalankan fungsi ini dari Apps Script Editor:
+ * - syncSemuaBuktiTransferKeDrive("LINK_ATAU_ID_FOLDER_DRIVE_ANDA")
+ * atau jika folder sudah disimpan di Pengaturan, cukup:
+ * - syncSemuaBuktiTransferKeDrive()
+ */
+function syncSemuaBuktiTransferKeDrive(folderIdOrUrl) {
+  var ss = getDb();
+  var paySheet = ss.getSheetByName(SHEETS.PEMBAYARAN);
+  if (!paySheet || paySheet.getLastRow() < 2) {
+    Logger.log("Tabel pembayaran kosong! Silakan jalankan resetAndImportTransaksiExcel() terlebih dahulu.");
+    return { status: 'error', message: 'Tabel pembayaran_retribusi masih kosong. Jalankan resetAndImportTransaksiExcel() dahulu.' };
+  }
+
+  // 1. Tentukan Folder Utama
+  var rawFolder = folderIdOrUrl;
+  if (!rawFolder) {
+    var configSheet = ss.getSheetByName(SHEETS.CONFIG);
+    if (configSheet && configSheet.getLastRow() > 1) {
+      var cVals = configSheet.getRange(2, 1, configSheet.getLastRow() - 1, 2).getValues();
+      cVals.forEach(function(r) { if (r[0] === 'driveFolderId') rawFolder = r[1]; });
+    }
+  }
+  if (!rawFolder) {
+    try {
+      rawFolder = PropertiesService.getScriptProperties().getProperty('driveFolderId');
+    } catch (e) {}
+  }
+
+  var cleanFolderId = extractDriveFolderId(rawFolder);
+  var rootFolder = null;
+  if (cleanFolderId && cleanFolderId !== 'root' && cleanFolderId !== '1AbC_dlh_retribusi_sppg_drive_folder') {
+    try {
+      rootFolder = DriveApp.getFolderById(cleanFolderId);
+    } catch (e) {
+      Logger.log("Folder ID tidak ditemukan: " + e.toString());
+    }
+  }
+
+  if (!rootFolder) {
+    var defaultFolderName = 'Bukti Slip Retribusi SPPG DLH';
+    var existingFolders = DriveApp.getFoldersByName(defaultFolderName);
+    if (existingFolders.hasNext()) {
+      rootFolder = existingFolders.next();
+    } else {
+      rootFolder = DriveApp.createFolder(defaultFolderName);
+    }
+    cleanFolderId = rootFolder.getId();
+    setFolderPenyimpananDrive(cleanFolderId);
+  }
+
+  var monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+  var monthShortsIndo = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+  var numRows = paySheet.getLastRow() - 1;
+  var rows = paySheet.getRange(2, 1, numRows, 17).getValues();
+  var updatedUrls = [];
+  var filesCreatedCount = 0;
+
+  for (var i = 0; i < numRows; i++) {
+    var r = rows[i];
+    var idTrx = r[0];
+    var idSppg = r[1];
+    var namaSppg = r[2];
+    var kecamatan = r[3];
+    var namaPelapor = r[4];
+    var kontakPelapor = r[5];
+    var periodeBulan = r[6];
+    var tanggalTransfer = r[7];
+    var nominal = r[8] || 750000;
+    var currentUrl = r[9];
+    var noSts = r[11];
+    var noStbp = r[12];
+    var idTrxBank = r[13];
+
+    // Level 1: periode (mm yyyy)
+    var mPeriodeIdx = monthNames.findIndex(function(m) { return m.toLowerCase() === String(periodeBulan).toLowerCase().trim(); });
+    if (mPeriodeIdx === -1) {
+      mPeriodeIdx = monthShortsIndo.findIndex(function(m) { return m.toLowerCase() === String(periodeBulan).toLowerCase().substr(0, 3); });
+    }
+    if (mPeriodeIdx === -1) mPeriodeIdx = 3;
+    var mmPeriode = (mPeriodeIdx + 1).toString().padStart(2, '0');
+    var folderPeriodeName = 'periode ' + mmPeriode + ' 2026';
+    var folderPeriode = getOrCreateSubFolder(rootFolder, folderPeriodeName);
+
+    // Level 2: bayar (tgl setor, Mmm)
+    var tglSetorInfo = parseTanggalSetor(tanggalTransfer);
+    var folderBayarName = 'bayar ' + tglSetorInfo.text;
+    var folderBayar = getOrCreateSubFolder(folderPeriode, folderBayarName);
+
+    // Level 3: (kecamatan) (nama sppg) (periode Mmmm).(extensi file)
+    var targetFileName = kecamatan + ' ' + namaSppg + ' Periode ' + (monthNames[mPeriodeIdx] || periodeBulan) + '.jpg';
+
+    // Cek apakah file sudah ada di folderBayar
+    var existingFiles = folderBayar.getFilesByName(targetFileName);
+    var fileUrl = '';
+    if (existingFiles.hasNext()) {
+      var existFile = existingFiles.next();
+      fileUrl = existFile.getUrl();
+    } else {
+      // Buat file bukti digital resmi
+      var svgContent = generateSlipSvgContent({
+        id_transaksi: idTrx,
+        id_sppg: idSppg,
+        nama_sppg: namaSppg,
+        kecamatan: kecamatan,
+        periode_bulan: monthNames[mPeriodeIdx] || periodeBulan,
+        tanggal_transfer: String(tanggalTransfer),
+        jumlah_transfer: nominal,
+        no_sts: noSts,
+        no_stbp: noStbp,
+        id_transaksi_bank: idTrxBank,
+        nama_pelapor: namaPelapor,
+        kontak_pelapor: kontakPelapor
+      });
+
+      var blob = Utilities.newBlob(svgContent, 'image/svg+xml', targetFileName);
+      var newFile = folderBayar.createFile(blob);
+      try {
+        newFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (eShare) {}
+      fileUrl = newFile.getUrl();
+      filesCreatedCount++;
+    }
+
+    updatedUrls.push([fileUrl]);
+  }
+
+  // Update kolom bukti_slip_url (Kolom J = 10)
+  paySheet.getRange(2, 10, updatedUrls.length, 1).setValues(updatedUrls);
+
+  Logger.log('Sinkronisasi selesai! ' + filesCreatedCount + ' file bukti transfer baru dibuat di folder "' + rootFolder.getName() + '"');
+  return {
+    status: 'success',
+    folderName: rootFolder.getName(),
+    folderUrl: rootFolder.getUrl(),
+    filesCreated: filesCreatedCount,
+    totalTransactions: numRows,
+    message: 'Bukti transfer berhasil disinkronkan ke folder "' + rootFolder.getName() + '" (' + filesCreatedCount + ' file baru dibuat).'
+  };
+}
+
+/**
+ * Generator template SVG Bukti Slip Transfer Resmi DLH
+ */
+function generateSlipSvgContent(trx) {
+  var sppg = trx.nama_sppg || 'SPPG';
+  var kec = trx.kecamatan || 'Pangkep';
+  var periode = trx.periode_bulan || 'April';
+  var tgl = trx.tanggal_transfer || '-';
+  var sts = trx.no_sts || '-';
+  var stbp = trx.no_stbp || '-';
+  var tranx = trx.id_transaksi_bank || '-';
+  var penyetor = trx.nama_pelapor || 'Penanggung Jawab SPPG';
+  var kontak = trx.kontak_pelapor || '-';
+
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520">' +
+    '<defs>' +
+    '<linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">' +
+    '<stop offset="0%" stop-color="#f8fafc"/>' +
+    '<stop offset="100%" stop-color="#f1f5f9"/>' +
+    '</linearGradient>' +
+    '<linearGradient id="hdr" x1="0%" y1="0%" x2="100%" y2="0%">' +
+    '<stop offset="0%" stop-color="#1e3a8a"/>' +
+    '<stop offset="100%" stop-color="#047857"/>' +
+    '</linearGradient>' +
+    '</defs>' +
+    '<rect width="800" height="520" fill="url(#bg)" rx="16" stroke="#cbd5e1" stroke-width="2"/>' +
+    '<rect width="800" height="80" fill="url(#hdr)" rx="16 16 0 0"/>' +
+    '<text x="400" y="32" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" letter-spacing="1">DINAS LINGKUNGAN HIDUP KABUPATEN PANGKAJENE DAN KEPULAUAN</text>' +
+    '<text x="400" y="58" fill="#93c5fd" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" letter-spacing="0.5">BUKTI PEMBAYARAN RETRIBUSI PERSAMPAHAN SPPG T.A. 2026</text>' +
+    '<rect x="40" y="105" width="720" height="350" fill="#ffffff" rx="10" stroke="#e2e8f0" stroke-width="1"/>' +
+    '<text x="70" y="145" fill="#64748b" font-family="Arial, sans-serif" font-size="13">Nama SPPG :</text>' +
+    '<text x="210" y="145" fill="#0f172a" font-family="Arial, sans-serif" font-size="15" font-weight="bold">' + sppg + ' (Kec. ' + kec + ')</text>' +
+    '<text x="70" y="180" fill="#64748b" font-family="Arial, sans-serif" font-size="13">Periode Pelayanan :</text>' +
+    '<text x="210" y="180" fill="#047857" font-family="Arial, sans-serif" font-size="14" font-weight="bold">Bulan ' + periode + ' 2026</text>' +
+    '<text x="70" y="215" fill="#64748b" font-family="Arial, sans-serif" font-size="13">Tanggal Setor :</text>' +
+    '<text x="210" y="215" fill="#0f172a" font-family="Arial, sans-serif" font-size="13" font-weight="bold">' + tgl + '</text>' +
+    '<text x="70" y="250" fill="#64748b" font-family="Arial, sans-serif" font-size="13">Penyetor / Kontak :</text>' +
+    '<text x="210" y="250" fill="#0f172a" font-family="Arial, sans-serif" font-size="13">' + penyetor + ' (' + kontak + ')</text>' +
+    '<line x1="70" y1="275" x2="730" y2="275" stroke="#e2e8f0" stroke-width="1"/>' +
+    '<text x="70" y="310" fill="#64748b" font-family="Arial, sans-serif" font-size="13">Nomor STS :</text>' +
+    '<text x="210" y="310" fill="#1e3a8a" font-family="monospace" font-size="13" font-weight="bold">' + sts + '</text>' +
+    '<text x="420" y="310" fill="#64748b" font-family="Arial, sans-serif" font-size="13">Nomor STBP :</text>' +
+    '<text x="530" y="310" fill="#0f172a" font-family="monospace" font-size="13">' + stbp + '</text>' +
+    '<text x="70" y="345" fill="#64748b" font-family="Arial, sans-serif" font-size="13">ID Transaksi Bank :</text>' +
+    '<text x="210" y="345" fill="#0f172a" font-family="monospace" font-size="13">' + tranx + '</text>' +
+    '<rect x="70" y="375" width="660" height="60" fill="#ecfdf5" rx="8" stroke="#a7f3d0" stroke-width="1"/>' +
+    '<text x="100" y="412" fill="#065f46" font-family="Arial, sans-serif" font-size="13" font-weight="bold">JUMLAH RETRIBUSI TERBAYAR :</text>' +
+    '<text x="690" y="413" fill="#047857" font-family="monospace" font-size="18" font-weight="bold" text-anchor="end">Rp 750.000</text>' +
+    '<rect x="570" y="125" width="160" height="36" fill="#dcfce7" rx="18" stroke="#86efac" stroke-width="1"/>' +
+    '<text x="650" y="148" fill="#15803d" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">LUNAS / VERIFIED</text>' +
+    '<text x="400" y="490" fill="#94a3b8" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">Dokumen digital ini merupakan bukti rekapitulasi sah sistem retribusi SPPG DLH Kab. Pangkep</text>' +
+    '</svg>';
 }
 

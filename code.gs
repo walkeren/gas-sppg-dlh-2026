@@ -582,15 +582,48 @@ function submitKonfirmasiPembayaran(payload) {
     var idTrx = 'TRX-' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMM') + '-' + Math.floor(1000 + Math.random() * 9000);
 
     // Handle Upload file slip ke Google Drive jika ada
-    var buktiUrl = payload.buktiUrl || '';
+    var buktiUrl = '';
     if (payload.fileBase64 && payload.fileName) {
-      buktiUrl = uploadSlipToDrive(payload.fileBase64, payload.fileName, payload.fileType, {
-        idTrx: idTrx,
-        kecamatan: payload.kecamatan,
-        namaSppg: payload.namaSppg,
-        periodeBulan: payload.periodeBulan,
-        tanggalTransfer: payload.tanggalTransfer
-      });
+      try {
+        var uploadedUrl = uploadSlipToDrive(payload.fileBase64, payload.fileName, payload.fileType, {
+          idTrx: idTrx,
+          kecamatan: payload.kecamatan,
+          namaSppg: payload.namaSppg,
+          periodeBulan: payload.periodeBulan,
+          tanggalTransfer: payload.tanggalTransfer
+        });
+        if (uploadedUrl) {
+          buktiUrl = uploadedUrl;
+        }
+      } catch (eUpload) {
+        Logger.log('Gagal uploadSlipToDrive: ' + eUpload.toString());
+      }
+    } else if (payload.buktiUrl && !String(payload.buktiUrl).startsWith('data:')) {
+      buktiUrl = String(payload.buktiUrl);
+    }
+
+    // Safeguard: Jangan biarkan base64 string jutaan karakter lolos ke Spreadsheet (limit sel 50.000 char)
+    if (buktiUrl && (String(buktiUrl).indexOf('data:') === 0 || String(buktiUrl).length > 1000)) {
+      buktiUrl = '';
+    }
+
+    // Autofill nama penanggung jawab dan kontak dari master SPPG jika belum terisi
+    var namaPelapor = payload.namaPelapor || '';
+    var kontakPelapor = payload.kontakPelapor !== undefined && payload.kontakPelapor !== null ? String(payload.kontakPelapor) : '';
+    if ((!namaPelapor || !kontakPelapor) && payload.sppgId) {
+      try {
+        var sppgSheet = ss.getSheetByName(SHEETS.MASTER_SPPG);
+        if (sppgSheet && sppgSheet.getLastRow() > 1) {
+          var sppgRows = sppgSheet.getRange(2, 1, sppgSheet.getLastRow() - 1, 5).getValues();
+          for (var si = 0; si < sppgRows.length; si++) {
+            if (sppgRows[si][0] === payload.sppgId) {
+              if (!namaPelapor) namaPelapor = sppgRows[si][3] || '';
+              if (!kontakPelapor) kontakPelapor = String(sppgRows[si][4] || '');
+              break;
+            }
+          }
+        }
+      } catch (eMaster) {}
     }
 
     var statusVerifikasi = payload.statusVerifikasi || (payload.noSts ? 'SELESAI_STS' : (payload.noStbp ? 'PROSES_STBP' : 'MENUNGGU_VERIFIKASI'));
@@ -600,8 +633,8 @@ function submitKonfirmasiPembayaran(payload) {
       payload.sppgId,
       payload.namaSppg,
       payload.kecamatan,
-      payload.namaPelapor,
-      payload.kontakPelapor,
+      namaPelapor,
+      kontakPelapor,
       payload.periodeBulan,
       payload.tanggalTransfer,
       Number(payload.jumlahTransfer || 750000),
@@ -633,6 +666,62 @@ function submitKonfirmasiPembayaran(payload) {
 }
 
 /**
+ * Ekstrak ID folder Google Drive dari teks input (baik ID mentah maupun URL Google Drive penuh)
+ */
+function extractDriveFolderId(input) {
+  if (!input) return '';
+  var str = String(input).trim().replace(/["']/g, '');
+  
+  // Format URL: https://drive.google.com/drive/folders/1AbCdEfGhIjKl...
+  var match = str.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) return match[1];
+
+  // Format URL: https://drive.google.com/open?id=1AbCdEfGhIjKl...
+  match = str.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) return match[1];
+
+  // Format URL: https://drive.google.com/drive/u/0/folders/1AbCd...
+  match = str.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) return match[1];
+
+  // Jika input adalah ID langsung (buang query params seperti ?usp=sharing atau trailing slash)
+  return str.replace(/[?&#\/].*$/, '').trim();
+}
+
+/**
+ * Helper parse tanggal setor menjadi format: (tgl setor, Mmm) -> contoh "14, Mei"
+ */
+function parseTanggalSetor(tglInput) {
+  var tglStr = String(tglInput || '').trim();
+  var monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+  var monthShortsIndo = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+  var matchIndo = tglStr.match(/^(\d{1,2})\s+([a-zA-Z]+)/);
+  if (matchIndo) {
+    var day = String(parseInt(matchIndo[1], 10)).padStart(2, '0');
+    var mName = matchIndo[2].toLowerCase();
+    var mIdx = monthNames.findIndex(function(m) { return m.toLowerCase() === mName; });
+    if (mIdx === -1) {
+      mIdx = monthShortsIndo.findIndex(function(m) { return m.toLowerCase() === mName.substr(0, 3); });
+    }
+    var monthShort = mIdx !== -1 ? monthShortsIndo[mIdx] : (matchIndo[2].charAt(0).toUpperCase() + matchIndo[2].slice(1, 3).toLowerCase());
+    return { day: day, month: monthShort, text: day + ', ' + monthShort };
+  }
+
+  var d = new Date(tglInput);
+  if (!isNaN(d.getTime())) {
+    var day = String(d.getDate()).padStart(2, '0');
+    var monthShort = monthShortsIndo[d.getMonth()] || 'Bln';
+    return { day: day, month: monthShort, text: day + ', ' + monthShort };
+  }
+
+  var now = new Date();
+  var day = String(now.getDate()).padStart(2, '0');
+  var monthShort = monthShortsIndo[now.getMonth()] || 'Bln';
+  return { day: day, month: monthShort, text: day + ', ' + monthShort };
+}
+
+/**
  * Helper mencari subfolder atau membuatnya secara otomatis jika belum ada
  */
 function getOrCreateSubFolder(parentFolder, folderName) {
@@ -645,32 +734,69 @@ function getOrCreateSubFolder(parentFolder, folderName) {
 
 /**
  * Upload slip bukti transfer dengan format folder hierarki:
- * [Folder Utama] / periode [mm yyyy] / bulan bayar [Bayar Mmm] / [Kecamatan] [Nama SPPG ] [Periode 'Month'].[extensi file]
+ * folder utama / periode (mm yyyy) / bayar (tgl setor, Mmm) / (kecamatan) (nama sppg) (periode Mmmm).(extensi file)
+ * Contoh: [Folder Utama] / periode 04 2026 / bayar 14, Mei / Balocci Kassi Periode April.jpg
  */
 function uploadSlipToDrive(base64Data, fileName, mimeType, meta) {
   try {
     meta = meta || {};
     var configSheet = getDb().getSheetByName(SHEETS.CONFIG);
-    var folderId = 'root';
+    var rawFolderId = '';
     var tahunAnggaran = '2026';
+
     if (configSheet && configSheet.getLastRow() > 1) {
       var vals = configSheet.getRange(2, 1, configSheet.getLastRow() - 1, 2).getValues();
       vals.forEach(function(r) {
-        if (r[0] === 'driveFolderId' && r[1]) folderId = String(r[1]).trim();
+        if (r[0] === 'driveFolderId' && r[1]) rawFolderId = String(r[1]).trim();
         if (r[0] === 'tahunAnggaran' && r[1]) tahunAnggaran = String(r[1]).trim();
       });
     }
 
-    var rootFolder;
-    try {
-      rootFolder = DriveApp.getFolderById(folderId);
-    } catch (e) {
-      rootFolder = DriveApp.getRootFolder();
+    // Jika di sheet kosong atau masih default dummy, coba baca dari Script Properties
+    if (!rawFolderId || rawFolderId === '1AbC_dlh_retribusi_sppg_drive_folder') {
+      try {
+        var spFolder = PropertiesService.getScriptProperties().getProperty('FOLDER_ID') || PropertiesService.getScriptProperties().getProperty('driveFolderId');
+        if (spFolder) rawFolderId = spFolder.trim();
+      } catch (eProp) {}
     }
 
-    // 1. Level 1: periode [mm yyyy] (Contoh: "periode 04 2026")
+    var cleanFolderId = extractDriveFolderId(rawFolderId);
+    var rootFolder = null;
+
+    if (cleanFolderId && cleanFolderId !== 'root' && cleanFolderId !== '1AbC_dlh_retribusi_sppg_drive_folder') {
+      try {
+        rootFolder = DriveApp.getFolderById(cleanFolderId);
+      } catch (eId) {
+        Logger.log('DriveApp.getFolderById gagal untuk ID "' + cleanFolderId + '": ' + eId.toString());
+      }
+    }
+
+    // Fallback: Jika folder belum diset atau ID tidak valid, cari/buat folder terpusat 'Bukti Slip Retribusi SPPG DLH'
+    if (!rootFolder) {
+      var defaultFolderName = 'Bukti Slip Retribusi SPPG DLH';
+      var existingFolders = DriveApp.getFoldersByName(defaultFolderName);
+      if (existingFolders.hasNext()) {
+        rootFolder = existingFolders.next();
+      } else {
+        rootFolder = DriveApp.createFolder(defaultFolderName);
+      }
+      // Simpan ID folder valid ini ke config agar upload berikutnya konsisten
+      try {
+        if (configSheet && configSheet.getLastRow() > 1) {
+          var cVals = configSheet.getRange(2, 1, configSheet.getLastRow() - 1, 1).getValues();
+          for (var ci = 0; ci < cVals.length; ci++) {
+            if (cVals[ci][0] === 'driveFolderId') {
+              configSheet.getRange(ci + 2, 2).setValue(rootFolder.getId());
+              break;
+            }
+          }
+        }
+      } catch (eSave) {}
+    }
+
+    // 1. Level 1: periode (mm yyyy) (Contoh: "periode 04 2026")
     var monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-    var monthShortsIndo = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+    var monthShortsIndo = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
     var mPeriodeIdx = -1;
     if (meta.periodeBulan) {
@@ -684,16 +810,13 @@ function uploadSlipToDrive(base64Data, fileName, mimeType, meta) {
     var folderPeriodeName = 'periode ' + mmPeriode + ' ' + tahunAnggaran;
     var folderPeriode = getOrCreateSubFolder(rootFolder, folderPeriodeName);
 
-    // 2. Level 2: bulan bayar [Bayar Mmm] (Contoh: "bulan bayar Bayar Mei", "bulan bayar Bayar Jul")
-    var payDate = meta.tanggalTransfer ? new Date(meta.tanggalTransfer) : new Date();
-    if (isNaN(payDate.getTime())) payDate = new Date();
-    var payMonthIdx = payDate.getMonth();
-    var mmmBayar = monthShortsIndo[payMonthIdx] || 'Bln';
-    var folderBulanBayarName = 'bulan bayar Bayar ' + mmmBayar;
-    var folderBulanBayar = getOrCreateSubFolder(folderPeriode, folderBulanBayarName);
+    // 2. Level 2: bayar (tgl setor, Mmm) (Contoh: "bayar 14, Mei", "bayar 08, Jul")
+    var tglSetorInfo = parseTanggalSetor(meta.tanggalTransfer);
+    var folderBayarName = 'bayar ' + tglSetorInfo.text;
+    var folderBayar = getOrCreateSubFolder(folderPeriode, folderBayarName);
 
-    // 3. Nama File: [Kecamatan] [Nama SPPG ] [Periode 'Month'].[extensi file]
-    // Contoh: Balocci Kassi Periode 'April'.jpg
+    // 3. Nama File: (kecamatan) (nama sppg) (periode Mmmm).(extensi file)
+    // Contoh: Balocci Kassi Periode April.jpg
     var ext = '';
     if (fileName && fileName.lastIndexOf('.') !== -1) {
       ext = fileName.substring(fileName.lastIndexOf('.'));
@@ -705,19 +828,101 @@ function uploadSlipToDrive(base64Data, fileName, mimeType, meta) {
 
     var kec = meta.kecamatan || 'Kecamatan';
     var sppg = meta.namaSppg || 'SPPG';
-    var periodeFull = monthNames[mPeriodeIdx] || meta.periodeBulan || 'Bulan';
-    var targetFileName = kec + ' ' + sppg + ' Periode \'' + periodeFull + '\'' + ext;
+    var periodeFull = monthNames[mPeriodeIdx] || meta.periodeBulan || 'April';
+    var targetFileName = kec + ' ' + sppg + ' Periode ' + periodeFull + ext;
 
-    var cleanBase64 = base64Data.split(',')[1] || base64Data;
+    var cleanBase64 = String(base64Data || '');
+    if (cleanBase64.indexOf(',') !== -1) {
+      cleanBase64 = cleanBase64.split(',')[1];
+    }
+    cleanBase64 = cleanBase64.replace(/\s/g, '');
+
+    if (!cleanBase64) {
+      Logger.log('uploadSlipToDrive: cleanBase64 kosong.');
+      return '';
+    }
+
     var decoded = Utilities.base64Decode(cleanBase64);
     var blob = Utilities.newBlob(decoded, mimeType || 'image/jpeg', targetFileName);
-    var file = folderBulanBayar.createFile(blob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    var file = folderBayar.createFile(blob);
 
-    return file.getUrl();
+    try {
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    } catch (eShare) {
+      Logger.log('Notice setSharing: ' + eShare.toString());
+    }
+
+    var fileUrl = file.getUrl();
+    Logger.log('uploadSlipToDrive SUKSES: ' + targetFileName + ' -> ' + fileUrl + ' (ID: ' + file.getId() + ')');
+    return fileUrl;
   } catch (err) {
     Logger.log('Error uploadSlipToDrive: ' + err.toString());
-    return 'https://drive.google.com/thumbnail?id=demo_slip';
+    return '';
+  }
+}
+
+/**
+ * Jalankan fungsi ini dari Apps Script Editor untuk mengatur dan memvalidasi folder Google Drive:
+ * Contoh: setFolderPenyimpananDrive("https://drive.google.com/drive/folders/1AbC...")
+ */
+function setFolderPenyimpananDrive(folderIdOrUrl) {
+  try {
+    var rawInput = String(folderIdOrUrl || '').trim();
+    if (!rawInput) {
+      var currentConfig = getDb().getSheetByName(SHEETS.CONFIG);
+      var currentId = '';
+      if (currentConfig && currentConfig.getLastRow() > 1) {
+        var vals = currentConfig.getRange(2, 1, currentConfig.getLastRow() - 1, 2).getValues();
+        vals.forEach(function(r) { if (r[0] === 'driveFolderId') currentId = r[1]; });
+      }
+      return {
+        status: 'info',
+        currentFolderId: currentId,
+        message: 'Masukkan Link atau ID Google Drive folder Anda. Contoh: setFolderPenyimpananDrive("1w7u9...")'
+      };
+    }
+
+    var cleanId = extractDriveFolderId(rawInput);
+    var folder = DriveApp.getFolderById(cleanId);
+    var folderName = folder.getName();
+    var folderUrl = folder.getUrl();
+
+    // 1. Simpan ke sheet app_config
+    var configSheet = getSheet(SHEETS.CONFIG);
+    if (configSheet && configSheet.getLastRow() > 1) {
+      var cVals = configSheet.getRange(2, 1, configSheet.getLastRow() - 1, 1).getValues();
+      var found = false;
+      for (var ci = 0; ci < cVals.length; ci++) {
+        if (cVals[ci][0] === 'driveFolderId') {
+          configSheet.getRange(ci + 2, 2).setValue(cleanId);
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        configSheet.appendRow(['driveFolderId', cleanId, 'ID Folder Google Drive penyimpanan bukti slip', new Date()]);
+      }
+    }
+
+    // 2. Simpan ke Script Properties
+    try {
+      PropertiesService.getScriptProperties().setProperty('driveFolderId', cleanId);
+    } catch (eProp) {}
+
+    Logger.log('Folder penyimpanan bukti slip berhasil diatur ke: "' + folderName + '" (' + cleanId + ')');
+    return {
+      status: 'success',
+      folderId: cleanId,
+      folderName: folderName,
+      folderUrl: folderUrl,
+      message: 'Folder penyimpanan berhasil dihubungkan ke: ' + folderName
+    };
+  } catch (err) {
+    Logger.log('Gagal mengatur folder: ' + err.toString());
+    return {
+      status: 'error',
+      message: 'Gagal menghubungkan folder: ' + err.toString() + '. Pastikan Link / ID folder benar dan dapat diakses.'
+    };
   }
 }
 
@@ -1011,6 +1216,14 @@ function saveAppConfig(configMap) {
     var sheet = getSheet(SHEETS.CONFIG);
     var data = sheet.getDataRange().getValues();
     var existingKeys = {};
+
+    // Jika driveFolderId dikirim, bersihkan formatnya (buang format link URL)
+    if (configMap && configMap.driveFolderId) {
+      configMap.driveFolderId = extractDriveFolderId(configMap.driveFolderId);
+      try {
+        PropertiesService.getScriptProperties().setProperty('driveFolderId', configMap.driveFolderId);
+      } catch (eProp) {}
+    }
 
     for (var i = 1; i < data.length; i++) {
       var key = data[i][0];
