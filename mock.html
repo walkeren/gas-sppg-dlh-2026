@@ -958,13 +958,7 @@
             <i data-lucide="wallet" class="w-4 h-4"></i>
             <span>Pembayaran SPPG</span>
           </button>
-          <button 
-            @click="adminSubmenu = 'input_pembayaran'" 
-            :class="adminSubmenu === 'input_pembayaran' ? 'bg-white text-brand-700 font-bold shadow-sm' : 'text-slate-600 hover:text-slate-900 font-medium'"
-            class="px-3.5 py-2 rounded-md transition flex items-center gap-1.5 whitespace-nowrap">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span>Input Pembayaran</span>
-          </button>
+          
 
           <button 
             @click="adminSubmenu = 'periode_wajib'" 
@@ -1040,6 +1034,7 @@
             </div>
           </div>
 
+          
           <!-- Table Content with Pagination & Sticky Header -->
           <div class="border-t border-slate-200">
             <table class="w-full text-left border-separate border-spacing-0 text-xs">
@@ -1057,6 +1052,183 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-700">
+                <!-- BARIS PERTAMA: FORM INPUT PEMBAYARAN BARU OLEH BENDAHARA -->
+                <tr class="bg-brand-50/70 border-b-2 border-brand-500 shadow-xs relative">
+                  
+                  <!-- 1. Tanggal (Input Date) -->
+                  <td class="py-2 px-2.5 border-r border-brand-200/80 align-top">
+                    <input 
+                      type="date" 
+                      x-ref="inputTanggal"
+                      tabindex="1"
+                      x-model="inputBayar.tanggalBayar" 
+                      required 
+                      class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded px-2 py-1 text-xs text-slate-800 font-mono outline-none shadow-2xs"
+                      title="Tanggal Bayar / Transfer">
+                  </td>
+
+                  <!-- 2. Nama SPPG (Searchable Autocomplete) -->
+                  <td class="py-2 px-2.5 border-r border-brand-200/80 align-top relative" x-data="{ openSearch: false }">
+                    <div class="relative">
+                      <input 
+                        type="text" 
+                        tabindex="2"
+                        x-model="inputBayar.searchQuery" 
+                        @focus="openSearch = true" 
+                        @input="openSearch = true" 
+                        placeholder="Cari SPPG..." 
+                        required 
+                        class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded pl-6 pr-5 py-1 text-xs text-slate-800 outline-none shadow-2xs font-semibold">
+                      <div class="absolute left-1.5 top-1.5 text-slate-400">
+                        <i data-lucide="search" class="w-3.5 h-3.5"></i>
+                      </div>
+                      <button 
+                        type="button" 
+                        tabindex="-1"
+                        x-show="inputBayar.searchQuery" 
+                        @click="resetInputBayarSppg(); openSearch = false" 
+                        class="absolute right-1 top-1.5 text-slate-400 hover:text-slate-600">
+                        <i data-lucide="x" class="w-3 h-3"></i>
+                      </button>
+                    </div>
+
+                    <!-- Dropdown List SPPG -->
+                    <div 
+                      x-show="openSearch" 
+                      @click.outside="openSearch = false" 
+                      class="absolute z-50 left-0 w-64 mt-1 max-h-48 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl divide-y divide-slate-100 text-xs" 
+                      x-cloak>
+                      <template x-for="sppg in filteredInputBayarSppg" :key="sppg.id">
+                        <div 
+                          @click="selectInputBayarSppg(sppg); openSearch = false" 
+                          class="px-3 py-2 hover:bg-brand-50 cursor-pointer transition">
+                          <div class="font-bold text-slate-900" x-text="sppg.nama.startsWith('SPPG') ? sppg.nama : 'SPPG ' + sppg.nama"></div>
+                          <div class="text-[10.5px] text-slate-500 flex items-center gap-1">
+                            <span x-text="'Kec. ' + (sppg.kecamatan || sppg.kec)"></span>
+                            <span>&bull;</span>
+                            <span class="truncate" x-text="sppg.penanggung_jawab || sppg.penanggungJawab || sppg.pengurus || '-'"></span>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+
+                    <!-- Info SPPG Terpilih -->
+                    <div x-show="inputBayar.sppgId" class="text-[10.5px] text-brand-700 font-medium truncate mt-0.5" x-text="inputBayar.kecamatan ? 'Kec. ' + inputBayar.kecamatan : ''"></div>
+                  </td>
+
+                  <!-- 3. Penyetor -> MENAMPILKAN ISIAN PERIODE (Sesuai Request User) -->
+                  <td class="py-2 px-2.5 border-r border-brand-200/80 align-top">
+                    <select 
+                      tabindex="3"
+                      x-model="inputBayar.periodeBulan" 
+                      required 
+                      class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded px-2 py-1 text-xs text-brand-700 font-semibold outline-none shadow-2xs">
+                      <option value="">-- Pilih Periode --</option>
+                      <template x-for="bln in availableBulanForInputBayar" :key="bln.full">
+                        <option :value="bln.full" x-text="bln.full + (bln.isPaid ? ' (Lunas)' : '')" :disabled="bln.isPaid"></option>
+                      </template>
+                    </select>
+                    <!-- Keterangan Penyetor Otomatis -->
+                    <div class="text-[10px] text-slate-600 truncate mt-0.5 font-medium" x-show="inputBayar.penanggungJawab" :title="'Penyetor: ' + inputBayar.penanggungJawab + ' (' + inputBayar.kontak + ')'" x-text="inputBayar.penanggungJawab"></div>
+                  </td>
+
+                  <!-- 4. Nominal (Readonly Rp 750.000) -->
+                  <td class="py-2 px-2.5 text-right font-mono font-bold text-slate-900 border-r border-brand-200/80 align-top">
+                    <input 
+                      type="text" 
+                      value="Rp 750.000" 
+                      readonly 
+                      tabindex="-1"
+                      class="w-full bg-slate-100/90 border border-slate-200 rounded px-1.5 py-1 text-xs text-right font-mono font-bold text-slate-800 outline-none cursor-default shadow-2xs">
+                  </td>
+
+                  <!-- 5. Bukti (Tombol Upload) -->
+                  <td class="py-2 px-1.5 text-center border-r border-brand-200/80 align-top">
+                    <input 
+                      type="file" 
+                      accept="image/*,application/pdf" 
+                      @change="handleInputBayarFileUpload($event)" 
+                      class="hidden" 
+                      x-ref="inlineBuktiFile">
+                    <button 
+                      type="button" 
+                      tabindex="4"
+                      @click="$refs.inlineBuktiFile.click()" 
+                      :class="inputBayar.filePreview ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-300'"
+                      class="w-full py-1 px-1 rounded border text-[11px] font-semibold flex items-center justify-center gap-1 shadow-2xs transition truncate"
+                      :title="inputBayar.fileName || 'Upload Bukti Slip Transfer'">
+                      <i :data-lucide="inputBayar.filePreview ? 'check-circle-2' : 'upload'" class="w-3.5 h-3.5 shrink-0"></i>
+                      <span class="truncate" x-text="inputBayar.filePreview ? 'OK' : 'Slip'"></span>
+                    </button>
+                  </td>
+
+                  <!-- 6. No. STS -->
+                  <td class="py-2 px-1 border-l border-brand-200/80 bg-emerald-50/20 align-top max-w-[95px]">
+                    <input 
+                      type="text" 
+                      tabindex="5"
+                      x-model="inputBayar.noSts" 
+                      placeholder="No. STS" 
+                      class="w-full bg-white border border-slate-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded px-1.5 py-1 text-xs font-mono text-slate-900 outline-none shadow-2xs">
+                  </td>
+
+                  <!-- 7. No. STBP -->
+                  <td class="py-2 px-1 border-l border-brand-200/80 bg-blue-50/20 align-top max-w-[95px]">
+                    <input 
+                      type="text" 
+                      tabindex="6"
+                      x-model="inputBayar.noStbp" 
+                      placeholder="No. STBP" 
+                      class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded px-1.5 py-1 text-xs font-mono text-slate-900 outline-none shadow-2xs">
+                  </td>
+
+                  <!-- 8. ID Transaksi -->
+                  <td class="py-2 px-1 border-l border-brand-200/80 bg-purple-50/20 align-top max-w-[95px]">
+                    <input 
+                      type="text" 
+                      tabindex="7"
+                      x-model="inputBayar.noTrxBank" 
+                      placeholder="ID Trx" 
+                      class="w-full bg-white border border-slate-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded px-1.5 py-1 text-xs font-mono text-slate-900 outline-none shadow-2xs">
+                  </td>
+
+                  <!-- 9. Aksi: Tombol Simpan & Tombol Baru (Input Baru) -->
+                  <td class="py-2 px-2 text-center border-b border-l border-brand-200/80 align-top">
+                    <div class="flex items-center gap-1.5 justify-center">
+                      <!-- Tombol Simpan -->
+                      <button 
+                        type="button" 
+                        x-ref="btnSimpan"
+                        tabindex="8"
+                        @click="handleSimpanPembayaran()" 
+                        @keydown.enter.prevent="handleSimpanPembayaran()"
+                        :disabled="inputBayar.isSubmitting"
+                        :aria-disabled="inputBayar.isSaved ? 'true' : 'false'"
+                        :class="inputBayar.isSaved ? 'opacity-40 cursor-not-allowed bg-slate-300 text-slate-500 border-slate-300' : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs border-emerald-700'"
+                        class="flex-1 py-1 px-2 rounded border text-xs font-bold transition flex items-center justify-center gap-1 whitespace-nowrap"
+                        title="Simpan Data Pembayaran">
+                        <i data-lucide="check" class="w-3.5 h-3.5 shrink-0"></i>
+                        <span>Simpan</span>
+                      </button>
+
+                      <!-- Tombol Baru (Input Baru) -->
+                      <button 
+                        type="button" 
+                        x-ref="btnBaru"
+                        tabindex="9"
+                        @click="handleInputBaru()" 
+                        @keydown.enter.prevent="handleInputBaru()"
+                        class="flex-1 py-1 px-2 bg-brand-600 hover:bg-brand-700 text-white rounded border border-brand-700 text-xs font-bold shadow-xs transition flex items-center justify-center gap-1 whitespace-nowrap"
+                        title="Reset & Input Baru (Fokus ke Tanggal)">
+                        <i data-lucide="plus" class="w-3.5 h-3.5 shrink-0"></i>
+                        <span>Baru</span>
+                      </button>
+                    </div>
+                  </td>
+
+                </tr>
+                
+                
                 <template x-for="trx in paginatedTransaksi" :key="trx.id">
                   <tr class="hover:bg-slate-50/80 transition-colors">
                     
@@ -1281,212 +1453,6 @@
       </div>
 
       
-      <!-- SUBMENU 1.5: INPUT PEMBAYARAN OLEH BENDAHARA -->
-      <div x-show="adminSubmenu === 'input_pembayaran'" class="space-y-4" x-cloak>
-        <div class="bg-white border border-slate-200 rounded-xl shadow-card p-5 sm:p-7 max-w-2xl mx-auto">
-          
-          <!-- Header Form -->
-          <div class="flex items-center gap-3.5 pb-4 mb-5 border-b border-slate-100">
-            <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
-              <i data-lucide="plus-circle" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <h3 class="font-headline font-bold text-slate-900 text-base">Input Pembayaran Retribusi SPPG</h3>
-              <p class="text-xs text-slate-500 mt-0.5">Pencatatan langsung transaksi setoran retribusi oleh Bendahara DLH.</p>
-            </div>
-          </div>
-
-          <form @submit.prevent="submitInputPembayaranBendahara()" class="space-y-4">
-            
-            <!-- Hidden Data Fields (Otomatis diambil dari database SPPG) -->
-            <input type="hidden" name="kecamatan" :value="inputBayar.kecamatan">
-            <input type="hidden" name="penanggungJawab" :value="inputBayar.penanggungJawab">
-            <input type="hidden" name="kontak" :value="inputBayar.kontak">
-
-            <!-- 1. Searchable Nama SPPG -->
-            <div class="relative" x-data="{ openDropdown: false }">
-              <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                Nama SPPG <span class="text-rose-500">*</span>
-              </label>
-              <div class="relative">
-                <input 
-                  type="text" 
-                  x-model="inputBayar.searchQuery" 
-                  @focus="openDropdown = true" 
-                  @input="openDropdown = true" 
-                  placeholder="Ketik untuk mencari nama SPPG atau kecamatan..." 
-                  required
-                  class="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-100 rounded-lg pl-9 pr-8 py-2.5 text-xs text-slate-800 outline-none transition">
-                <div class="absolute left-3 top-2.5 text-slate-400">
-                  <i data-lucide="search" class="w-4 h-4"></i>
-                </div>
-                <button 
-                  type="button" 
-                  x-show="inputBayar.searchQuery" 
-                  @click="resetInputBayarSppg(); openDropdown = false" 
-                  class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 transition"
-                  title="Hapus pilihan">
-                  <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                </button>
-              </div>
-
-              <!-- Dropdown List Hasil Pencarian -->
-              <div 
-                x-show="openDropdown" 
-                @click.outside="openDropdown = false" 
-                class="absolute z-30 left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg divide-y divide-slate-100 text-xs" 
-                x-cloak>
-                <template x-for="sppg in filteredInputBayarSppg" :key="sppg.id">
-                  <div 
-                    @click="selectInputBayarSppg(sppg); openDropdown = false" 
-                    class="px-3.5 py-2.5 hover:bg-brand-50 cursor-pointer transition flex items-center justify-between">
-                    <div>
-                      <div class="font-bold text-slate-900" x-text="sppg.nama.startsWith('SPPG') ? sppg.nama : 'SPPG ' + sppg.nama"></div>
-                      <div class="text-[11px] text-slate-500 flex items-center gap-1.5 mt-0.5">
-                        <span x-text="'Kec. ' + (sppg.kecamatan || sppg.kec)"></span>
-                        <span>&bull;</span>
-                        <span x-text="'PJ: ' + (sppg.penanggung_jawab || sppg.penanggungJawab || sppg.pengurus || '-')"></span>
-                      </div>
-                    </div>
-                    <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600" x-text="sppg.id"></span>
-                  </div>
-                </template>
-                <template x-if="filteredInputBayarSppg.length === 0">
-                  <div class="px-3.5 py-3 text-center text-slate-400">
-                    Tidak ditemukan SPPG dengan kata kunci tersebut.
-                  </div>
-                </template>
-              </div>
-
-              <!-- Info Badge Rincian SPPG yang Terpilih dari Database -->
-              <div x-show="inputBayar.sppgId" class="mt-2.5 p-3 bg-brand-50/80 border border-brand-200/90 rounded-lg text-xs flex flex-wrap items-center gap-x-4 gap-y-1.5 text-slate-700">
-                <div class="flex items-center gap-1">
-                  <span class="text-slate-500">Kecamatan:</span> 
-                  <span class="font-bold text-slate-900" x-text="inputBayar.kecamatan"></span>
-                </div>
-                <div class="flex items-center gap-1">
-                  <span class="text-slate-500">Penyetor (PJ):</span> 
-                  <span class="font-bold text-slate-900" x-text="inputBayar.penanggungJawab || '-'"></span>
-                </div>
-                <div class="flex items-center gap-1">
-                  <span class="text-slate-500">Kontak:</span> 
-                  <span class="font-bold font-mono text-slate-900" x-text="inputBayar.kontak || '-'"></span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 2. Grid Tanggal Bayar & Periode Dibayar -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Tanggal Bayar / Transfer <span class="text-rose-500">*</span>
-                </label>
-                <input 
-                  type="date" 
-                  x-model="inputBayar.tanggalBayar" 
-                  required
-                  class="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-100 rounded-lg px-3.5 py-2.5 text-xs text-slate-800 font-mono outline-none transition">
-              </div>
-
-              <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Periode Dibayar <span class="text-rose-500">*</span>
-                </label>
-                <select 
-                  x-model="inputBayar.periodeBulan" 
-                  :disabled="!inputBayar.sppgId"
-                  required
-                  class="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-100 rounded-lg px-3.5 py-2.5 text-xs text-slate-800 outline-none transition disabled:opacity-40 disabled:cursor-not-allowed">
-                  <template x-if="!inputBayar.sppgId">
-                    <option value="">-- Pilih SPPG Dahulu --</option>
-                  </template>
-                  <template x-if="inputBayar.sppgId">
-                    <option value="">-- Pilih Periode Bulan --</option>
-                  </template>
-                  <template x-for="bln in availableBulanForInputBayar" :key="bln.full">
-                    <option :value="bln.full" x-text="bln.full + (bln.isPaid ? ' (Sudah Dibayar)' : '')" :disabled="bln.isPaid"></option>
-                  </template>
-                </select>
-              </div>
-            </div>
-
-            <!-- 3. Upload Bukti Transaksi -->
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                Upload Bukti Transaksi (Slip Transfer Bank) <span class="text-rose-500">*</span>
-              </label>
-              <div class="relative border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-xl p-4 transition-colors text-center bg-slate-50/50 hover:bg-white cursor-pointer group">
-                <input 
-                  type="file" 
-                  accept="image/*,application/pdf" 
-                  @change="handleInputBayarFileUpload($event)"
-                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                
-                <template x-if="!inputBayar.filePreview">
-                  <div class="space-y-1.5">
-                    <div class="w-9 h-9 mx-auto rounded-full bg-slate-100 group-hover:bg-brand-50 text-slate-400 group-hover:text-brand-600 flex items-center justify-center transition">
-                      <i data-lucide="upload-cloud" class="w-5 h-5"></i>
-                    </div>
-                    <p class="text-xs font-medium text-slate-700">Klik atau seret file bukti transfer ke sini</p>
-                    <p class="text-[10px] text-slate-400">Mendukung format JPG, PNG, atau PDF (maks. 5MB)</p>
-                  </div>
-                </template>
-
-                <template x-if="inputBayar.filePreview">
-                  <div class="flex items-center justify-between p-2 bg-white border border-slate-200 rounded-lg">
-                    <div class="flex items-center gap-2.5 truncate">
-                      <template x-if="inputBayar.fileType && inputBayar.fileType.startsWith('image/')">
-                        <img :src="inputBayar.filePreview" class="w-9 h-9 object-cover rounded border border-slate-200">
-                      </template>
-                      <template x-if="!inputBayar.fileType || !inputBayar.fileType.startsWith('image/')">
-                        <div class="w-9 h-9 rounded bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
-                          <i data-lucide="file-text" class="w-5 h-5"></i>
-                        </div>
-                      </template>
-                      <div class="text-left truncate">
-                        <div class="text-xs font-semibold text-slate-900 truncate" x-text="inputBayar.fileName"></div>
-                        <div class="text-[10px] text-emerald-600 font-medium">Siap diunggah</div>
-                      </div>
-                    </div>
-                    <button 
-                      type="button" 
-                      @click.stop="clearInputBayarFile()" 
-                      class="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" 
-                      title="Hapus berkas">
-                      <i data-lucide="trash-2" class="w-4 h-4"></i>
-                    </button>
-                  </div>
-                </template>
-              </div>
-            </div>
-
-            <!-- 4. Tombol Aksi Form -->
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
-              <button 
-                type="button" 
-                @click="resetInputBayarForm(); adminSubmenu = 'pembayaran'" 
-                class="px-4 py-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold transition">
-                Batal
-              </button>
-              <button 
-                type="submit" 
-                :disabled="inputBayar.isSubmitting"
-                class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold shadow-sm transition flex items-center gap-2">
-                <template x-if="inputBayar.isSubmitting">
-                  <div class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                </template>
-                <template x-if="!inputBayar.isSubmitting">
-                  <i data-lucide="check" class="w-4 h-4"></i>
-                </template>
-                <span>Simpan Pembayaran</span>
-              </button>
-            </div>
-
-          </form>
-
-        </div>
-      </div>
-
       <!-- SUBMENU 2: PERIODE WAJIB -->
       <div x-show="adminSubmenu === 'periode_wajib'" class="space-y-4" x-cloak>
         
@@ -2634,9 +2600,11 @@
     function appData() {
       return {
         currentView: 'dashboard', // 'dashboard' | 'form' | 'admin'
-        adminSubmenu: 'pembayaran', // 'pembayaran' | 'periode_wajib' | 'daftar_sppg' | 'tambah_sppg'
+        adminSubmenu: 'pembayaran',
+        showInputBayarInline: false, // 'pembayaran' | 'periode_wajib' | 'daftar_sppg' | 'tambah_sppg'
         isLoggedIn: false,
-        isSubmitting: false,
+        isSaved: false,
+          isSubmitting: false,
         isSyncing: false,
 
         async init() {
@@ -5587,15 +5555,23 @@
         },
 
         get availableBulanForInputBayar() {
-          if (!this.inputBayar.sppgId) return [];
-          const targetMatriks = (this.matriksData || []).find(m => m.id === this.inputBayar.sppgId);
           const bulanFullMap = {
+            'Jan': 'Januari', 'Feb': 'Februari', 'Mar': 'Maret',
             'Apr': 'April', 'Mei': 'Mei', 'Jun': 'Juni', 'Jul': 'Juli',
             'Agu': 'Agustus', 'Sep': 'September', 'Okt': 'Oktober', 'Nov': 'November', 'Des': 'Desember'
           };
-          return (this.bulanListShort || []).map(b => {
+          const list = (this.bulanListShort && this.bulanListShort.length > 0) ? this.bulanListShort : ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          if (!this.inputBayar.sppgId) {
+            return list.map(b => ({
+              short: b,
+              full: bulanFullMap[b] || b,
+              isPaid: false
+            }));
+          }
+          const targetMatriks = (this.matriksData || []).find(m => m.id === this.inputBayar.sppgId);
+          return list.map(b => {
             const status = targetMatriks && targetMatriks.months ? targetMatriks.months[b] : 'unpaid';
-            const isPaid = (status === 'verified' || status === 'paid' || status === 'pending');
+            const isPaid = (status === 'verified' || status === 'paid');
             return {
               short: b,
               full: bulanFullMap[b] || b,
@@ -5670,26 +5646,28 @@
             filePreview: null,
             fileName: '',
             fileType: '',
+            noSts: '',
+            noStbp: '',
+            noTrxBank: '',
+            isSaved: false,
             isSubmitting: false
           };
-          this.$nextTick(() => lucide.createIcons());
-        },
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
+                },
 
-        submitInputPembayaranBendahara() {
+        submitInputBayarInline(onSuccess) {
           if (!this.inputBayar.sppgId) {
             this.notifyWarning('Validasi', 'Silakan pilih SPPG terlebih dahulu.');
             return;
           }
           if (!this.inputBayar.periodeBulan) {
-            this.notifyWarning('Validasi', 'Silakan pilih periode bulan pembayaran.');
+            this.notifyWarning('Validasi', 'Silakan tentukan periode bulan setoran.');
             return;
           }
           if (!this.inputBayar.tanggalBayar) {
             this.notifyWarning('Validasi', 'Silakan tentukan tanggal bayar / transfer.');
-            return;
-          }
-          if (!this.inputBayar.filePreview) {
-            this.notifyWarning('Validasi', 'Harap lampirkan bukti transaksi / slip transfer bank.');
             return;
           }
 
@@ -5705,79 +5683,117 @@
             periodeBulan: this.inputBayar.periodeBulan,
             tanggalTransfer: this.inputBayar.tanggalBayar,
             jumlahTransfer: this.inputBayar.jumlahTransfer || 750000,
-            fileBase64: this.inputBayar.filePreview,
-            fileName: this.inputBayar.fileName,
-            fileType: this.inputBayar.fileType,
-            statusVerifikasi: 'MENUNGGU_VERIFIKASI'
+            buktiUrl: this.inputBayar.filePreview || '',
+            fileBase64: this.inputBayar.filePreview || '',
+            fileName: this.inputBayar.fileName || '',
+            fileType: this.inputBayar.fileType || '',
+            noSts: this.inputBayar.noSts || '',
+            noStbp: this.inputBayar.noStbp || '',
+            noTrxBank: this.inputBayar.noTrxBank || '',
+            statusVerifikasi: this.inputBayar.noSts ? 'SELESAI_STS' : (this.inputBayar.noStbp ? 'PROSES_STBP' : 'MENUNGGU_VERIFIKASI'),
+            sumber: 'Input Bendahara'
+          };
+
+          const handleSuccess = (res) => {
+            this.inputBayar.isSubmitting = false;
+            const newId = (res && res.idTrx) ? res.idTrx : ('TRX-' + new Date().getFullYear() + String(new Date().getMonth()+1).padStart(2, '0') + '-' + String(Math.floor(1000 + Math.random() * 9000)));
+            const newRecord = {
+              id: newId,
+              sppgId: payload.sppgId,
+              namaSppg: payload.namaSppg,
+              kecamatan: payload.kecamatan,
+              namaPelapor: payload.namaPelapor,
+              kontakPelapor: payload.kontakPelapor,
+              periodeBulan: payload.periodeBulan,
+              tanggalTransfer: payload.tanggalTransfer,
+              jumlahTransfer: payload.jumlahTransfer,
+              buktiUrl: (res && res.buktiUrl) ? res.buktiUrl : payload.fileBase64,
+              status: payload.statusVerifikasi,
+              noTrxBank: payload.noTrxBank,
+              noStbp: payload.noStbp,
+              noSts: payload.noSts,
+              tanggalSts: payload.noSts ? payload.tanggalTransfer : '',
+              editNoSts: payload.noSts,
+              editNoStbp: payload.noStbp,
+              editNoTrxBank: payload.noTrxBank
+            };
+            this.transaksiList.unshift(newRecord);
+            this.notifySuccess('Pembayaran Tersimpan', 'Setoran ' + payload.namaSppg + ' periode ' + payload.periodeBulan + ' berhasil dicatat.');
+
+            if (typeof onSuccess === 'function') {
+              onSuccess(newRecord);
+            }
+            this.$nextTick(() => {
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+            });
           };
 
           if (typeof google !== 'undefined' && google.script && google.script.run) {
             google.script.run
-              .withSuccessHandler((res) => {
-                this.inputBayar.isSubmitting = false;
-                if (res && res.success) {
-                  const newRecord = {
-                    id: res.idTrx,
-                    sppgId: payload.sppgId,
-                    namaSppg: payload.namaSppg,
-                    kecamatan: payload.kecamatan,
-                    namaPelapor: payload.namaPelapor,
-                    kontakPelapor: payload.kontakPelapor,
-                    periodeBulan: payload.periodeBulan,
-                    tanggalTransfer: payload.tanggalTransfer,
-                    jumlahTransfer: payload.jumlahTransfer,
-                    buktiUrl: res.buktiUrl || payload.fileBase64,
-                    status: 'MENUNGGU_VERIFIKASI',
-                    noTrxBank: '',
-                    noStbp: '',
-                    noSts: '',
-                    tanggalSts: ''
-                  };
-                  this.transaksiList.unshift(newRecord);
-                  this.notifySuccess('Pembayaran Tersimpan', 'Setoran ' + payload.namaSppg + ' periode ' + payload.periodeBulan + ' berhasil dicatat.');
-                  this.resetInputBayarForm();
-                  this.adminSubmenu = 'pembayaran';
-                } else {
-                  this.notifyError('Gagal Menyimpan', res ? res.error : 'Terjadi kesalahan sistem.');
-                }
-                this.$nextTick(() => lucide.createIcons());
-              })
+              .withSuccessHandler(handleSuccess)
               .withFailureHandler((err) => {
                 this.inputBayar.isSubmitting = false;
                 this.notifyError('Kesalahan Jaringan', err.toString());
               })
               .submitKonfirmasiPembayaran(payload);
           } else {
-            // Simulasi Lokal Offline
-            setTimeout(() => {
-              const newTrxId = 'TRX-' + new Date().getFullYear() + String(new Date().getMonth()+1).padStart(2, '0') + '-' + String(Math.floor(1000 + Math.random() * 9000));
-              const newRecord = {
-                id: newTrxId,
-                sppgId: payload.sppgId,
-                namaSppg: payload.namaSppg,
-                kecamatan: payload.kecamatan,
-                namaPelapor: payload.namaPelapor,
-                kontakPelapor: payload.kontakPelapor,
-                periodeBulan: payload.periodeBulan,
-                tanggalTransfer: payload.tanggalTransfer,
-                jumlahTransfer: payload.jumlahTransfer,
-                buktiUrl: payload.fileBase64,
-                status: 'MENUNGGU_VERIFIKASI',
-                noTrxBank: '',
-                noStbp: '',
-                noSts: '',
-                tanggalSts: ''
-              };
-              this.transaksiList.unshift(newRecord);
-              this.inputBayar.isSubmitting = false;
-              this.notifySuccess('Pembayaran Tersimpan', 'Setoran ' + payload.namaSppg + ' periode ' + payload.periodeBulan + ' berhasil dicatat.');
-              this.resetInputBayarForm();
-              this.adminSubmenu = 'pembayaran';
-              this.$nextTick(() => lucide.createIcons());
-            }, 500);
+            setTimeout(() => handleSuccess({ success: true }), 300);
           }
         },
 
+        handleSimpanPembayaran() {
+          if (this.inputBayar.isSaved) return;
+
+          if (!this.inputBayar.tanggalBayar) {
+            this.notifyWarning('Validasi', 'Silakan isi tanggal bayar / transfer.');
+            this.$nextTick(() => {
+              const inputTgl = (this.$refs && this.$refs.inputTanggal) || document.querySelector('input[type="date"][tabindex="1"]');
+              if (inputTgl) inputTgl.focus();
+            });
+            return;
+          }
+          if (!this.inputBayar.sppgId) {
+            this.notifyWarning('Validasi', 'Silakan pilih SPPG terlebih dahulu.');
+            return;
+          }
+          if (!this.inputBayar.periodeBulan) {
+            this.notifyWarning('Validasi', 'Silakan tentukan periode bulan setoran.');
+            return;
+          }
+
+          const sppgNama = this.inputBayar.namaSppg || 'SPPG';
+          const bulan = this.inputBayar.periodeBulan;
+          const tgl = this.inputBayar.tanggalBayar;
+          const confirmMsg = "Konfirmasi Simpan Pembayaran:\n\nSPPG: " + sppgNama + "\nPeriode: " + bulan + "\nTanggal Bayar: " + tgl + "\nNominal: Rp 750.000\nNo. STS: " + (this.inputBayar.noSts || '-') + "\nNo. STBP: " + (this.inputBayar.noStbp || '-') + "\nID Trx: " + (this.inputBayar.noTrxBank || '-') + "\n\nApakah data di atas sudah benar dan ingin disimpan?";
+
+          if (!window.confirm(confirmMsg)) {
+            this.$nextTick(() => {
+              const btn = (this.$refs && this.$refs.btnSimpan) || document.querySelector('button[tabindex="8"]');
+              if (btn) btn.focus();
+            });
+            return;
+          }
+
+          this.submitInputBayarInline(() => {
+            this.inputBayar.isSaved = true;
+            this.$nextTick(() => {
+              const btn = (this.$refs && this.$refs.btnSimpan) || document.querySelector('button[tabindex="8"]');
+              if (btn) btn.focus();
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+            });
+          });
+        },
+
+        handleInputBaru() {
+          this.resetInputBayarForm();
+          this.inputBayar.isSaved = false;
+          this.notifyInfo('Input Baru', 'Silakan masukkan data pembayaran berikutnya.');
+          this.$nextTick(() => {
+            const inputTgl = (this.$refs && this.$refs.inputTanggal) || document.querySelector('input[type="date"][tabindex="1"]');
+            if (inputTgl) inputTgl.focus();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
+        },
         submitFormSPPG() {
           if (!this.form.sppgId) {
             this.notifyWarning('Validasi Formulir', 'Silakan pilih nama SPPG terlebih dahulu.');

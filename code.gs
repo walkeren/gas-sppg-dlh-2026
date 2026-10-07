@@ -593,6 +593,8 @@ function submitKonfirmasiPembayaran(payload) {
       });
     }
 
+    var statusVerifikasi = payload.statusVerifikasi || (payload.noSts ? 'SELESAI_STS' : (payload.noStbp ? 'PROSES_STBP' : 'MENUNGGU_VERIFIKASI'));
+    var tglSts = payload.noSts ? (payload.tanggalSts || payload.tanggalTransfer || Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd')) : '';
     var rowData = [
       idTrx,
       payload.sppgId,
@@ -602,14 +604,14 @@ function submitKonfirmasiPembayaran(payload) {
       payload.kontakPelapor,
       payload.periodeBulan,
       payload.tanggalTransfer,
-      Number(payload.jumlahTransfer),
+      Number(payload.jumlahTransfer || 750000),
       buktiUrl,
-      'MENUNGGU_VERIFIKASI',
-      '', // No STS (diisi Bendahara)
-      '', // No STBP (diisi Bendahara)
+      statusVerifikasi,
+      payload.noSts || '', // No STS (diisi Bendahara)
+      payload.noStbp || '', // No STBP (diisi Bendahara)
       payload.noTrxBank || payload.idTransaksi || '', // ID Transaksi
-      '', // Tgl STS
-      'Web Form SPPG',
+      tglSts, // Tgl STS
+      payload.sumber || (payload.noSts ? 'Input Bendahara' : 'Web Form SPPG'),
       new Date()
     ];
 
