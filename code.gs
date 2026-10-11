@@ -111,6 +111,10 @@ function handleApiRequest(action, payload) {
         result = saveAppConfig(payload.configMap || payload.data);
         break;
 
+      case 'normalisasiStatusDatabase':
+        result = normalisasiStatusDatabase();
+        break;
+
       default:
         result = { success: false, message: 'Action not found: ' + action };
     }
@@ -548,7 +552,7 @@ function getPublicDashboardData() {
           tanggalTransfer: r[7] instanceof Date ? Utilities.formatDate(r[7], Session.getScriptTimeZone(), 'yyyy-MM-dd') : String(r[7]),
           jumlahTransfer: Number(r[8]),
           buktiUrl: r[9],
-          status: r[10],
+          status: normalizeStatusValue(r[10]),
           noSts: r[11] !== '' && r[11] !== null && r[11] !== undefined ? String(r[11]) : '',
           noStbp: r[12] !== '' && r[12] !== null && r[12] !== undefined ? String(r[12]) : '',
           noTrxBank: r[13] !== '' && r[13] !== null && r[13] !== undefined ? String(r[13]) : '',
@@ -626,7 +630,7 @@ function submitKonfirmasiPembayaran(payload) {
       } catch (eMaster) {}
     }
 
-    var statusVerifikasi = payload.statusVerifikasi || (payload.noSts ? 'SELESAI_STS' : (payload.noStbp ? 'PROSES_STBP' : 'MENUNGGU_VERIFIKASI'));
+    var statusVerifikasi = normalizeStatusValue(payload.statusVerifikasi) || (payload.noSts ? 'terverifikasi' : 'menunggu');
     var tglSts = payload.noSts ? (payload.tanggalSts || payload.tanggalTransfer || Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd')) : '';
     var rowData = [
       idTrx,
@@ -1067,7 +1071,7 @@ function saveTransaksiInline(idTrx, noSts, noStbp, idTransaksi) {
         var cleanStbp = String(noStbp || '').trim();
         var cleanTrx = String(idTransaksi || '').trim();
 
-        var status = cleanSts ? 'SELESAI_STS' : (cleanStbp ? 'PROSES_STBP' : 'MENUNGGU_VERIFIKASI');
+        var status = cleanSts ? 'terverifikasi' : 'menunggu';
         sheet.getRange(i + 1, 11).setValue(status);
         sheet.getRange(i + 1, 12).setValue(cleanSts);
         sheet.getRange(i + 1, 13).setValue(cleanStbp);
@@ -1108,8 +1112,8 @@ function updateSts(idTrx, noSts, tanggalSts) {
 
     for (var i = 1; i < data.length; i++) {
       if (data[i][0] === idTrx) {
-        sheet.getRange(i + 1, 11).setValue('SELESAI_STS'); // Kolom Status
-        sheet.getRange(i + 1, 12).setValue(noSts);         // Kolom No STS
+        sheet.getRange(i + 1, 11).setValue('terverifikasi'); // Kolom Status
+        sheet.getRange(i + 1, 12).setValue(noSts);           // Kolom No STS
         sheet.getRange(i + 1, 15).setValue(tanggalSts || new Date()); // Kolom Tgl STS
         return { success: true };
       }
@@ -1121,7 +1125,23 @@ function updateSts(idTrx, noSts, tanggalSts) {
 }
 
 /**
- * Toggle Verifikasi Status Pembayaran (SELESAI_STS / MENUNGGU_VERIFIKASI)
+ * Helper: Normalisasi nilai status database
+ * Hanya menghasilkan 'terverifikasi' atau 'menunggu', selebihnya kosong ('')
+ */
+function normalizeStatusValue(val) {
+  if (!val) return '';
+  var s = String(val).trim().toLowerCase();
+  if (s === 'terverifikasi' || s === 'selesai_sts' || s === 'lunas' || s === 'verified') {
+    return 'terverifikasi';
+  }
+  if (s === 'menunggu' || s === 'menunggu_verifikasi' || s === 'proses_stbp' || s === 'pending') {
+    return 'menunggu';
+  }
+  return '';
+}
+
+/**
+ * Toggle Verifikasi Status Pembayaran ('terverifikasi' / 'menunggu')
  */
 function toggleVerifikasiPembayaran(idTrx, newStatus) {
   try {
@@ -1130,10 +1150,10 @@ function toggleVerifikasiPembayaran(idTrx, newStatus) {
 
     for (var i = 1; i < data.length; i++) {
       if (data[i][0] === idTrx) {
-        var currentStatus = data[i][10];
-        var statusToSet = newStatus || (currentStatus === 'SELESAI_STS' ? 'MENUNGGU_VERIFIKASI' : 'SELESAI_STS');
+        var currentStatus = normalizeStatusValue(data[i][10]);
+        var statusToSet = newStatus ? normalizeStatusValue(newStatus) : (currentStatus === 'terverifikasi' ? 'menunggu' : 'terverifikasi');
         sheet.getRange(i + 1, 11).setValue(statusToSet);
-        if (statusToSet === 'SELESAI_STS' && !data[i][14]) {
+        if (statusToSet === 'terverifikasi' && !data[i][14]) {
           sheet.getRange(i + 1, 15).setValue(Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd'));
         }
         return { success: true, status: statusToSet };
@@ -1141,6 +1161,61 @@ function toggleVerifikasiPembayaran(idTrx, newStatus) {
     }
     return { success: false, message: 'Transaksi tidak ditemukan.' };
   } catch (err) {
+    return { success: false, error: err.toString() };
+  }
+}
+
+/**
+ * Normalisasi Status di sheet pembayaran_retribusi:
+ * Hanya diperbolehkan nilai 'terverifikasi' dan 'menunggu'.
+ * Status di luar kedua nilai tersebut akan dikosongkan ('').
+ * Dapat dijalankan langsung via Google Apps Script (Klik tombol Run).
+ */
+function normalisasiStatusDatabase() {
+  try {
+    var sheet = getSheet(SHEETS.PEMBAYARAN);
+    if (!sheet) return { success: false, message: 'Sheet ' + SHEETS.PEMBAYARAN + ' tidak ditemukan.' };
+    
+    var lastRow = sheet.getLastRow();
+    if (lastRow <= 1) {
+      Logger.log('Tabel pembayaran masih kosong.');
+      return { success: true, count: 0, message: 'Tidak ada data transaksi.' };
+    }
+    
+    var data = sheet.getRange(2, 1, lastRow - 1, 15).getValues();
+    var newStatuses = [];
+    var changedCount = 0;
+    
+    for (var i = 0; i < data.length; i++) {
+      var raw = String(data[i][10] || '').trim().toLowerCase();
+      var noSts = String(data[i][11] || '').trim();
+      var normalized = '';
+      
+      if (raw === 'terverifikasi' || raw === 'selesai_sts' || raw === 'lunas' || raw === 'verified') {
+        normalized = 'terverifikasi';
+      } else if (raw === 'menunggu' || raw === 'menunggu_verifikasi' || raw === 'proses_stbp' || raw === 'pending') {
+        normalized = 'menunggu';
+      } else if (noSts !== '') {
+        // Jika ada nomor STS kasda terisi, kategorikan terverifikasi
+        normalized = 'terverifikasi';
+      } else {
+        // Status selain 'terverifikasi' dan 'menunggu' dikosongkan
+        normalized = '';
+      }
+      
+      newStatuses.push([normalized]);
+      if (String(data[i][10] || '') !== normalized) {
+        changedCount++;
+        Logger.log('Baris ' + (i + 2) + ' (' + data[i][0] + '): "' + data[i][10] + '" -> "' + normalized + '"');
+      }
+    }
+    
+    sheet.getRange(2, 11, newStatuses.length, 1).setValues(newStatuses);
+    var msg = 'Normalisasi status database selesai: ' + changedCount + ' baris disesuaikan menjadi terverifikasi/menunggu.';
+    Logger.log(msg);
+    return { success: true, count: changedCount, message: msg };
+  } catch (err) {
+    Logger.log('Error normalisasiStatusDatabase: ' + err.toString());
     return { success: false, error: err.toString() };
   }
 }

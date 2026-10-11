@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -278,7 +278,7 @@
           </div>
           <h1 class="text-2xl sm:text-3xl font-headline font-bold text-white tracking-tight" x-text="'Dashboard Pelaporan ' + config.appName">
           </h1>
-          <p class="text-brand-100 text-xs sm:text-sm leading-relaxed" x-text="config.tagline + ' — Portal terpadu monitoring dan konfirmasi setoran retribusi sampah.'">
+          <p class="text-brand-100 text-xs sm:text-sm leading-relaxed" x-text="config.tagline + ' â€” Portal terpadu monitoring dan konfirmasi setoran retribusi sampah.'">
           </p>
           <div class="pt-2 flex flex-wrap items-center gap-3.5">
             <button 
@@ -334,7 +334,7 @@
                     <div 
                       :class="idx % 2 === 1 ? 'bg-slate-100/60' : 'bg-white'"
                       class="grid grid-cols-12 items-center py-1 px-2.5 hover:bg-amber-100 transition-colors"
-                      :title="item.lastPaymentDate ? (item.nama + ' — Terakhir Bayar: ' + item.lastPaymentDate) : (item.nama + ' — Belum ada setoran')">
+                      :title="item.lastPaymentDate ? (item.nama + ' â€” Terakhir Bayar: ' + item.lastPaymentDate) : (item.nama + ' â€” Belum ada setoran')">
                       
                       <!-- SPPG Name Only (Tanpa Kecamatan & Lebih Compact) -->
                       <div class="col-span-4 pr-2">
@@ -367,7 +367,7 @@
                                     'rounded-l-xs': bIdx === 0 || !item.paidMonths[bulanListShort[bIdx - 1]],
                                     'rounded-r-xs': bIdx === bulanListShort.length - 1 || !item.paidMonths[bulanListShort[bIdx + 1]]
                                   }"
-                                  :title="item.nama + ' — Setoran Bulan ' + bln + ' (Sudah Bayar/Lapor)'">
+                                  :title="item.nama + ' â€” Setoran Bulan ' + bln + ' (Sudah Bayar/Lapor)'">
                                 </div>
                               </template>
                             </div>
@@ -415,7 +415,7 @@
                     <div class="font-semibold text-slate-900 truncate" x-text="trx.namaSppg"></div>
                     <div class="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
                       <span class="font-mono" x-text="trx.tanggalTransfer"></span>
-                      <span>•</span>
+                      <span>â€¢</span>
                       <span class="text-brand-600 font-semibold" x-text="trx.periodeBulan"></span>
                     </div>
                   </div>
@@ -629,10 +629,10 @@
             <!-- 2. ID Transaksi Bank -->
             <div class="flex justify-between items-center text-slate-600">
               <span class="text-slate-500 text-[11px]">ID Transaksi Bank:</span>
-              <template x-if="popover.idTransaksi && popover.idTransaksi !== '-' && popover.idTransaksi !== '—'">
+              <template x-if="popover.idTransaksi && popover.idTransaksi !== '-' && popover.idTransaksi !== 'â€”'">
                 <span class="font-mono font-bold text-slate-800 text-[11px]" x-text="formatTRX(popover.idTransaksi, popover.bulan, popover.sppgId, popover.kec)"></span>
               </template>
-              <template x-if="!popover.idTransaksi || popover.idTransaksi === '-' || popover.idTransaksi === '—'">
+              <template x-if="!popover.idTransaksi || popover.idTransaksi === '-' || popover.idTransaksi === 'â€”'">
                 <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
               </template>
             </div>
@@ -640,10 +640,10 @@
             <!-- 3. Tgl Setor -->
             <div class="flex justify-between items-center text-slate-600">
               <span class="text-slate-500 text-[11px]">Tgl Setor:</span>
-              <template x-if="popover.tglSetor && popover.tglSetor !== '-' && popover.tglSetor !== '—'">
+              <template x-if="popover.tglSetor && popover.tglSetor !== '-' && popover.tglSetor !== 'â€”'">
                 <span class="font-mono font-semibold text-slate-800 text-xs" x-text="popover.tglSetor"></span>
               </template>
-              <template x-if="!popover.tglSetor || popover.tglSetor === '-' || popover.tglSetor === '—'">
+              <template x-if="!popover.tglSetor || popover.tglSetor === '-' || popover.tglSetor === 'â€”'">
                 <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
               </template>
             </div>
@@ -651,10 +651,10 @@
             <!-- 4. No. STBP -->
             <div class="flex justify-between items-center text-slate-600">
               <span class="text-slate-500 text-[11px]">No. STBP:</span>
-              <template x-if="popover.noStbp && popover.noStbp !== '-' && popover.noStbp !== '—'">
+              <template x-if="popover.noStbp && popover.noStbp !== '-' && popover.noStbp !== 'â€”'">
                 <span class="font-mono font-bold text-slate-800 text-[11px]" x-text="formatSTBP(popover.noStbp, popover.bulan, popover.sppgId, popover.kec)"></span>
               </template>
-              <template x-if="!popover.noStbp || popover.noStbp === '-' || popover.noStbp === '—'">
+              <template x-if="!popover.noStbp || popover.noStbp === '-' || popover.noStbp === 'â€”'">
                 <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
               </template>
             </div>
@@ -662,10 +662,10 @@
             <!-- 5. No. STS -->
             <div class="flex justify-between items-center text-slate-600">
               <span class="text-slate-500 text-[11px]">No. STS:</span>
-              <template x-if="popover.noSts && popover.noSts !== '-' && popover.noSts !== '—'">
+              <template x-if="popover.noSts && popover.noSts !== '-' && popover.noSts !== 'â€”'">
                 <span class="font-mono font-bold text-slate-800 text-[11px]" x-text="formatSTS(popover.noSts, popover.bulan, popover.sppgId, popover.kec)"></span>
               </template>
-              <template x-if="!popover.noSts || popover.noSts === '-' || popover.noSts === '—'">
+              <template x-if="!popover.noSts || popover.noSts === '-' || popover.noSts === 'â€”'">
                 <span class="text-slate-400 font-mono text-xs font-bold">&mdash;</span>
               </template>
             </div>
@@ -1014,9 +1014,8 @@
                 x-model="filters.status" 
                 class="w-full bg-white border border-slate-200 focus:border-brand-500 rounded-lg px-3 py-1.5 text-xs text-slate-800 outline-none">
                 <option value="">Semua Status</option>
-                <option value="MENUNGGU_VERIFIKASI">Menunggu Verifikasi</option>
-                <option value="PROSES_STBP">Sudah Terbit STBP</option>
-                <option value="SELESAI_STS">Sudah Terbit STS</option>
+                <option value="menunggu">Menunggu Verifikasi</option>
+                <option value="terverifikasi">Terverifikasi</option>
               </select>
             </div>
 
@@ -1298,7 +1297,7 @@
                       <div class="flex items-center gap-1.5 justify-center">
                         
                         <!-- Tombol 1: Unverif (Putih/Abu-abu) - Lebar Konsisten w-[76px] -->
-                        <template x-if="trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI'">
+                        <template x-if="trx.status === 'terverifikasi' || trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI'">
                           <button 
                             type="button" 
                             @click="toggleVerifikasi(trx)"
@@ -1313,7 +1312,7 @@
                         </template>
 
                         <!-- Tombol 1: Verifikasi (Hijau Muda) - Lebar Konsisten w-[76px] -->
-                        <template x-if="trx.status !== 'SELESAI_STS' && trx.status !== 'TERVERIFIKASI'">
+                        <template x-if="trx.status !== 'terverifikasi' && trx.status !== 'SELESAI_STS' && trx.status !== 'TERVERIFIKASI'">
                           <button 
                             type="button" 
                             @click="toggleVerifikasi(trx)"
@@ -2267,7 +2266,7 @@
     <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <span class="font-headline font-bold text-slate-700" x-text="config.footerText"></span>
-        <span>•</span>
+        <span>â€¢</span>
         <span x-text="'Tahun Anggaran ' + config.tahunAnggaran"></span>
       </div>
 
@@ -2363,7 +2362,7 @@
             <input 
               :type="showPassword ? 'text' : 'password'" 
               x-model="loginPassword" 
-              placeholder="••••••••"
+              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
               required
               class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg pl-9 pr-9 py-2 text-xs text-slate-800 outline-none">
             <button 
@@ -3261,7 +3260,7 @@
     "tanggalTransfer": "14 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "4635",
     "noStbp": "0084",
     "noSts": "034",
@@ -3279,7 +3278,7 @@
     "tanggalTransfer": "08 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "5870",
     "noStbp": "",
     "noSts": "084",
@@ -3297,7 +3296,7 @@
     "tanggalTransfer": "28 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "8350",
     "noStbp": "",
     "noSts": "116",
@@ -3315,7 +3314,7 @@
     "tanggalTransfer": "14 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "8618",
     "noStbp": "0085",
     "noSts": "035",
@@ -3333,7 +3332,7 @@
     "tanggalTransfer": "10 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "7839",
     "noStbp": "",
     "noSts": "087",
@@ -3351,7 +3350,7 @@
     "tanggalTransfer": "10 Ags 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "6417",
     "noStbp": "",
     "noSts": "131",
@@ -3369,7 +3368,7 @@
     "tanggalTransfer": "14 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2626",
     "noStbp": "0086",
     "noSts": "036",
@@ -3387,7 +3386,7 @@
     "tanggalTransfer": "2 JuLi 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "5122",
     "noStbp": "",
     "noSts": "075",
@@ -3405,7 +3404,7 @@
     "tanggalTransfer": "17 JuLi 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "0098",
     "noStbp": "",
     "noSts": "103",
@@ -3423,7 +3422,7 @@
     "tanggalTransfer": "14 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "3976",
     "noStbp": "0087",
     "noSts": "037",
@@ -3441,7 +3440,7 @@
     "tanggalTransfer": "30 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "5456",
     "noStbp": "",
     "noSts": "069",
@@ -3459,7 +3458,7 @@
     "tanggalTransfer": "23 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "4717",
     "noStbp": "",
     "noSts": "",
@@ -3477,7 +3476,7 @@
     "tanggalTransfer": "16 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "0518",
     "noStbp": "0091",
     "noSts": "041",
@@ -3495,7 +3494,7 @@
     "tanggalTransfer": "25 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "1936",
     "noStbp": "",
     "noSts": "065",
@@ -3513,7 +3512,7 @@
     "tanggalTransfer": "15 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "0259",
     "noStbp": "",
     "noSts": "",
@@ -3531,7 +3530,7 @@
     "tanggalTransfer": "19 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "1172",
     "noStbp": "",
     "noSts": "045",
@@ -3549,7 +3548,7 @@
     "tanggalTransfer": "19 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "6424",
     "noStbp": "",
     "noSts": "062",
@@ -3567,7 +3566,7 @@
     "tanggalTransfer": "11 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2527",
     "noStbp": "",
     "noSts": "",
@@ -3585,7 +3584,7 @@
     "tanggalTransfer": "03 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2970",
     "noStbp": "",
     "noSts": "",
@@ -3603,7 +3602,7 @@
     "tanggalTransfer": "19 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "6887",
     "noStbp": "",
     "noSts": "063",
@@ -3621,7 +3620,7 @@
     "tanggalTransfer": "13 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "5266",
     "noStbp": "",
     "noSts": "",
@@ -3639,7 +3638,7 @@
     "tanggalTransfer": "16 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "1570",
     "noStbp": "0092",
     "noSts": "042",
@@ -3657,7 +3656,7 @@
     "tanggalTransfer": "14 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "8472",
     "noStbp": "",
     "noSts": "093",
@@ -3675,7 +3674,7 @@
     "tanggalTransfer": "21 Jul 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2419",
     "noStbp": "",
     "noSts": "",
@@ -3693,7 +3692,7 @@
     "tanggalTransfer": "21/8/2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "1226",
     "noStbp": "",
     "noSts": "",
@@ -3711,7 +3710,7 @@
     "tanggalTransfer": "15 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "5299",
     "noStbp": "0089",
     "noSts": "039",
@@ -3729,7 +3728,7 @@
     "tanggalTransfer": "30 Jul 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2536",
     "noStbp": "",
     "noSts": "",
@@ -3747,7 +3746,7 @@
     "tanggalTransfer": "30 Jul 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2537",
     "noStbp": "",
     "noSts": "",
@@ -3765,7 +3764,7 @@
     "tanggalTransfer": "29 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "6780",
     "noStbp": "",
     "noSts": "050",
@@ -3783,7 +3782,7 @@
     "tanggalTransfer": "17 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "4062",
     "noStbp": "",
     "noSts": "",
@@ -3801,7 +3800,7 @@
     "tanggalTransfer": "27 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "6240",
     "noStbp": "",
     "noSts": "",
@@ -3819,7 +3818,7 @@
     "tanggalTransfer": "27 Agus 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "7567",
     "noStbp": "",
     "noSts": "",
@@ -3837,7 +3836,7 @@
     "tanggalTransfer": "13 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "6534",
     "noStbp": "0077",
     "noSts": "027",
@@ -3855,7 +3854,7 @@
     "tanggalTransfer": "08 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "5847",
     "noStbp": "",
     "noSts": "082",
@@ -3873,7 +3872,7 @@
     "tanggalTransfer": "14 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "9153",
     "noStbp": "",
     "noSts": "",
@@ -3891,7 +3890,7 @@
     "tanggalTransfer": "15 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "1973",
     "noStbp": "0090",
     "noSts": "040",
@@ -3909,7 +3908,7 @@
     "tanggalTransfer": "29 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "4680",
     "noStbp": "",
     "noSts": "066",
@@ -3927,7 +3926,7 @@
     "tanggalTransfer": "27 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "3233",
     "noStbp": "",
     "noSts": "",
@@ -3945,7 +3944,7 @@
     "tanggalTransfer": "25 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "3870",
     "noStbp": "",
     "noSts": "064",
@@ -3963,7 +3962,7 @@
     "tanggalTransfer": "16 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2076",
     "noStbp": "0093",
     "noSts": "043",
@@ -3981,7 +3980,7 @@
     "tanggalTransfer": "07 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "",
     "noStbp": "",
     "noSts": "",
@@ -3999,7 +3998,7 @@
     "tanggalTransfer": "20 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "1010",
     "noStbp": "",
     "noSts": "",
@@ -4017,7 +4016,7 @@
     "tanggalTransfer": "13 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "8308",
     "noStbp": "0078",
     "noSts": "028",
@@ -4035,7 +4034,7 @@
     "tanggalTransfer": "07 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "0991",
     "noStbp": "",
     "noSts": "078",
@@ -4053,7 +4052,7 @@
     "tanggalTransfer": "16 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "8920",
     "noStbp": "",
     "noSts": "",
@@ -4071,7 +4070,7 @@
     "tanggalTransfer": "18 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "",
     "noStbp": "",
     "noSts": "",
@@ -4089,7 +4088,7 @@
     "tanggalTransfer": "16 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "1404",
     "noStbp": "",
     "noSts": "",
@@ -4107,7 +4106,7 @@
     "tanggalTransfer": "16 Juli 2025",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "9649",
     "noStbp": "",
     "noSts": "",
@@ -4125,7 +4124,7 @@
     "tanggalTransfer": "13 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "1130",
     "noStbp": "0079",
     "noSts": "029",
@@ -4143,7 +4142,7 @@
     "tanggalTransfer": "05 JuLi 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "0724",
     "noStbp": "",
     "noSts": "076",
@@ -4161,7 +4160,7 @@
     "tanggalTransfer": "24 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2517",
     "noStbp": "",
     "noSts": "",
@@ -4179,7 +4178,7 @@
     "tanggalTransfer": "15 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2679",
     "noStbp": "0099",
     "noSts": "051",
@@ -4197,7 +4196,7 @@
     "tanggalTransfer": "15 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "",
     "noStbp": "",
     "noSts": "",
@@ -4215,7 +4214,7 @@
     "tanggalTransfer": "22 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "4561",
     "noStbp": "",
     "noSts": "",
@@ -4233,7 +4232,7 @@
     "tanggalTransfer": "14 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "6036",
     "noStbp": "0088",
     "noSts": "038",
@@ -4251,7 +4250,7 @@
     "tanggalTransfer": "06 JuLi 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "4598",
     "noStbp": "",
     "noSts": "077",
@@ -4269,7 +4268,7 @@
     "tanggalTransfer": "31 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2407",
     "noStbp": "",
     "noSts": "",
@@ -4287,7 +4286,7 @@
     "tanggalTransfer": "12 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "1100",
     "noStbp": "0075",
     "noSts": "025",
@@ -4305,7 +4304,7 @@
     "tanggalTransfer": "30 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "6903",
     "noStbp": "",
     "noSts": "068",
@@ -4323,7 +4322,7 @@
     "tanggalTransfer": "10 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "4993",
     "noStbp": "",
     "noSts": "",
@@ -4341,7 +4340,7 @@
     "tanggalTransfer": "20 JuLi 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "3912",
     "noStbp": "",
     "noSts": "",
@@ -4359,7 +4358,7 @@
     "tanggalTransfer": "13 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "9043",
     "noStbp": "0080",
     "noSts": "030",
@@ -4377,7 +4376,7 @@
     "tanggalTransfer": "10 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "4991",
     "noStbp": "",
     "noSts": "",
@@ -4395,7 +4394,7 @@
     "tanggalTransfer": "20 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "3912",
     "noStbp": "",
     "noSts": "",
@@ -4413,7 +4412,7 @@
     "tanggalTransfer": "13 Mei 2025",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "1053",
     "noStbp": "0081",
     "noSts": "031",
@@ -4431,7 +4430,7 @@
     "tanggalTransfer": "30 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2039",
     "noStbp": "",
     "noSts": "067",
@@ -4449,7 +4448,7 @@
     "tanggalTransfer": "29 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "0608",
     "noStbp": "",
     "noSts": "",
@@ -4467,7 +4466,7 @@
     "tanggalTransfer": "16 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "4284",
     "noStbp": "0094",
     "noSts": "044",
@@ -4485,7 +4484,7 @@
     "tanggalTransfer": "30 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "",
     "noStbp": "",
     "noSts": "",
@@ -4503,7 +4502,7 @@
     "tanggalTransfer": "23 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "7977",
     "noStbp": "",
     "noSts": "",
@@ -4521,7 +4520,7 @@
     "tanggalTransfer": "13 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "7536",
     "noStbp": "0082",
     "noSts": "032",
@@ -4539,7 +4538,7 @@
     "tanggalTransfer": "30 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "0979",
     "noStbp": "",
     "noSts": "061",
@@ -4557,7 +4556,7 @@
     "tanggalTransfer": "30 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2948",
     "noStbp": "",
     "noSts": "",
@@ -4575,7 +4574,7 @@
     "tanggalTransfer": "13 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "6525",
     "noStbp": "0083",
     "noSts": "033",
@@ -4593,7 +4592,7 @@
     "tanggalTransfer": "30 Juni 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "0652",
     "noStbp": "",
     "noSts": "070",
@@ -4611,7 +4610,7 @@
     "tanggalTransfer": "24 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "6610",
     "noStbp": "",
     "noSts": "",
@@ -4629,7 +4628,7 @@
     "tanggalTransfer": "28 Agus 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2088",
     "noStbp": "",
     "noSts": "",
@@ -4647,7 +4646,7 @@
     "tanggalTransfer": "13 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "0581",
     "noStbp": "0076",
     "noSts": "026",
@@ -4665,7 +4664,7 @@
     "tanggalTransfer": "08 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "8584",
     "noStbp": "",
     "noSts": "081",
@@ -4683,7 +4682,7 @@
     "tanggalTransfer": "08 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "8585",
     "noStbp": "",
     "noSts": "082",
@@ -4701,7 +4700,7 @@
     "tanggalTransfer": "20 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "0764",
     "noStbp": "0096",
     "noSts": "046",
@@ -4719,7 +4718,7 @@
     "tanggalTransfer": "21 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "2499",
     "noStbp": "",
     "noSts": "",
@@ -4737,7 +4736,7 @@
     "tanggalTransfer": "21 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "5234",
     "noStbp": "",
     "noSts": "",
@@ -4755,7 +4754,7 @@
     "tanggalTransfer": "24 Agus 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "8393",
     "noStbp": "",
     "noSts": "",
@@ -4773,7 +4772,7 @@
     "tanggalTransfer": "20 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "4752",
     "noStbp": "0097",
     "noSts": "047",
@@ -4791,7 +4790,7 @@
     "tanggalTransfer": "15 Mei 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "",
     "noStbp": "",
     "noSts": "",
@@ -4809,7 +4808,7 @@
     "tanggalTransfer": "23 Juli 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "8367",
     "noStbp": "",
     "noSts": "",
@@ -4827,7 +4826,7 @@
     "tanggalTransfer": "10 Agus 2026",
     "jumlahTransfer": 750000,
     "buktiUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80",
-    "status": "SELESAI_STS",
+    "status": "terverifikasi",
     "noTrxBank": "1256",
     "noStbp": "",
     "noSts": "",
@@ -4859,7 +4858,7 @@
             const bKey = String(trx.periodeBulan || '').toLowerCase().trim();
             const bShort = bulanFullToShort[bKey] || trx.periodeBulan;
             if (bShort) {
-              const isVerified = (trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI' || trx.isVerified === true);
+              const isVerified = (trx.status === 'terverifikasi' || trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI' || trx.isVerified === true);
               const currentStatus = statusMap[sppgId][bShort];
               if (isVerified) {
                 statusMap[sppgId][bShort] = 'verified';
@@ -4931,9 +4930,9 @@
                 nominal = 750000;
               }
 
-              const hasSts = Boolean(noSts && noSts !== '-' && noSts !== '—');
-              const hasStbp = Boolean(noStbp && noStbp !== '-' && noStbp !== '—');
-              const hasTrxBank = Boolean(idTransaksi && idTransaksi !== '-' && idTransaksi !== '—');
+              const hasSts = Boolean(noSts && noSts !== '-' && noSts !== 'â€”');
+              const hasStbp = Boolean(noStbp && noStbp !== '-' && noStbp !== 'â€”');
+              const hasTrxBank = Boolean(idTransaksi && idTransaksi !== '-' && idTransaksi !== 'â€”');
               const isValid = hasSts && hasStbp && hasTrxBank;
 
               detailsMap[bln] = {
@@ -5767,7 +5766,7 @@
             noSts: this.inputBayar.noSts || '',
             noStbp: this.inputBayar.noStbp || '',
             noTrxBank: this.inputBayar.noTrxBank || '',
-            statusVerifikasi: this.inputBayar.noSts ? 'SELESAI_STS' : (this.inputBayar.noStbp ? 'PROSES_STBP' : 'MENUNGGU_VERIFIKASI'),
+            statusVerifikasi: this.inputBayar.noSts ? 'terverifikasi' : 'menunggu',
             sumber: 'Input Bendahara'
           };
 
@@ -5938,7 +5937,7 @@
               tanggalTransfer: this.form.tanggalTransfer,
               jumlahTransfer: this.form.jumlahTransfer,
               buktiUrl: (res && res.buktiUrl) ? res.buktiUrl : this.filePreview,
-              status: 'MENUNGGU_VERIFIKASI',
+              status: 'menunggu',
               noTrxBank: '',
               noStbp: '',
               noSts: '',
@@ -5995,7 +5994,7 @@
                 tanggalTransfer: this.form.tanggalTransfer,
                 jumlahTransfer: this.form.jumlahTransfer,
                 buktiUrl: this.filePreview,
-                status: 'MENUNGGU_VERIFIKASI',
+                status: 'menunggu',
                 noTrxBank: '',
                 noStbp: '',
                 noSts: '',
@@ -6195,7 +6194,8 @@
 
               const matchKec = !this.filters.kecamatan || item.kecamatan === this.filters.kecamatan;
               const matchBulan = !this.filters.bulan || item.periodeBulan === this.filters.bulan;
-              const matchStatus = !this.filters.status || item.status === this.filters.status;
+              const normItemStatus = (item.status === 'terverifikasi' || item.status === 'SELESAI_STS' || item.status === 'TERVERIFIKASI') ? 'terverifikasi' : ((item.status === 'menunggu' || item.status === 'MENUNGGU_VERIFIKASI' || item.status === 'PROSES_STBP') ? 'menunggu' : (item.status || ''));
+              const matchStatus = !this.filters.status || normItemStatus === this.filters.status || item.status === this.filters.status;
 
               return matchSearch && matchKec && matchBulan && matchStatus;
             })
@@ -6304,13 +6304,7 @@
                   trx.noSts = noSts;
                   trx.noStbp = noStbp;
                   trx.noTrxBank = noTrxBank;
-                  if (noSts) {
-                    trx.status = 'SELESAI_STS';
-                  } else if (noStbp) {
-                    trx.status = 'PROSES_STBP';
-                  } else {
-                    trx.status = 'MENUNGGU_VERIFIKASI';
-                  }
+                  trx.status = noSts ? 'terverifikasi' : 'menunggu';
                   this.notifySuccess('Data Disimpan', `Perubahan transaksi ${id} berhasil disimpan ke database.`);
                 } else {
                   this.notifyError('Gagal Menyimpan', res ? res.error : 'Terjadi kesalahan saat menyimpan.');
@@ -6330,13 +6324,7 @@
                 trx.noSts = noSts;
                 trx.noStbp = noStbp;
                 trx.noTrxBank = noTrxBank;
-                if (noSts) {
-                  trx.status = 'SELESAI_STS';
-                } else if (noStbp) {
-                  trx.status = 'PROSES_STBP';
-                } else {
-                  trx.status = 'MENUNGGU_VERIFIKASI';
-                }
+                trx.status = noSts ? 'terverifikasi' : 'menunggu';
                 this.notifySuccess('Data Disimpan', `Perubahan transaksi ${id} berhasil disimpan ke database Google Sheets.`);
               } else {
                 this.notifyError('Gagal Menyimpan', res ? res.error || res.message : 'Terjadi kesalahan saat menyimpan.');
@@ -6355,13 +6343,7 @@
               trx.noSts = noSts;
               trx.noStbp = noStbp;
               trx.noTrxBank = noTrxBank;
-              if (noSts) {
-                trx.status = 'SELESAI_STS';
-              } else if (noStbp) {
-                trx.status = 'PROSES_STBP';
-              } else {
-                trx.status = 'MENUNGGU_VERIFIKASI';
-              }
+              trx.status = noSts ? 'terverifikasi' : 'menunggu';
               this.notifySuccess('Data Disimpan', `Perubahan transaksi ${id} berhasil diperbarui.`);
               this.$nextTick(() => lucide.createIcons());
             }, 300);
@@ -6372,8 +6354,8 @@
           if (!trx || trx.isVerifying) return;
           trx.isVerifying = true;
 
-          const isCurrentlyVerified = (trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI' || trx.isVerified === true);
-          const targetStatus = isCurrentlyVerified ? 'MENUNGGU_VERIFIKASI' : 'SELESAI_STS';
+          const isCurrentlyVerified = (trx.status === 'terverifikasi' || trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI' || trx.isVerified === true);
+          const targetStatus = isCurrentlyVerified ? 'menunggu' : 'terverifikasi';
 
           if (typeof google !== 'undefined' && google.script && google.script.run) {
             google.script.run
@@ -6381,7 +6363,7 @@
                 trx.isVerifying = false;
                 if (res && res.success) {
                   trx.status = res.status || targetStatus;
-                  trx.isVerified = (trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI');
+                  trx.isVerified = (trx.status === 'terverifikasi' || trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI');
                   if (trx.isVerified) {
                     this.notifySuccess('Terverifikasi', `Setoran ${trx.namaSppg} bulan ${trx.periodeBulan} telah diverifikasi (Status Lunas).`);
                   } else {
@@ -6403,7 +6385,7 @@
               trx.isVerifying = false;
               if (res && res.success) {
                 trx.status = res.status || targetStatus;
-                trx.isVerified = (trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI');
+                trx.isVerified = (trx.status === 'terverifikasi' || trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI');
                 if (trx.isVerified) {
                   this.notifySuccess('Terverifikasi', `Setoran ${trx.namaSppg} bulan ${trx.periodeBulan} telah diverifikasi (Status Lunas).`);
                 } else {
@@ -6424,7 +6406,7 @@
             setTimeout(() => {
               trx.isVerifying = false;
               trx.status = targetStatus;
-              trx.isVerified = (targetStatus === 'SELESAI_STS' || targetStatus === 'TERVERIFIKASI');
+              trx.isVerified = (targetStatus === 'terverifikasi' || targetStatus === 'SELESAI_STS' || targetStatus === 'TERVERIFIKASI');
               if (trx.isVerified) {
                 this.notifySuccess('Terverifikasi', `Setoran ${trx.namaSppg} bulan ${trx.periodeBulan} telah diverifikasi (Status Lunas).`);
               } else {
@@ -6522,7 +6504,8 @@
             const tglSts = this.editStsForm.tanggalSts;
             this.activeTrx.noSts = noSts;
             this.activeTrx.tanggalSts = tglSts;
-            this.activeTrx.status = 'SELESAI_STS';
+            this.activeTrx.status = 'terverifikasi';
+            this.activeTrx.isVerified = true;
             this.showStsModal = false;
 
             if (typeof google !== 'undefined' && google.script && google.script.run) {
