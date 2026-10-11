@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -1200,25 +1200,24 @@
                         @click="handleSimpanPembayaran()" 
                         @keydown.enter.prevent="handleSimpanPembayaran()"
                         :disabled="inputBayar.isSubmitting"
-                        :aria-disabled="inputBayar.isSaved ? 'true' : 'false'"
-                        :class="inputBayar.isSaved ? 'opacity-40 cursor-not-allowed bg-slate-300 text-slate-500 border-slate-300' : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs border-emerald-700'"
+                        :class="inputBayar.isSubmitting ? 'opacity-50 cursor-not-allowed bg-slate-300 text-slate-500 border-slate-300' : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs border-emerald-700 cursor-pointer'"
                         class="flex-1 py-1 px-2 rounded border text-xs font-bold transition flex items-center justify-center gap-1 whitespace-nowrap"
                         title="Simpan Data Pembayaran">
                         <i data-lucide="check" class="w-3.5 h-3.5 shrink-0"></i>
                         <span>Simpan</span>
                       </button>
 
-                      <!-- Tombol Baru (Input Baru) -->
+                      <!-- Tombol Reset (Mengosongkan form tanpa menyimpan) -->
                       <button 
                         type="button" 
-                        x-ref="btnBaru"
+                        x-ref="btnReset"
                         tabindex="9"
-                        @click="handleInputBaru()" 
-                        @keydown.enter.prevent="handleInputBaru()"
-                        class="flex-1 py-1 px-2 bg-brand-600 hover:bg-brand-700 text-white rounded border border-brand-700 text-xs font-bold shadow-xs transition flex items-center justify-center gap-1 whitespace-nowrap"
-                        title="Reset & Input Baru (Fokus ke Tanggal)">
-                        <i data-lucide="plus" class="w-3.5 h-3.5 shrink-0"></i>
-                        <span>Baru</span>
+                        @click="handleResetForm()" 
+                        @keydown.enter.prevent="handleResetForm()"
+                        class="flex-1 py-1 px-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded border border-slate-300 text-xs font-bold shadow-xs transition flex items-center justify-center gap-1 whitespace-nowrap cursor-pointer"
+                        title="Kosongkan form input tanpa menyimpan (Reset)">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 shrink-0 text-slate-600"></i>
+                        <span>Reset</span>
                       </button>
                     </div>
                   </td>
@@ -2588,7 +2587,7 @@
      * Masukkan URL Web App Deployment Google Apps Script Anda di bawah ini:
      * Contoh: "https://script.google.com/macros/s/AKfycbyxxxxxx/exec"
      */
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbz2Sia5_x3nYX-OMZzAhGusl64BUF53pydmKG_zO8jOUL_62IPKtiAvuj1AzOg-Vt99/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwioUq-sswxQskWdVUn3JUv8cfsyjkofIImArAMsplxxGrJuRHhYPOSRwKeEg23iew/exec";
 
 
     /**
@@ -2902,7 +2901,7 @@
           kecamatan: '',
           penanggungJawab: '',
           kontak: '',
-          tanggalBayar: new Date().toISOString().split('T')[0],
+          tanggalBayar: '',
           periodeBulan: '',
           jumlahTransfer: 750000,
           filePreview: null,
@@ -5708,6 +5707,13 @@
           this.$nextTick(() => lucide.createIcons());
         },
 
+        focusTanggal() {
+          this.$nextTick(() => {
+            const inputTgl = (this.$refs && this.$refs.inputTanggal) || document.querySelector('input[type="date"][tabindex="1"]');
+            if (inputTgl) inputTgl.focus();
+          });
+        },
+
         resetInputBayarForm() {
           this.inputBayar = {
             searchQuery: '',
@@ -5716,7 +5722,7 @@
             kecamatan: '',
             penanggungJawab: '',
             kontak: '',
-            tanggalBayar: new Date().toISOString().split('T')[0],
+            tanggalBayar: '',
             periodeBulan: '',
             jumlahTransfer: 750000,
             filePreview: null,
@@ -5728,10 +5734,13 @@
             isSaved: false,
             isSubmitting: false
           };
+          if (this.$refs && this.$refs.inlineBuktiFile) {
+            this.$refs.inlineBuktiFile.value = '';
+          }
           this.$nextTick(() => {
             if (typeof lucide !== 'undefined') lucide.createIcons();
           });
-                },
+        },
 
         submitInputBayarInline(onSuccess) {
           if (!this.inputBayar.sppgId) {
@@ -5839,14 +5848,11 @@
         },
 
         handleSimpanPembayaran() {
-          if (this.inputBayar.isSaved) return;
+          if (this.inputBayar.isSubmitting) return;
 
           if (!this.inputBayar.tanggalBayar) {
             this.notifyWarning('Validasi', 'Silakan isi tanggal bayar / transfer.');
-            this.$nextTick(() => {
-              const inputTgl = (this.$refs && this.$refs.inputTanggal) || document.querySelector('input[type="date"][tabindex="1"]');
-              if (inputTgl) inputTgl.focus();
-            });
+            this.focusTanggal();
             return;
           }
           if (!this.inputBayar.sppgId) {
@@ -5872,24 +5878,20 @@
           }
 
           this.submitInputBayarInline(() => {
-            this.inputBayar.isSaved = true;
-            this.$nextTick(() => {
-              const btn = (this.$refs && this.$refs.btnSimpan) || document.querySelector('button[tabindex="8"]');
-              if (btn) btn.focus();
-              if (typeof lucide !== 'undefined') lucide.createIcons();
-            });
+            // Selesai simpan: form kembali kosong dan fokus ke tanggal
+            this.resetInputBayarForm();
+            this.focusTanggal();
           });
         },
 
-        handleInputBaru() {
+        handleResetForm() {
           this.resetInputBayarForm();
-          this.inputBayar.isSaved = false;
-          this.notifyInfo('Input Baru', 'Silakan masukkan data pembayaran berikutnya.');
-          this.$nextTick(() => {
-            const inputTgl = (this.$refs && this.$refs.inputTanggal) || document.querySelector('input[type="date"][tabindex="1"]');
-            if (inputTgl) inputTgl.focus();
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-          });
+          this.notifyInfo('Reset Form', 'Form isian pembayaran telah dikosongkan.');
+          this.focusTanggal();
+        },
+
+        handleInputBaru() {
+          this.handleResetForm();
         },
         submitFormSPPG() {
           if (!this.form.sppgId) {
