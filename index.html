@@ -1122,7 +1122,7 @@
                       class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded px-2 py-1 text-xs text-brand-700 font-semibold outline-none shadow-2xs">
                       <option value="">-- Pilih Periode --</option>
                       <template x-for="bln in availableBulanForInputBayar" :key="bln.full">
-                        <option :value="bln.full" x-text="bln.full + (bln.isPaid ? ' (Lunas)' : '')" :disabled="bln.isPaid"></option>
+                        <option :value="bln.full" x-text="bln.full + (bln.isPaid ? ' (Sudah Dibayar)' : '')" :disabled="bln.isPaid"></option>
                       </template>
                     </select>
                     <!-- Keterangan Penyetor Otomatis -->
@@ -5635,6 +5635,15 @@
             'Apr': 'April', 'Mei': 'Mei', 'Jun': 'Juni', 'Jul': 'Juli',
             'Agu': 'Agustus', 'Sep': 'September', 'Okt': 'Oktober', 'Nov': 'November', 'Des': 'Desember'
           };
+          const bulanFullToShort = {
+            'januari': 'Jan', 'februari': 'Feb', 'maret': 'Mar',
+            'april': 'Apr', 'mei': 'Mei', 'juni': 'Jun', 'juli': 'Jul',
+            'agustus': 'Agu', 'september': 'Sep', 'oktober': 'Okt',
+            'november': 'Nov', 'desember': 'Des',
+            'jan': 'Jan', 'feb': 'Feb', 'mar': 'Mar', 'apr': 'Apr',
+            'mei': 'Mei', 'jun': 'Jun', 'jul': 'Jul', 'agu': 'Agu',
+            'sep': 'Sep', 'okt': 'Okt', 'nov': 'Nov', 'des': 'Des'
+          };
           const list = (this.bulanListShort && this.bulanListShort.length > 0) ? this.bulanListShort : ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
           if (!this.inputBayar.sppgId) {
             return list.map(b => ({
@@ -5643,13 +5652,44 @@
               isPaid: false
             }));
           }
-          const targetMatriks = (this.matriksData || []).find(m => m.id === this.inputBayar.sppgId);
+
+          const targetSppgId = String(this.inputBayar.sppgId).trim().toLowerCase();
+          const paidMonths = new Set();
+
+          // 1. Cek langsung dari transaksiList (mencakup status terverifikasi & menunggu)
+          (this.transaksiList || []).forEach(trx => {
+            const trxSppgId = String(trx.sppgId || '').trim().toLowerCase();
+            if (trxSppgId === targetSppgId) {
+              const rawBln = String(trx.periodeBulan || '').toLowerCase().trim();
+              paidMonths.add(rawBln);
+              const shortBln = (bulanFullToShort[rawBln] || rawBln).toLowerCase();
+              paidMonths.add(shortBln);
+              const properShort = bulanFullToShort[rawBln];
+              if (properShort && bulanFullMap[properShort]) {
+                paidMonths.add(bulanFullMap[properShort].toLowerCase());
+              }
+            }
+          });
+
+          // 2. Cek dari matriksData (verified, paid, atau pending)
+          const targetMatriks = (this.matriksData || []).find(m => String(m.id || '').trim().toLowerCase() === targetSppgId);
+          if (targetMatriks && targetMatriks.months) {
+            Object.keys(targetMatriks.months).forEach(bKey => {
+              const st = targetMatriks.months[bKey];
+              if (st === 'verified' || st === 'paid' || st === 'pending') {
+                paidMonths.add(bKey.toLowerCase());
+                const fullBln = (bulanFullMap[bKey] || bKey).toLowerCase();
+                paidMonths.add(fullBln);
+              }
+            });
+          }
+
           return list.map(b => {
-            const status = targetMatriks && targetMatriks.months ? targetMatriks.months[b] : 'unpaid';
-            const isPaid = (status === 'verified' || status === 'paid');
+            const fullBln = bulanFullMap[b] || b;
+            const isPaid = paidMonths.has(b.toLowerCase()) || paidMonths.has(fullBln.toLowerCase());
             return {
               short: b,
-              full: bulanFullMap[b] || b,
+              full: fullBln,
               isPaid: isPaid
             };
           });
@@ -5861,6 +5901,12 @@
           }
           if (!this.inputBayar.periodeBulan) {
             this.notifyWarning('Validasi', 'Silakan tentukan periode bulan setoran.');
+            return;
+          }
+
+          const selectedBlnObj = (this.availableBulanForInputBayar || []).find(b => b.full.toLowerCase() === (this.inputBayar.periodeBulan || '').toLowerCase());
+          if (selectedBlnObj && selectedBlnObj.isPaid) {
+            this.notifyWarning('Sudah Terdaftar', `Periode bulan ${this.inputBayar.periodeBulan} untuk ${this.inputBayar.namaSppg} sudah pernah diinput sebelumnya.`);
             return;
           }
 
