@@ -224,8 +224,22 @@
         </nav>
       </div>
 
-      <!-- Right Area: Status & Logout (HANYA tampil jika Bendahara SUDAH login) -->
+      <!-- Right Area: Sync Status & Admin Controls -->
       <div class="flex items-center gap-2">
+        <!-- Live Loading Status Pill -->
+        <div x-show="isSyncing" x-cloak class="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 border border-amber-200 text-amber-800 rounded-pill text-[11px] font-medium shadow-2xs">
+          <svg class="animate-spin w-3 h-3 text-amber-600 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span class="hidden sm:inline">Memuat Database...</span>
+          <span class="sm:hidden">Memuat...</span>
+        </div>
+        <div x-show="!isSyncing && isDbLoaded" x-cloak class="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-pill text-[11px] font-medium shadow-2xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Database Terhubung</span>
+        </div>
+
         <template x-if="isLoggedIn">
           <div class="flex items-center gap-2">
             <button 
@@ -259,6 +273,31 @@
   <!-- MAIN CONTENT CONTAINER                                                    -->
   <!-- ========================================================================= -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+    <!-- BANNER NOTIFIKASI SINKRONISASI DATABASE (Tampil saat database sedang dimuat) -->
+    <div x-show="!isDbLoaded && isSyncing" x-cloak x-transition class="bg-gradient-to-r from-amber-50 via-amber-100/70 to-amber-50 border border-amber-200 rounded-xl p-3.5 sm:p-4 text-amber-900 shadow-xs flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-9 h-9 rounded-lg bg-amber-200/80 text-amber-900 flex items-center justify-center shrink-0 shadow-2xs">
+          <svg class="animate-spin w-5 h-5 text-amber-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <div class="font-bold text-xs sm:text-sm text-amber-950 flex items-center gap-2">
+            <span>Sedang Memuat Database Google Sheets...</span>
+            <span class="text-[10px] bg-amber-200/90 text-amber-900 px-2 py-0.5 rounded font-mono font-bold uppercase tracking-wider">Sinkronisasi</span>
+          </div>
+          <p class="text-[11px] sm:text-xs text-amber-800/90 mt-0.5">
+            Sistem sedang menghubungkan dan mengambil status pembayaran seluruh SPPG secara realtime. Mohon tunggu sejenak agar status yang tampil akurat.
+          </p>
+        </div>
+      </div>
+      <div class="shrink-0 hidden sm:flex items-center gap-1.5 px-3 py-1 bg-white/80 border border-amber-200 rounded-lg text-xs font-mono font-semibold text-amber-800 shadow-2xs">
+        <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+        <span>Menyinkronkan...</span>
+      </div>
+    </div>
 
     <!-- ========================================================================= -->
     <!-- VIEW 1: DASHBOARD UTAMA (DEFAULT MENU)                                    -->
@@ -314,8 +353,15 @@
               <span class="text-xs font-mono text-slate-600 bg-slate-100 px-3 py-1 rounded-pill font-semibold" x-text="masterData.length + ' SPPG'"></span>
             </div>
 
-            <!-- Scrollable Timeline Container -->
-            <div class="overflow-x-auto">
+            <!-- Loading State Saat Memuat Database -->
+            <div x-show="!isDbLoaded" class="py-20 text-center flex flex-col items-center justify-center bg-slate-50/50 rounded-lg">
+              <div class="w-8 h-8 border-2 border-brand-200 border-t-brand-600 rounded-full animate-spin mb-2.5"></div>
+              <span class="text-xs font-bold text-slate-700">Memuat grafik monitoring SPPG...</span>
+              <span class="text-[11px] text-slate-400 mt-0.5">Menyinkronkan data setoran dari Google Sheets</span>
+            </div>
+
+            <!-- Scrollable Timeline Container (Tampil setelah database terload) -->
+            <div x-show="isDbLoaded" class="overflow-x-auto">
               <div class="min-w-[480px]">
                 
                 <!-- Sticky Timeline Header -->
@@ -407,8 +453,14 @@
               </span>
             </div>
 
+            <!-- Loading State Penyetor Terbaru -->
+            <div x-show="!isDbLoaded" class="py-14 text-center flex flex-col items-center justify-center">
+              <div class="w-6 h-6 border-2 border-slate-200 border-t-leaf-600 rounded-full animate-spin mb-2"></div>
+              <span class="text-xs font-medium text-slate-500">Mengambil transaksi terkini...</span>
+            </div>
+
             <!-- List 6 Transaksi Terkini -->
-            <div class="divide-y divide-slate-100 space-y-0.5">
+            <div x-show="isDbLoaded" class="divide-y divide-slate-100 space-y-0.5">
               <template x-for="trx in recentTransactions" :key="trx.id">
                 <div class="py-2.5 flex items-center justify-between gap-2.5 text-xs sm:text-sm hover:bg-slate-50/80 px-1.5 rounded transition">
                   <div class="min-w-0">
@@ -484,7 +536,15 @@
         </div>
 
         <!-- Matriks Table Content (Sticky Header Tepat di Bawah Navigasi Halaman) -->
-        <div class="border-t border-slate-200 rounded-b-xl">
+        <!-- Loading State Saat Memuat Database -->
+        <div x-show="!isDbLoaded" class="py-20 px-4 text-center bg-slate-50/60 rounded-b-xl flex flex-col items-center justify-center border-t border-slate-200">
+          <div class="w-10 h-10 border-3 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mb-3"></div>
+          <div class="font-bold text-slate-800 text-sm sm:text-base">Sedang Memuat Data Matriks Setoran SPPG...</div>
+          <p class="text-xs text-slate-500 mt-1 max-w-md">Menghubungkan ke database Google Sheets DLH untuk menyinkronkan status verifikasi & pembayaran terkini seluruh SPPG.</p>
+        </div>
+
+        <!-- Tabel Matriks (Tampil setelah database terload) -->
+        <div x-show="isDbLoaded" class="border-t border-slate-200 rounded-b-xl">
           <table class="w-full text-left border-separate border-spacing-0 text-xs">
             <thead class="sticky top-16 z-30 bg-slate-100 shadow-xs">
               <tr class="bg-slate-100 text-slate-700 font-headline uppercase tracking-wider text-[11px]">
@@ -1225,6 +1285,19 @@
                 </tr>
                 
                 
+                <!-- Baris Indikator Loading Transaksi jika belum terload -->
+                <template x-if="!isDbLoaded">
+                  <tr>
+                    <td colspan="9" class="py-12 text-center text-slate-500 bg-slate-50/50">
+                      <div class="flex flex-col items-center justify-center">
+                        <div class="w-7 h-7 border-2 border-brand-200 border-t-brand-600 rounded-full animate-spin mb-2"></div>
+                        <span class="text-xs font-semibold text-slate-700">Memuat data transaksi dari Google Sheets...</span>
+                        <span class="text-[11px] text-slate-400 mt-0.5">Menyinkronkan data pembayaran secara realtime</span>
+                      </div>
+                    </td>
+                  </tr>
+                </template>
+
                 <template x-for="trx in paginatedTransaksi" :key="trx.id">
                   <tr class="hover:bg-slate-50/80 transition-colors">
                     
@@ -2621,8 +2694,9 @@
         showInputBayarInline: false, // 'pembayaran' | 'periode_wajib' | 'daftar_sppg' | 'tambah_sppg'
         isLoggedIn: false,
         isSaved: false,
-          isSubmitting: false,
-        isSyncing: false,
+        isSubmitting: false,
+        isSyncing: true,
+        isDbLoaded: false,
 
         async init() {
           // Restore saved session on device if available
@@ -2642,6 +2716,8 @@
           this.ensurePeriodeWajibMap();
 
           const applyData = (res) => {
+            this.isDbLoaded = true;
+            this.isSyncing = false;
             if (!res || !res.success) return;
             if (res.config) Object.assign(this.config, res.config);
             if (res.masterSppg && res.masterSppg.length) {
@@ -2674,30 +2750,44 @@
             });
           };
 
+          // Timeout pengaman (12 detik) agar tidak loading selamanya jika jaringan lambat
+          setTimeout(() => {
+            if (!this.isDbLoaded) {
+              this.isDbLoaded = true;
+              this.isSyncing = false;
+            }
+          }, 12000);
+
           // 1. Direct GAS Environment (prioritas utama saat dijalankan di Google Apps Script)
           if (typeof google !== 'undefined' && google.script && google.script.run) {
             this.isSyncing = true;
+            this.isDbLoaded = false;
             google.script.run
               .withSuccessHandler((res) => {
-                this.isSyncing = false;
                 applyData(res);
               })
               .withFailureHandler((err) => {
                 this.isSyncing = false;
+                this.isDbLoaded = true;
                 console.warn('GAS sync error:', err);
               })
               .getPublicDashboardData();
           } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
             // 2. Vercel / External REST API (fallback jika di hosting luar)
             this.isSyncing = true;
+            this.isDbLoaded = false;
             try {
               const res = await apiCall('getPublicDashboardData');
-              this.isSyncing = false;
               applyData(res);
             } catch (err) {
               this.isSyncing = false;
+              this.isDbLoaded = true;
               console.warn('Vercel API sync warning:', err);
             }
+          } else {
+            // 3. Mode Demo Lokal
+            this.isSyncing = false;
+            this.isDbLoaded = true;
           }
           this.$nextTick(() => lucide.createIcons());
         },
