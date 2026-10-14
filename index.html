@@ -232,12 +232,12 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <span class="hidden sm:inline">Memuat Database...</span>
+          <span class="hidden sm:inline">Memuat Data...</span>
           <span class="sm:hidden">Memuat...</span>
         </div>
         <div x-show="!isSyncing && isDbLoaded" x-cloak class="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-pill text-[11px] font-medium shadow-2xs">
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span>Database Terhubung</span>
+          <span>Data Terhubung</span>
         </div>
 
         <template x-if="isLoggedIn">
@@ -274,7 +274,7 @@
   <!-- ========================================================================= -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
-    <!-- BANNER NOTIFIKASI SINKRONISASI DATABASE (Tampil saat database sedang dimuat) -->
+    <!-- BANNER NOTIFIKASI SINKRONISASI DATA (Tampil saat data sedang dimuat) -->
     <div x-show="!isDbLoaded && isSyncing" x-cloak x-transition class="bg-gradient-to-r from-amber-50 via-amber-100/70 to-amber-50 border border-amber-200 rounded-xl p-3.5 sm:p-4 text-amber-900 shadow-xs flex items-center justify-between gap-3">
       <div class="flex items-center gap-3 min-w-0">
         <div class="w-9 h-9 rounded-lg bg-amber-200/80 text-amber-900 flex items-center justify-center shrink-0 shadow-2xs">
@@ -285,17 +285,17 @@
         </div>
         <div class="min-w-0">
           <div class="font-bold text-xs sm:text-sm text-amber-950 flex items-center gap-2">
-            <span>Sedang Memuat Database Google Sheets...</span>
+            <span>Sedang Memuat Data...</span>
             <span class="text-[10px] bg-amber-200/90 text-amber-900 px-2 py-0.5 rounded font-mono font-bold uppercase tracking-wider">Sinkronisasi</span>
           </div>
           <p class="text-[11px] sm:text-xs text-amber-800/90 mt-0.5">
-            Sistem sedang menghubungkan dan mengambil status pembayaran seluruh SPPG secara realtime. Mohon tunggu sejenak agar status yang tampil akurat.
+            Sistem sedang mengambil status pembayaran seluruh SPPG secara realtime. Mohon tunggu sejenak agar data yang tampil akurat.
           </p>
         </div>
       </div>
       <div class="shrink-0 hidden sm:flex items-center gap-1.5 px-3 py-1 bg-white/80 border border-amber-200 rounded-lg text-xs font-mono font-semibold text-amber-800 shadow-2xs">
         <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
-        <span>Menyinkronkan...</span>
+        <span>Menyinkronkan Data...</span>
       </div>
     </div>
 
@@ -317,7 +317,7 @@
           </div>
           <h1 class="text-2xl sm:text-3xl font-headline font-bold text-white tracking-tight" x-text="'Dashboard Pelaporan ' + config.appName">
           </h1>
-          <p class="text-brand-100 text-xs sm:text-sm leading-relaxed" x-text="config.tagline + ' â€” Portal terpadu monitoring dan konfirmasi setoran retribusi sampah.'">
+          <p class="text-brand-100 text-xs sm:text-sm leading-relaxed" x-text="config.tagline + ' â€” Portal terpadu monitoring dan konfirmasi pembayaran retribusi sampah.'">
           </p>
           <div class="pt-2 flex flex-wrap items-center gap-3.5">
             <button 
@@ -330,7 +330,7 @@
               @click="scrollToMatriks()" 
               class="px-4 sm:px-5 py-3 sm:py-3.5 text-white/90 hover:text-white hover:bg-white/10 active:bg-white/15 rounded-xl text-sm sm:text-base font-semibold transition-all flex items-center gap-2">
               <i data-lucide="arrow-down-circle" class="w-4.5 h-4.5 text-emerald-300"></i>
-              <span>Lihat Matriks</span>
+              <span>Lihat Status Pembayaran</span>
             </button>
           </div>
         </div>
@@ -353,11 +353,11 @@
               <span class="text-xs font-mono text-slate-600 bg-slate-100 px-3 py-1 rounded-pill font-semibold" x-text="masterData.length + ' SPPG'"></span>
             </div>
 
-            <!-- Loading State Saat Memuat Database -->
+            <!-- Loading State Saat Memuat Data -->
             <div x-show="!isDbLoaded" class="py-20 text-center flex flex-col items-center justify-center bg-slate-50/50 rounded-lg">
               <div class="w-8 h-8 border-2 border-brand-200 border-t-brand-600 rounded-full animate-spin mb-2.5"></div>
               <span class="text-xs font-bold text-slate-700">Memuat grafik monitoring SPPG...</span>
-              <span class="text-[11px] text-slate-400 mt-0.5">Menyinkronkan data setoran dari Google Sheets</span>
+              <span class="text-[11px] text-slate-400 mt-0.5">Menyinkronkan data pembayaran secara realtime</span>
             </div>
 
             <!-- Scrollable Timeline Container (Tampil setelah database terload) -->
@@ -433,9 +433,9 @@
           <div class="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm text-slate-600">
             <span class="flex items-center gap-2">
               <span class="w-3 h-3 bg-amber-500 rounded-xs inline-block"></span>
-              <span>Rentang Setoran Terbayar (Apr - Des <span x-text="config.tahunAnggaran"></span>)</span>
+              <span>Rentang Pembayaran Terbayar (Apr - Des <span x-text="config.tahunAnggaran"></span>)</span>
             </span>
-            <span class="text-brand-600 font-bold cursor-pointer hover:underline" @click="scrollToMatriks()">Lihat Matriks &darr;</span>
+            <span class="text-brand-600 font-bold cursor-pointer hover:underline" @click="scrollToMatriks()">Lihat Tabel &darr;</span>
           </div>
         </div>
 
@@ -453,10 +453,10 @@
               </span>
             </div>
 
-            <!-- Loading State Penyetor Terbaru -->
+            <!-- Loading State Pembayaran Terbaru -->
             <div x-show="!isDbLoaded" class="py-14 text-center flex flex-col items-center justify-center">
               <div class="w-6 h-6 border-2 border-slate-200 border-t-leaf-600 rounded-full animate-spin mb-2"></div>
-              <span class="text-xs font-medium text-slate-500">Mengambil transaksi terkini...</span>
+              <span class="text-xs font-medium text-slate-500">Mengambil data pembayaran terkini...</span>
             </div>
 
             <!-- List 6 Transaksi Terkini -->
@@ -506,24 +506,24 @@
       <!-- ================= SECTION 2: MATRIKS TABULAR SPPG (DENGAN POPOVER DETAIL DI SETIAP SEL) ================= -->
       <div id="matriksSection" class="bg-white border border-slate-200 rounded-xl shadow-card relative">
         
-        <!-- Matriks Header & Legend (HANYA 2 KETERANGAN: SUDAH & BELUM BAYAR) -->
-        <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between gap-4">
-          <div class="min-w-0 flex-1">
-            <h2 class="font-headline font-bold text-slate-900 text-base flex items-center gap-2">
+        <!-- Header & Legenda Status Pembayaran -->
+        <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+          <div class="min-w-0">
+            <h2 class="font-headline font-bold text-slate-900 text-base sm:text-lg flex items-center gap-2">
               <i data-lucide="grid-2x2-plus" class="w-4.5 h-4.5 text-brand-600 shrink-0"></i>
-              <span class="truncate">Matriks Pembayaran Retribusi SPPG</span>
+              <span>Status Pembayaran Retribusi SPPG</span>
             </h2>
-            <p class="text-xs text-slate-500 mt-0.5 truncate sm:whitespace-normal">Rekapitulasi status setoran per SPPG periode April - Desember <span x-text="config.tahunAnggaran"></span>.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Rekapitulasi status pembayaran per SPPG periode April - Desember <span x-text="config.tahunAnggaran"></span>.</p>
           </div>
 
           <!-- Legenda Warna & Simbol (3 Keterangan: Terverifikasi, Menunggu Verifikasi, Belum Bayar) -->
-          <div class="flex items-center flex-wrap gap-2 text-xs font-semibold shrink-0 ml-auto">
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 border border-emerald-200" title="Setoran telah diverifikasi resmi oleh Bendahara DLH">
+          <div class="flex items-center flex-wrap gap-2 text-xs font-semibold shrink-0">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 border border-emerald-200" title="Pembayaran telah diverifikasi resmi oleh Bendahara DLH">
               <i data-lucide="check" class="w-4 h-4 stroke-[3] text-emerald-700"></i>
               <span>Terverifikasi</span>
             </div>
             
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-100 text-amber-800 border border-amber-300" title="Laporan sudah dikirim oleh SPPG, menunggu verifikasi Bendahara">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-100 text-amber-800 border border-amber-300" title="Laporan pembayaran sudah dikirim oleh SPPG, menunggu verifikasi Bendahara">
               <i data-lucide="check" class="w-4 h-4 stroke-[3] text-amber-700"></i>
               <span>Menunggu Verifikasi</span>
             </div>
@@ -535,12 +535,12 @@
           </div>
         </div>
 
-        <!-- Matriks Table Content (Sticky Header Tepat di Bawah Navigasi Halaman) -->
-        <!-- Loading State Saat Memuat Database -->
+        <!-- Tabel Status Pembayaran Content -->
+        <!-- Loading State Saat Memuat Data -->
         <div x-show="!isDbLoaded" class="py-20 px-4 text-center bg-slate-50/60 rounded-b-xl flex flex-col items-center justify-center border-t border-slate-200">
           <div class="w-10 h-10 border-3 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mb-3"></div>
-          <div class="font-bold text-slate-800 text-sm sm:text-base">Sedang Memuat Data Matriks Setoran SPPG...</div>
-          <p class="text-xs text-slate-500 mt-1 max-w-md">Menghubungkan ke database Google Sheets DLH untuk menyinkronkan status verifikasi & pembayaran terkini seluruh SPPG.</p>
+          <div class="font-bold text-slate-800 text-sm sm:text-base">Sedang Memuat Data Pembayaran SPPG...</div>
+          <p class="text-xs text-slate-500 mt-1 max-w-md">Menyinkronkan data verifikasi & pembayaran terkini seluruh SPPG.</p>
         </div>
 
         <!-- Tabel Matriks (Tampil setelah database terload) -->
@@ -1291,7 +1291,7 @@
                     <td colspan="9" class="py-12 text-center text-slate-500 bg-slate-50/50">
                       <div class="flex flex-col items-center justify-center">
                         <div class="w-7 h-7 border-2 border-brand-200 border-t-brand-600 rounded-full animate-spin mb-2"></div>
-                        <span class="text-xs font-semibold text-slate-700">Memuat data transaksi dari Google Sheets...</span>
+                        <span class="text-xs font-semibold text-slate-700">Memuat data transaksi pembayaran...</span>
                         <span class="text-[11px] text-slate-400 mt-0.5">Menyinkronkan data pembayaran secara realtime</span>
                       </div>
                     </td>
@@ -2379,12 +2379,12 @@
       <span>Konfirmasi</span>
     </button>
 
-    <!-- Tab 3: Matriks -->
+    <!-- Tab 3: Status Pembayaran -->
     <button 
       @click="currentView = 'dashboard'; $nextTick(() => scrollToMatriks());" 
       class="flex flex-col items-center justify-center flex-1 py-1 text-xs text-slate-400 hover:text-slate-600 transition">
-      <i data-lucide="grid-2x2-plus" class="w-6 h-6 mb-1"></i>
-      <span>Matriks</span>
+      <i data-lucide="table" class="w-6 h-6 mb-1"></i>
+      <span>Status</span>
     </button>
 
   </nav>
