@@ -80,6 +80,7 @@
       font-family: 'DM Sans', sans-serif;
       font-size: 1rem; /* 15px Dasar Seimbang */
       line-height: 1.5;
+      overflow-x: hidden;
     }
     
     ::-webkit-scrollbar {
@@ -532,6 +533,11 @@
               <i data-lucide="x" class="w-4 h-4 stroke-[2.5] text-rose-700"></i>
               <span>Belum Bayar</span>
             </div>
+
+            <div class="w-full sm:hidden flex items-center gap-1.5 text-[11px] text-slate-400 font-normal pt-1">
+              <i data-lucide="arrow-left-right" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span>Geser tabel untuk melihat seluruh bulan</span>
+            </div>
           </div>
         </div>
 
@@ -543,9 +549,9 @@
           <p class="text-xs text-slate-500 mt-1 max-w-md">Menyinkronkan data verifikasi & pembayaran terkini seluruh SPPG.</p>
         </div>
 
-        <!-- Tabel Matriks (Tampil setelah database terload) -->
-        <div x-show="isDbLoaded" class="border-t border-slate-200 rounded-b-xl">
-          <table class="w-full text-left border-separate border-spacing-0 text-xs">
+        <!-- Tabel Status Pembayaran (Tampil setelah data terload) -->
+        <div x-show="isDbLoaded" class="border-t border-slate-200 rounded-b-xl overflow-x-auto">
+          <table class="w-full min-w-[620px] text-left border-separate border-spacing-0 text-xs">
             <thead class="sticky top-16 z-30 bg-slate-100 shadow-xs">
               <tr class="bg-slate-100 text-slate-700 font-headline uppercase tracking-wider text-[11px]">
                 <th class="py-2.5 px-3.5 min-w-[190px] border-b border-r border-slate-200 font-bold bg-slate-100 sticky top-16 z-30">Nama SPPG</th>
@@ -1093,8 +1099,8 @@
 
           
           <!-- Table Content with Pagination & Sticky Header -->
-          <div class="border-t border-slate-200">
-            <table class="w-full text-left border-separate border-spacing-0 text-xs">
+          <div class="border-t border-slate-200 overflow-x-auto">
+            <table class="w-full min-w-[900px] text-left border-separate border-spacing-0 text-xs">
               <thead class="sticky top-16 z-30 bg-slate-100 shadow-xs">
                 <tr class="bg-slate-100 text-slate-700 font-headline uppercase tracking-wider text-[11px]">
                   <th class="py-3 px-3 bg-slate-100 border-b border-r border-slate-200 sticky top-16 z-30 min-w-[105px]">Tanggal</th>
@@ -1551,8 +1557,8 @@
             </div>
           </div>
 
-          <div class="border border-slate-200 rounded-lg">
-            <table class="w-full text-left border-separate border-spacing-0 text-xs">
+          <div class="border border-slate-200 rounded-lg overflow-x-auto">
+            <table class="w-full min-w-[700px] text-left border-separate border-spacing-0 text-xs">
               <thead class="sticky top-16 z-30 bg-slate-100 shadow-xs">
                 <tr class="bg-slate-100 text-slate-700 font-headline uppercase tracking-wider text-[11px]">
                   <th class="py-3 px-3 min-w-[220px] border-b border-r border-slate-200 bg-slate-100 sticky top-16 z-30">Nama SPPG & Wilayah</th>
@@ -1736,8 +1742,8 @@
           </div>
 
           <!-- SPPG Table dengan Sticky Header -->
-          <div class="border border-slate-200 rounded-lg">
-            <table class="w-full text-left border-separate border-spacing-0 text-xs">
+          <div class="border border-slate-200 rounded-lg overflow-x-auto">
+            <table class="w-full min-w-[650px] text-left border-separate border-spacing-0 text-xs">
               <thead class="sticky top-16 z-30 bg-slate-100 shadow-xs">
                 <tr class="bg-slate-100 text-slate-700 font-headline uppercase tracking-wider text-[11px]">
                   <th class="py-2.5 px-3 bg-slate-100 border-b border-r border-slate-200 sticky top-16 z-30">Kode SPPG</th>
