@@ -798,7 +798,7 @@ function uploadSlipToDrive(base64Data, fileName, mimeType, meta) {
       } catch (eSave) {}
     }
 
-    // 1. Level 1: periode (mm yyyy) (Contoh: "periode 04 2026")
+    // 1. Level 1: periode (mm yyyy) (Contoh: "07 2026")
     var monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
     var monthShortsIndo = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
@@ -811,16 +811,46 @@ function uploadSlipToDrive(base64Data, fileName, mimeType, meta) {
     }
     if (mPeriodeIdx === -1) mPeriodeIdx = 3; // Default April
     var mmPeriode = (mPeriodeIdx + 1).toString().padStart(2, '0');
-    var folderPeriodeName = 'periode ' + mmPeriode + ' ' + tahunAnggaran;
-    var folderPeriode = getOrCreateSubFolder(rootFolder, folderPeriodeName);
+    var folderPeriodeName = mmPeriode + ' ' + tahunAnggaran;
+    
+    // Cari folder periode (cek format '07 2026' atau 'periode 07 2026' agar tidak duplikat)
+    var folderPeriode = null;
+    var fIter1 = rootFolder.getFoldersByName(folderPeriodeName);
+    if (fIter1.hasNext()) {
+      folderPeriode = fIter1.next();
+    } else {
+      var fIterAlt = rootFolder.getFoldersByName('periode ' + folderPeriodeName);
+      if (fIterAlt.hasNext()) {
+        folderPeriode = fIterAlt.next();
+      } else {
+        folderPeriode = rootFolder.createFolder(folderPeriodeName);
+      }
+    }
 
-    // 2. Level 2: bayar (tgl setor, Mmm) (Contoh: "bayar 14, Mei", "bayar 08, Jul")
-    var tglSetorInfo = parseTanggalSetor(meta.tanggalTransfer);
-    var folderBayarName = 'bayar ' + tglSetorInfo.text;
+    // 2. Level 2: bulan bayar (Mon) (Contoh: "bayar Sep", "bayar Agu")
+    var monShort = 'Bln';
+    var tglTransferStr = String(meta.tanggalTransfer || '').trim();
+    if (tglTransferStr) {
+      var parts = tglTransferStr.split('-');
+      if (parts.length === 3 && parts[0].length === 4) {
+        var mNum = parseInt(parts[1], 10);
+        if (mNum >= 1 && mNum <= 12) {
+          monShort = monthShortsIndo[mNum - 1];
+        }
+      } else {
+        var d = new Date(tglTransferStr);
+        if (!isNaN(d.getTime())) {
+          monShort = monthShortsIndo[d.getMonth()];
+        }
+      }
+    }
+    if (!monShort || monShort === 'Bln') {
+      monShort = monthShortsIndo[new Date().getMonth()];
+    }
+    var folderBayarName = 'bayar ' + monShort;
     var folderBayar = getOrCreateSubFolder(folderPeriode, folderBayarName);
 
-    // 3. Nama File: (kecamatan) (nama sppg) (periode Mmmm).(extensi file)
-    // Contoh: Balocci Kassi Periode April.jpg
+    // 3. Nama File: nama sppg periode.ext (Contoh: Bonto Langkasa Juli.pdf)
     var ext = '';
     if (fileName && fileName.lastIndexOf('.') !== -1) {
       ext = fileName.substring(fileName.lastIndexOf('.'));
@@ -830,16 +860,16 @@ function uploadSlipToDrive(base64Data, fileName, mimeType, meta) {
       else ext = '.jpg';
     }
 
-    var kec = meta.kecamatan || 'Kecamatan';
-    var sppg = meta.namaSppg || 'SPPG';
-    var periodeFull = monthNames[mPeriodeIdx] || meta.periodeBulan || 'April';
-    var targetFileName = kec + ' ' + sppg + ' Periode ' + periodeFull + ext;
+    var rawSppg = String(meta.namaSppg || 'SPPG').trim();
+    var cleanSppg = rawSppg.replace(/^SPPG\s+/i, '').trim();
+    var periodeFull = monthNames[mPeriodeIdx] || meta.periodeBulan || 'Juli';
+    var targetFileName = cleanSppg + ' ' + periodeFull + ext;
 
     var cleanBase64 = String(base64Data || '');
     if (cleanBase64.indexOf(',') !== -1) {
       cleanBase64 = cleanBase64.split(',')[1];
     }
-    cleanBase64 = cleanBase64.replace(/\s/g, '');
+    cleanBase64 = cleanBase64.replace(/[\r\n\s]/g, '');
 
     if (!cleanBase64) {
       Logger.log('uploadSlipToDrive: cleanBase64 kosong.');
