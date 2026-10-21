@@ -2580,7 +2580,7 @@
   <!-- ========================================================================= -->
   <!-- MODAL PREVIEW & UPLOAD/GANTI BUKTI TRANSFER SLIP                           -->
   <!-- ========================================================================= -->
-  <div x-show="showBuktiModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm" x-cloak>
+  <div x-show="showBuktiModal" class="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm" x-cloak>
     <div 
       x-show="showBuktiModal"
       x-transition:enter="transition ease-out duration-200"
@@ -2713,7 +2713,7 @@
   <!-- ========================================================================= -->
   <!-- MODAL EDIT TRANSAKSI PEMBAYARAN SPPG (KLIK DARI NAMA SPPG)                -->
   <!-- ========================================================================= -->
-  <div x-show="showEditTransaksiModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm" x-cloak>
+  <div x-show="showEditTransaksiModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm" x-cloak>
     <div 
       x-show="showEditTransaksiModal"
       x-transition:enter="transition ease-out duration-200"
@@ -2741,22 +2741,100 @@
       <form @submit.prevent="saveEditTransaksi()" class="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs">
         
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- 1. SPPG Selection -->
-          <div class="sm:col-span-2">
-            <label class="block font-semibold text-slate-700 mb-1">Nama SPPG & Wilayah <span class="text-rose-500">*</span></label>
-            <select 
-              x-model="editTrxForm.sppgId" 
-              @change="onEditTrxSppgChange()"
-              required 
-              class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 font-semibold outline-none shadow-2xs">
-              <template x-for="sppg in masterData" :key="sppg.id">
-                <option :value="sppg.id" x-text="(sppg.nama.startsWith('SPPG') ? sppg.nama : 'SPPG ' + sppg.nama) + ' (Kec. ' + sppg.kec + ')'"></option>
-              </template>
-            </select>
+          <!-- 1. SPPG Selection (Searchable & Grouped by Kecamatan A-Z) -->
+          <div class="sm:col-span-2 relative z-30" x-data="{ openSearchSppg: false, sppgFilter: '' }">
+            <label class="block font-semibold text-slate-700 mb-1 flex items-center justify-between">
+              <span>Nama SPPG & Wilayah <span class="text-rose-500">*</span></span>
+              <span class="text-[10.5px] font-normal text-brand-600 font-sans" x-show="editTrxForm.kecamatan" x-text="'Kecamatan ' + editTrxForm.kecamatan"></span>
+            </label>
+
+            <!-- Search / Selection Trigger Button -->
+            <button 
+              type="button" 
+              @click="openSearchSppg = !openSearchSppg; if (openSearchSppg) $nextTick(() => { $refs.editSppgSearchInput && $refs.editSppgSearchInput.focus(); if (typeof lucide !== 'undefined') lucide.createIcons(); })"
+              class="w-full bg-white border border-slate-300 hover:border-brand-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg px-3 py-2 text-xs text-left flex items-center justify-between shadow-2xs transition">
+              <div class="flex items-center gap-2 truncate">
+                <i data-lucide="building-2" class="w-4 h-4 text-brand-600 shrink-0"></i>
+                <span class="font-bold text-slate-900 truncate" x-text="editTrxForm.namaSppg ? ((editTrxForm.namaSppg.startsWith('SPPG') ? editTrxForm.namaSppg : 'SPPG ' + editTrxForm.namaSppg) + ' (Kec. ' + editTrxForm.kecamatan + ')') : '-- Pilih SPPG --'"></span>
+              </div>
+              <i :data-lucide="openSearchSppg ? 'chevron-up' : 'chevron-down'" class="w-4 h-4 text-slate-400 shrink-0"></i>
+            </button>
+
+            <!-- Grouped Dropdown Popup (High Z-Index, Isolated, Searchable) -->
+            <div 
+              x-show="openSearchSppg" 
+              @click.outside="openSearchSppg = false" 
+              class="absolute z-50 left-0 right-0 mt-1 max-h-72 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-2xl divide-y divide-slate-100 text-xs" 
+              x-cloak>
+              
+              <!-- Search Bar inside dropdown -->
+              <div class="p-2.5 bg-slate-50 border-b border-slate-200 sticky top-0 z-20">
+                <div class="relative">
+                  <i data-lucide="search" class="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-400"></i>
+                  <input 
+                    type="text" 
+                    x-ref="editSppgSearchInput"
+                    x-model="sppgFilter" 
+                    placeholder="Ketik untuk mencari SPPG atau Kecamatan..." 
+                    class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg pl-8 pr-7 py-1.5 text-xs text-slate-900 outline-none">
+                  <button 
+                    type="button" 
+                    x-show="sppgFilter" 
+                    @click="sppgFilter = ''" 
+                    class="absolute right-2 top-2 text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Grouped by Kecamatan A-Z -->
+              <div class="divide-y divide-slate-100">
+                <template x-for="grp in getGroupedSppgList(sppgFilter)" :key="grp.kecamatan">
+                  <div>
+                    <!-- Kecamatan Header (A-Z) -->
+                    <div class="bg-slate-100/90 px-3 py-1.5 text-[10.5px] font-bold text-slate-700 tracking-wider uppercase flex items-center justify-between sticky top-[49px] z-10 border-y border-slate-200 select-none">
+                      <div class="flex items-center gap-1.5">
+                        <i data-lucide="map-pin" class="w-3 h-3 text-brand-600"></i>
+                        <span x-text="'Kecamatan ' + grp.kecamatan"></span>
+                      </div>
+                      <span class="text-[9.5px] bg-white border border-slate-200 px-1.5 py-0.2 rounded-full font-sans text-slate-500" x-text="grp.items.length + ' SPPG'"></span>
+                    </div>
+
+                    <!-- SPPG List in Kecamatan (A-Z) -->
+                    <div class="divide-y divide-slate-50">
+                      <template x-for="sppg in grp.items" :key="sppg.id">
+                        <div 
+                          @click="selectEditTrxSppg(sppg); openSearchSppg = false; sppgFilter = ''" 
+                          class="px-3.5 py-2 hover:bg-brand-50 cursor-pointer transition flex items-center justify-between gap-2"
+                          :class="editTrxForm.sppgId === sppg.id ? 'bg-brand-50/80 text-brand-900 font-bold' : 'text-slate-800'">
+                          <div class="min-w-0">
+                            <div class="font-bold flex items-center gap-1.5">
+                              <span x-text="sppg.nama.startsWith('SPPG') ? sppg.nama : 'SPPG ' + sppg.nama"></span>
+                              <template x-if="editTrxForm.sppgId === sppg.id">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-brand-600 shrink-0"></i>
+                              </template>
+                            </div>
+                            <div class="text-[10px] text-slate-500 truncate" x-text="(sppg.penanggung_jawab || sppg.penanggungJawab || sppg.pengurus ? 'PJ: ' + (sppg.penanggung_jawab || sppg.penanggungJawab || sppg.pengurus) : '') + (sppg.kontak ? ' (' + sppg.kontak + ')' : '')"></div>
+                          </div>
+                          <span class="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 shrink-0" x-text="sppg.id"></span>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- Empty State -->
+                <template x-if="getGroupedSppgList(sppgFilter).length === 0">
+                  <div class="p-4 text-center text-slate-400 text-xs">
+                    Tidak ada SPPG yang cocok dengan kata kunci "<span class="font-bold text-slate-600" x-text="sppgFilter"></span>"
+                  </div>
+                </template>
+              </div>
+            </div>
           </div>
 
           <!-- 2. Tanggal Bayar -->
-          <div>
+          <div class="relative z-10">
             <label class="block font-semibold text-slate-700 mb-1">Tanggal Bayar / Transfer <span class="text-rose-500">*</span></label>
             <input 
               type="date" 
@@ -2766,14 +2844,15 @@
           </div>
 
           <!-- 3. Periode Bulan -->
-          <div>
+          <div class="relative z-10">
             <label class="block font-semibold text-slate-700 mb-1">Periode Bulan Setoran <span class="text-rose-500">*</span></label>
             <select 
               x-model="editTrxForm.periodeBulan" 
               required 
               class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 font-semibold outline-none shadow-2xs">
+              <option value="">-- Pilih Bulan Setoran --</option>
               <template x-for="bln in bulanList" :key="bln">
-                <option :value="bln" x-text="'Bulan ' + bln"></option>
+                <option :value="bln" x-text="'Bulan ' + bln" :selected="editTrxForm.periodeBulan === bln"></option>
               </template>
             </select>
           </div>
@@ -2814,8 +2893,8 @@
             <select 
               x-model="editTrxForm.status" 
               class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 font-semibold outline-none shadow-2xs">
-              <option value="terverifikasi">Terverifikasi (Lunas / Hijau)</option>
-              <option value="menunggu">Menunggu Verifikasi (Kuning)</option>
+              <option value="terverifikasi">Terverifikasi</option>
+              <option value="menunggu">Menunggu Verifikasi</option>
             </select>
           </div>
         </div>
@@ -2854,8 +2933,8 @@
           </div>
         </div>
 
-        <!-- Bukti Transfer Slip (Upload / Ganti) -->
-        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+        <!-- Bukti Transfer Slip (Preview & Upload/Ganti) -->
+        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
           <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center justify-between">
             <div class="flex items-center gap-1.5">
               <i data-lucide="receipt" class="w-3.5 h-3.5 text-brand-600"></i>
@@ -2864,7 +2943,62 @@
             <span class="text-[10.5px] font-normal" :class="editTrxForm.filePreview || editTrxForm.buktiUrl ? 'text-emerald-700 font-semibold' : 'text-slate-400'" x-text="editTrxForm.filePreview ? 'Bukti baru dipilih' : (editTrxForm.buktiUrl ? 'Bukti sudah terlampir' : 'Belum ada bukti')"></span>
           </div>
 
-          <div class="flex items-center gap-3">
+          <!-- Thumbnail & Detail Box Saat Ada Bukti -->
+          <template x-if="editTrxForm.filePreview || editTrxForm.buktiUrl">
+            <div class="p-3 bg-white border border-slate-200 rounded-xl flex flex-col sm:flex-row items-center gap-3">
+              <!-- Pratinjau Gambar -->
+              <template x-if="!isSlipPdf(editTrxForm.filePreview || editTrxForm.buktiUrl)">
+                <div class="relative group cursor-pointer shrink-0" @click="previewEditTrxSlip()" title="Klik untuk memperbesar pratinjau slip">
+                  <img 
+                    :src="getSlipPreviewUrl(editTrxForm.filePreview || editTrxForm.buktiUrl)" 
+                    alt="Slip Bukti Transfer" 
+                    class="h-20 w-28 object-cover rounded-lg border border-slate-200 shadow-2xs group-hover:opacity-90 transition bg-slate-50">
+                  <div class="absolute inset-0 bg-slate-900/40 rounded-lg opacity-0 group-hover:opacity-100 flex items-center justify-center transition text-white">
+                    <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Pratinjau Dokumen PDF -->
+              <template x-if="isSlipPdf(editTrxForm.filePreview || editTrxForm.buktiUrl)">
+                <div class="h-20 w-28 bg-rose-50 border border-rose-200 rounded-lg flex flex-col items-center justify-center text-rose-600 shrink-0 cursor-pointer group" @click="previewEditTrxSlip()" title="Klik untuk membuka dokumen PDF">
+                  <i data-lucide="file-text" class="w-7 h-7 group-hover:scale-110 transition-transform"></i>
+                  <span class="text-[10px] font-bold mt-1 font-mono uppercase">Dokumen PDF</span>
+                </div>
+              </template>
+
+              <!-- Keterangan & Tombol Preview -->
+              <div class="flex-1 min-w-0 text-left space-y-1">
+                <div class="font-bold text-slate-800 text-xs truncate" x-text="editTrxForm.fileName || ('Slip Pembayaran ' + (editTrxForm.namaSppg || 'SPPG'))"></div>
+                <div class="text-[11px] text-slate-500">
+                  <span>Periode: <strong class="text-slate-700" x-text="editTrxForm.periodeBulan"></strong></span>
+                  <span class="mx-1">&bull;</span>
+                  <span>Nominal: <strong class="text-slate-700 font-mono" x-text="formatRupiah(editTrxForm.jumlahTransfer)"></strong></span>
+                </div>
+                <div class="flex items-center gap-2 pt-1 flex-wrap">
+                  <!-- Tombol Lihat Preview -->
+                  <button 
+                    type="button" 
+                    @click="previewEditTrxSlip()" 
+                    class="px-2.5 py-1 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 rounded-md text-[11px] font-bold flex items-center gap-1 transition shadow-2xs cursor-pointer">
+                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                    <span>Lihat Preview</span>
+                  </button>
+
+                  <!-- Buka di Drive jika link Drive -->
+                  <template x-if="editTrxForm.buktiUrl && editTrxForm.buktiUrl.includes('drive.google.com')">
+                    <a :href="editTrxForm.buktiUrl" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-md text-[11px] font-semibold flex items-center gap-1 transition">
+                      <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500"></i>
+                      <span>Buka di Drive</span>
+                    </a>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </template>
+
+          <!-- Input File Tersembunyi & Tombol Upload/Ganti -->
+          <div class="flex items-center gap-2.5 flex-wrap">
             <input 
               type="file" 
               x-ref="editTrxFileInput" 
@@ -2875,10 +3009,21 @@
             <button 
               type="button" 
               @click="$refs.editTrxFileInput.click()" 
-              class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition cursor-pointer">
+              class="px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition cursor-pointer">
               <i :data-lucide="editTrxForm.filePreview || editTrxForm.buktiUrl ? 'refresh-cw' : 'upload'" class="w-3.5 h-3.5 text-brand-600"></i>
-              <span x-text="editTrxForm.filePreview ? 'Ganti File Pilihan' : (editTrxForm.buktiUrl ? 'Ganti Bukti Transfer' : 'Upload Bukti Transfer')"></span>
+              <span x-text="editTrxForm.filePreview ? 'Pilih Berkas Lain' : (editTrxForm.buktiUrl ? 'Ganti Bukti Transfer' : 'Upload Bukti Transfer')"></span>
             </button>
+
+            <!-- Tombol Pratinjau Cepat di Samping Tombol Ganti -->
+            <template x-if="editTrxForm.filePreview || editTrxForm.buktiUrl">
+              <button 
+                type="button" 
+                @click="previewEditTrxSlip()" 
+                class="px-3 py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition cursor-pointer">
+                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                <span>Pratinjau Slip</span>
+              </button>
+            </template>
 
             <template x-if="editTrxForm.fileName">
               <span class="text-[11px] text-slate-600 truncate max-w-xs font-mono" x-text="editTrxForm.fileName"></span>
@@ -2925,7 +3070,7 @@
   <!-- ========================================================================= -->
   <!-- MODAL KONFIRMASI AKSI / DIALOG (PENGGANTI WINDOW.CONFIRM / ALERT)         -->
   <!-- ========================================================================= -->
-  <div x-show="confirmModal.show" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" x-cloak>
+  <div x-show="confirmModal.show" class="fixed inset-0 z-[90] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" x-cloak>
     <div 
       x-show="confirmModal.show"
       x-transition:enter="transition ease-out duration-200"
@@ -2986,7 +3131,7 @@
      * Masukkan URL Web App Deployment Google Apps Script Anda di bawah ini:
      * Contoh: "https://script.google.com/macros/s/AKfycbyxxxxxx/exec"
      */
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwioUq-sswxQskWdVUn3JUv8cfsyjkofIImArAMsplxxGrJuRHhYPOSRwKeEg23iew/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyPS8Sq7-e2EzMSYeZ-UQeFTC8u2fv5x06NL9LqVWZkodnK0QTaZXiOdYI6j9Xo2DDv/exec";
 
 
     /**
@@ -3322,6 +3467,18 @@
             return ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
           }
           return master.filter(m => this.config.bulanAktif.includes(m));
+        },
+
+        get bulanList() {
+          const map = {
+            'Jan': 'Januari', 'Feb': 'Februari', 'Mar': 'Maret', 'Apr': 'April',
+            'Mei': 'Mei', 'Jun': 'Juni', 'Jul': 'Juli', 'Agu': 'Agustus',
+            'Sep': 'September', 'Okt': 'Oktober', 'Nov': 'November', 'Des': 'Desember'
+          };
+          if (this.bulanListShort && this.bulanListShort.length > 0) {
+            return this.bulanListShort.map(b => map[b] || b);
+          }
+          return ['April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
         },
 
         // Login Form
@@ -5271,8 +5428,10 @@
     "tanggalSts": "10 Agus 2026",
     "catatan": "Import Excel transaksi.xlsx (Status: TRUE)"
   }
-],
-
+],
+
+
+
         // Matriks Data: DIHITUNG DINAMIS DARI DATA TRANSAKSI & DIURUTKAN SESUAI ABJAD
         get matriksData() {
           const bulanFullToShort = {
@@ -7229,6 +7388,71 @@
         // =========================================================================
         // EDIT TRANSAKSI PEMBAYARAN (KLIK NAMA SPPG)
         // =========================================================================
+        getGroupedSppgList(filterText = '') {
+          const query = String(filterText || '').toLowerCase().trim();
+          const rawKecs = (this.masterData || []).map(s => s.kecamatan || s.kec || '').filter(Boolean);
+          const kecList = [...new Set(rawKecs)].sort((a, b) => a.localeCompare(b, 'id', { sensitivity: 'base' }));
+
+          const groups = [];
+          kecList.forEach(kec => {
+            const sppgsInKec = (this.masterData || [])
+              .filter(s => (s.kecamatan === kec || s.kec === kec))
+              .filter(s => {
+                if (!query) return true;
+                const nama = (s.nama || '').toLowerCase();
+                const kecName = (s.kecamatan || s.kec || '').toLowerCase();
+                const pj = (s.penanggung_jawab || s.penanggungJawab || s.pengurus || '').toLowerCase();
+                const kontak = String(s.kontak || '').toLowerCase();
+                return nama.includes(query) || kecName.includes(query) || pj.includes(query) || kontak.includes(query);
+              })
+              .sort((a, b) => a.nama.localeCompare(b.nama, 'id', { numeric: true, sensitivity: 'base' }));
+
+            if (sppgsInKec.length > 0) {
+              groups.push({
+                kecamatan: kec,
+                items: sppgsInKec
+              });
+            }
+          });
+
+          return groups;
+        },
+
+        selectEditTrxSppg(sppg) {
+          if (!sppg) return;
+          this.editTrxForm.sppgId = sppg.id;
+          this.editTrxForm.namaSppg = sppg.nama;
+          this.editTrxForm.kecamatan = sppg.kecamatan || sppg.kec || '';
+          if (!this.editTrxForm.namaPelapor && (sppg.penanggung_jawab || sppg.penanggungJawab || sppg.pengurus)) {
+            this.editTrxForm.namaPelapor = sppg.penanggung_jawab || sppg.penanggungJawab || sppg.pengurus;
+          }
+          if (!this.editTrxForm.kontakPelapor && sppg.kontak) {
+            this.editTrxForm.kontakPelapor = sppg.kontak;
+          }
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
+        },
+
+        previewEditTrxSlip() {
+          const currentSlip = this.editTrxForm.filePreview || this.editTrxForm.buktiUrl;
+          if (!currentSlip) {
+            this.notifyWarning('Bukti Kosong', 'Belum ada bukti transfer untuk ditampilkan.');
+            return;
+          }
+          this.activeTrx = {
+            id: this.editTrxForm.id,
+            namaSppg: this.editTrxForm.namaSppg,
+            periodeBulan: this.editTrxForm.periodeBulan,
+            jumlahTransfer: this.editTrxForm.jumlahTransfer,
+            buktiUrl: currentSlip
+          };
+          this.showBuktiModal = true;
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
+        },
+
         openEditTransaksiModal(trx) {
           if (!trx) return;
           this.editTrxForm = {
