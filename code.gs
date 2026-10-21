@@ -115,6 +115,20 @@ function handleApiRequest(action, payload) {
         result = normalisasiStatusDatabase();
         break;
 
+      case 'deleteTransaksi':
+      case 'hapusTransaksi':
+        result = deleteTransaksi(payload.idTrx || payload.id);
+        break;
+
+      case 'updateTransaksi':
+      case 'editTransaksi':
+        result = updateTransaksi(payload.data || payload);
+        break;
+
+      case 'updateBuktiSlip':
+        result = updateBuktiSlip(payload.idTrx || payload.id, payload.fileBase64 || payload.base64Data, payload.fileName, payload.fileType || payload.mimeType);
+        break;
+
       default:
         result = { success: false, message: 'Action not found: ' + action };
     }
@@ -1263,6 +1277,145 @@ function updatePaymentField(idTrx, colIndex, value) {
     }
     return { success: false, message: 'Transaksi tidak ditemukan.' };
   } catch (err) {
+    return { success: false, error: err.toString() };
+  }
+}
+
+/**
+ * Hapus Transaksi Pembayaran dari Google Sheets
+ */
+function deleteTransaksi(idTrx) {
+  try {
+    if (!idTrx) return { success: false, message: 'ID Transaksi wajib diisi.' };
+    var sheet = getSheet(SHEETS.PEMBAYARAN);
+    if (!sheet) return { success: false, message: 'Sheet pembayaran tidak ditemukan.' };
+    var data = sheet.getDataRange().getValues();
+
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(idTrx).trim()) {
+        sheet.deleteRow(i + 1);
+        Logger.log('Transaksi ' + idTrx + ' berhasil dihapus dari baris ' + (i + 1));
+        return { success: true, message: 'Transaksi berhasil dihapus.' };
+      }
+    }
+    return { success: false, message: 'Transaksi tidak ditemukan.' };
+  } catch (err) {
+    Logger.log('Error deleteTransaksi: ' + err.toString());
+    return { success: false, error: err.toString() };
+  }
+}
+
+/**
+ * Upload Bukti Baru / Ganti Bukti Slip Transaksi
+ */
+function updateBuktiSlip(idTrx, base64Data, fileName, mimeType) {
+  try {
+    if (!idTrx) return { success: false, message: 'ID Transaksi tidak valid.' };
+    var sheet = getSheet(SHEETS.PEMBAYARAN);
+    var data = sheet.getDataRange().getValues();
+    var rowIndex = -1;
+    var rowData = null;
+
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(idTrx).trim()) {
+        rowIndex = i + 1;
+        rowData = data[i];
+        break;
+      }
+    }
+
+    if (rowIndex === -1) {
+      return { success: false, message: 'Transaksi tidak ditemukan.' };
+    }
+
+    var buktiUrl = '';
+    if (base64Data && fileName) {
+      var meta = {
+        idTrx: idTrx,
+        kecamatan: rowData[3],
+        namaSppg: rowData[2],
+        periodeBulan: rowData[6],
+        tanggalTransfer: rowData[7] instanceof Date ? Utilities.formatDate(rowData[7], Session.getScriptTimeZone(), 'yyyy-MM-dd') : String(rowData[7])
+      };
+      buktiUrl = uploadSlipToDrive(base64Data, fileName, mimeType, meta);
+    }
+
+    if (buktiUrl) {
+      sheet.getRange(rowIndex, 10).setValue(buktiUrl); // Kolom 10: bukti_slip_url
+      return { success: true, buktiUrl: buktiUrl, message: 'Bukti transfer berhasil diperbarui.' };
+    } else {
+      return { success: false, message: 'Gagal mengunggah bukti ke Google Drive.' };
+    }
+  } catch (err) {
+    Logger.log('Error updateBuktiSlip: ' + err.toString());
+    return { success: false, error: err.toString() };
+  }
+}
+
+/**
+ * Update Lengkap Transaksi Pembayaran dari Form Edit
+ */
+function updateTransaksi(payload) {
+  try {
+    if (!payload || !payload.id) return { success: false, message: 'Data transaksi tidak valid.' };
+    var idTrx = payload.id;
+    var sheet = getSheet(SHEETS.PEMBAYARAN);
+    var data = sheet.getDataRange().getValues();
+    var rowIndex = -1;
+
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(idTrx).trim()) {
+        rowIndex = i + 1;
+        break;
+      }
+    }
+
+    if (rowIndex === -1) {
+      return { success: false, message: 'Transaksi tidak ditemukan.' };
+    }
+
+    var buktiUrl = payload.buktiUrl || data[rowIndex - 1][9] || '';
+    if (payload.fileBase64 && payload.fileName) {
+      var meta = {
+        idTrx: idTrx,
+        kecamatan: payload.kecamatan,
+        namaSppg: payload.namaSppg,
+        periodeBulan: payload.periodeBulan,
+        tanggalTransfer: payload.tanggalTransfer
+      };
+      var newUrl = uploadSlipToDrive(payload.fileBase64, payload.fileName, payload.fileType, meta);
+      if (newUrl) buktiUrl = newUrl;
+    }
+
+    var cleanSts = String(payload.noSts || '').trim();
+    var cleanStbp = String(payload.noStbp || '').trim();
+    var cleanTrx = String(payload.noTrxBank || '').trim();
+    var status = payload.status || (cleanSts ? 'terverifikasi' : 'menunggu');
+
+    if (payload.sppgId) sheet.getRange(rowIndex, 2).setValue(payload.sppgId);
+    if (payload.namaSppg) sheet.getRange(rowIndex, 3).setValue(payload.namaSppg);
+    if (payload.kecamatan) sheet.getRange(rowIndex, 4).setValue(payload.kecamatan);
+    sheet.getRange(rowIndex, 5).setValue(payload.namaPelapor || '');
+    sheet.getRange(rowIndex, 6).setValue(payload.kontakPelapor || '');
+    if (payload.periodeBulan) sheet.getRange(rowIndex, 7).setValue(payload.periodeBulan);
+    if (payload.tanggalTransfer) sheet.getRange(rowIndex, 8).setValue(payload.tanggalTransfer);
+    if (payload.jumlahTransfer) sheet.getRange(rowIndex, 9).setValue(Number(payload.jumlahTransfer));
+    if (buktiUrl && !String(buktiUrl).startsWith('data:')) sheet.getRange(rowIndex, 10).setValue(buktiUrl);
+    sheet.getRange(rowIndex, 11).setValue(status);
+    sheet.getRange(rowIndex, 12).setValue(cleanSts);
+    sheet.getRange(rowIndex, 13).setValue(cleanStbp);
+    sheet.getRange(rowIndex, 14).setValue(cleanTrx);
+    if (cleanSts && !data[rowIndex - 1][14]) {
+      sheet.getRange(rowIndex, 15).setValue(Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd'));
+    }
+
+    return { 
+      success: true, 
+      buktiUrl: buktiUrl,
+      message: 'Data transaksi berhasil diperbarui.' 
+    };
+  } catch (err) {
+    Logger.log('Error updateTransaksi: ' + err.toString());
     return { success: false, error: err.toString() };
   }
 }

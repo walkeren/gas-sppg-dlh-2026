@@ -1102,7 +1102,7 @@
                   <th class="py-2.5 px-1.5 bg-emerald-50/90 border-b border-l border-slate-200 sticky top-0 z-20 w-[85px] min-w-[75px] max-w-[95px] text-[10.5px]">No. STS</th>
                   <th class="py-2.5 px-1.5 bg-blue-50/90 border-b border-l border-slate-200 sticky top-0 z-20 w-[85px] min-w-[75px] max-w-[95px] text-[10.5px]">No. STBP</th>
                   <th class="py-2.5 px-1.5 bg-purple-50/90 border-b border-l border-slate-200 sticky top-0 z-20 w-[85px] min-w-[75px] max-w-[95px] text-[10.5px]">ID Transaksi</th>
-                  <th class="py-2.5 px-2 text-center border-b border-l border-slate-200 w-[165px] min-w-[160px] bg-slate-100 sticky top-0 z-20 text-[10.5px]">Aksi</th>
+                  <th class="py-2.5 px-2 text-center border-b border-l border-slate-200 w-[185px] min-w-[180px] bg-slate-100 sticky top-0 z-20 text-[10.5px]">Aksi</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-700">
@@ -1304,9 +1304,16 @@
                       <div class="text-[10px] text-brand-600 font-semibold mt-0.5" x-text="'Bulan ' + trx.periodeBulan"></div>
                     </td>
 
-                    <!-- Kolom Nama SPPG -->
-                    <td class="py-2.5 px-3 border-r border-slate-100">
-                      <div class="font-semibold text-slate-900" x-text="trx.namaSppg"></div>
+                    <!-- Kolom Nama SPPG (Klik untuk Buka Form Edit) -->
+                    <td class="py-2.5 px-3 border-r border-slate-100 cursor-pointer group hover:bg-brand-50/50 transition" 
+                        @click="openEditTransaksiModal(trx)" 
+                        title="Klik nama SPPG untuk mengubah data setoran ini">
+                      <div class="font-semibold text-brand-700 group-hover:text-brand-900 group-hover:underline flex items-center gap-1.5">
+                        <span x-text="trx.namaSppg"></span>
+                        <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 text-brand-600 transition-opacity shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                        </svg>
+                      </div>
                       <div class="text-[11px] text-slate-500" x-text="'Kec. ' + trx.kecamatan"></div>
                     </td>
 
@@ -1324,10 +1331,16 @@
                       <button 
                         type="button"
                         @click="openBuktiModal(trx)"
-                        class="inline-flex items-center gap-1 px-2 py-1 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 rounded text-[11px] font-medium transition"
-                        title="Lihat Slip Bukti Transfer">
-                        <i data-lucide="image" class="w-3.5 h-3.5"></i>
-                        <span>Slip</span>
+                        :class="trx.buktiUrl ? 'bg-brand-50 hover:bg-brand-100 text-brand-700 border-brand-200' : 'bg-slate-50 hover:bg-slate-100 text-slate-400 border-dashed border-slate-300'"
+                        class="inline-flex items-center gap-1 px-2 py-1 border rounded text-[11px] font-medium transition cursor-pointer"
+                        :title="trx.buktiUrl ? 'Lihat Slip Bukti Transfer' : 'Bukti transfer belum diunggah (Klik untuk upload)'">
+                        <template x-if="trx.buktiUrl">
+                          <i data-lucide="image" class="w-3.5 h-3.5"></i>
+                        </template>
+                        <template x-if="!trx.buktiUrl">
+                          <i data-lucide="upload" class="w-3.5 h-3.5 text-slate-400"></i>
+                        </template>
+                        <span x-text="trx.buktiUrl ? 'Slip' : 'Upload'"></span>
                       </button>
                     </td>
 
@@ -1361,17 +1374,17 @@
                         class="w-full bg-white border border-slate-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded px-1.5 py-0.5 text-[10.5px] font-mono text-slate-900 outline-none transition shadow-2xs">
                     </td>
 
-                    <!-- Kolom Aksi: Tombol Verifikasi/Batal di sebelah kiri tombol Simpan -->
-                    <td class="py-1.5 px-1.5 text-center border-l border-slate-200 w-[165px] min-w-[160px]">
-                      <div class="flex items-center gap-1.5 justify-center">
+                    <!-- Kolom Aksi: Tombol Verifikasi, Simpan, dan Icon Silang Delete di sebelah kanannya -->
+                    <td class="py-1.5 px-1.5 text-center border-l border-slate-200 w-[185px] min-w-[180px]">
+                      <div class="flex items-center gap-1 justify-center">
                         
-                        <!-- Tombol 1: Unverif (Putih/Abu-abu) - Lebar Konsisten w-[76px] -->
+                        <!-- Tombol 1: Unverif (Putih/Abu-abu) -->
                         <template x-if="trx.status === 'terverifikasi' || trx.status === 'SELESAI_STS' || trx.status === 'TERVERIFIKASI'">
                           <button 
                             type="button" 
                             @click="toggleVerifikasi(trx)"
                             :disabled="trx.isVerifying"
-                            class="w-[76px] py-1 px-1.5 rounded text-[10.5px] font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 transition flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
+                            class="w-[70px] py-1 px-1 rounded text-[10.5px] font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 transition flex items-center justify-center gap-0.5 shadow-2xs cursor-pointer"
                             title="Unverifikasi setoran (Kembalikan ke Menunggu Verifikasi)">
                             <svg class="w-3 h-3 text-slate-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -1380,13 +1393,13 @@
                           </button>
                         </template>
 
-                        <!-- Tombol 1: Verifikasi (Hijau Muda) - Lebar Konsisten w-[76px] -->
+                        <!-- Tombol 1: Verifikasi (Hijau Muda) -->
                         <template x-if="trx.status !== 'terverifikasi' && trx.status !== 'SELESAI_STS' && trx.status !== 'TERVERIFIKASI'">
                           <button 
                             type="button" 
                             @click="toggleVerifikasi(trx)"
                             :disabled="trx.isVerifying"
-                            class="w-[76px] py-1 px-1.5 rounded text-[10.5px] font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 transition flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
+                            class="w-[70px] py-1 px-1 rounded text-[10.5px] font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 transition flex items-center justify-center gap-0.5 shadow-2xs cursor-pointer"
                             title="Verifikasi setoran ini (Status berubah Hijau / Lunas)">
                             <svg class="w-3 h-3 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -1395,18 +1408,35 @@
                           </button>
                         </template>
 
-                        <!-- Tombol 2: Simpan (Biru Muda saat Aktif) - Lebar Konsisten w-[68px] -->
+                        <!-- Tombol 2: Simpan (Biru Muda saat Aktif) -->
                         <button 
                           type="button" 
                           @click="saveInlineTransaksi(trx)"
                           :disabled="!isRowModified(trx) || trx.isSaving"
                           :class="isRowModified(trx) && !trx.isSaving ? 'bg-sky-100 hover:bg-sky-200 text-sky-900 border border-sky-300 cursor-pointer shadow-2xs' : 'bg-slate-50 text-slate-400 border border-slate-200 cursor-not-allowed opacity-60'"
-                          class="w-[68px] py-1 px-1.5 rounded text-[10.5px] font-bold transition flex items-center justify-center gap-1 shadow-2xs"
+                          class="w-[58px] py-1 px-1 rounded text-[10.5px] font-bold transition flex items-center justify-center gap-0.5 shadow-2xs"
                           title="Simpan perubahan nomor STS / STBP / ID Transaksi">
                           <svg class="w-3 h-3 shrink-0" :class="isRowModified(trx) && !trx.isSaving ? 'text-sky-700' : 'text-slate-400'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17 21v-8H7v8M7 3v5h8V3M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
                           </svg>
                           <span x-text="trx.isSaving ? '...' : 'Simpan'"></span>
+                        </button>
+
+                        <!-- Tombol 3: Icon Silang untuk Delete (di sebelah kanan tombol simpan) -->
+                        <button 
+                          type="button" 
+                          @click="confirmHapusTransaksi(trx)"
+                          :disabled="trx.isDeleting"
+                          class="w-7 h-7 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-300 transition flex items-center justify-center shadow-2xs cursor-pointer shrink-0"
+                          title="Hapus data transaksi ini">
+                          <template x-if="!trx.isDeleting">
+                            <svg class="w-3.5 h-3.5 text-slate-400 hover:text-rose-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </template>
+                          <template x-if="trx.isDeleting">
+                            <div class="w-3 h-3 border-2 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+                          </template>
                         </button>
 
                       </div>
@@ -2548,48 +2578,347 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL PREVIEW BUKTI TRANSFER DARI DRIVE                                   -->
+  <!-- MODAL PREVIEW & UPLOAD/GANTI BUKTI TRANSFER SLIP                           -->
   <!-- ========================================================================= -->
   <div x-show="showBuktiModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm" x-cloak>
-    <div class="bg-white border border-slate-200 rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div 
+      x-show="showBuktiModal"
+      x-transition:enter="transition ease-out duration-200"
+      x-transition:enter-start="opacity-0 scale-95"
+      x-transition:enter-end="opacity-100 scale-100"
+      class="bg-white border border-slate-200 rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
       
-      <div class="p-4 border-b border-slate-200 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i data-lucide="receipt" class="w-5 h-5 text-brand-600"></i>
+      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
+            <i data-lucide="receipt" class="w-4.5 h-4.5"></i>
+          </div>
           <div>
             <h3 class="font-headline font-bold text-slate-900 text-sm">Pratinjau Slip Transfer Bank</h3>
-            <p class="text-[11px] text-slate-400 font-mono" x-text="activeTrx ? activeTrx.id + ' - ' + activeTrx.namaSppg : ''"></p>
+            <p class="text-[11px] text-slate-500 font-mono" x-text="activeTrx ? (activeTrx.id + ' • ' + activeTrx.namaSppg + ' • Bulan ' + activeTrx.periodeBulan) : ''"></p>
           </div>
         </div>
-        <button @click="showBuktiModal = false" class="p-1.5 rounded-full text-slate-400 hover:text-slate-600">
+        <button @click="showBuktiModal = false" class="p-1.5 rounded-full text-slate-400 hover:text-slate-600 transition">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <div class="p-4 overflow-y-auto flex flex-col items-center justify-center bg-slate-100/50 min-h-[250px]">
+      <!-- Preview Area (JPG / PNG / PDF) -->
+      <div class="p-4 overflow-y-auto flex flex-col items-center justify-center bg-slate-100/60 min-h-[280px]">
+        
         <template x-if="activeTrx && activeTrx.buktiUrl">
-          <img :src="getSlipPreviewUrl(activeTrx.buktiUrl)" alt="Slip Bukti Transfer" class="max-h-[55vh] max-w-full rounded-lg shadow-sm border border-slate-200 object-contain">
+          <div class="w-full flex flex-col items-center justify-center">
+            <!-- Jika Dokumen PDF -->
+            <template x-if="isSlipPdf(activeTrx.buktiUrl)">
+              <div class="w-full h-[55vh] flex flex-col items-center justify-center bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
+                <template x-if="activeTrx.buktiUrl.startsWith('data:application/pdf')">
+                  <embed :src="activeTrx.buktiUrl" type="application/pdf" class="w-full h-full">
+                </template>
+                <template x-if="activeTrx.buktiUrl.includes('drive.google.com')">
+                  <iframe :src="getDriveEmbedUrl(activeTrx.buktiUrl)" class="w-full h-full border-0" allow="autoplay"></iframe>
+                </template>
+                <template x-if="!activeTrx.buktiUrl.startsWith('data:application/pdf') && !activeTrx.buktiUrl.includes('drive.google.com')">
+                  <div class="p-6 text-center space-y-2">
+                    <i data-lucide="file-text" class="w-10 h-10 text-brand-600 mx-auto"></i>
+                    <div class="text-xs font-semibold text-slate-700">Dokumen PDF Terlampir</div>
+                    <a :href="activeTrx.buktiUrl" target="_blank" class="text-xs text-brand-600 hover:underline font-bold inline-block">Buka / Download PDF</a>
+                  </div>
+                </template>
+              </div>
+            </template>
+
+            <!-- Jika Berupa Gambar (JPG, PNG, WebP, Thumbnail Drive) -->
+            <template x-if="!isSlipPdf(activeTrx.buktiUrl)">
+              <div class="relative group">
+                <img 
+                  :src="getSlipPreviewUrl(activeTrx.buktiUrl)" 
+                  alt="Slip Bukti Transfer" 
+                  class="max-h-[55vh] max-w-full rounded-xl shadow-md border border-slate-200 object-contain bg-white">
+              </div>
+            </template>
+          </div>
         </template>
+
+        <!-- Jika Bukti Kosong -->
         <template x-if="!activeTrx || !activeTrx.buktiUrl">
-          <div class="text-xs text-slate-400 italic">Belum ada lampiran bukti transfer.</div>
+          <div class="py-10 px-4 text-center space-y-3 max-w-sm">
+            <div class="w-12 h-12 rounded-full bg-slate-200/70 text-slate-400 mx-auto flex items-center justify-center">
+              <i data-lucide="image-off" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-slate-700">Belum Ada Bukti Transfer</div>
+              <p class="text-[11px] text-slate-400 mt-0.5">Bukti setoran untuk SPPG ini belum diunggah. Silakan klik tombol di bawah untuk melampirkan berkas bukti.</p>
+            </div>
+            <button 
+              type="button" 
+              @click="$refs.buktiModalFileInput.click()" 
+              class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold inline-flex items-center gap-1.5 shadow-xs transition cursor-pointer">
+              <i data-lucide="upload" class="w-4 h-4"></i>
+              <span>Upload Bukti Sekarang</span>
+            </button>
+          </div>
         </template>
+
       </div>
 
-      <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
-        <div>Nominal: <span class="font-mono font-bold text-slate-900" x-text="activeTrx ? formatRupiah(activeTrx.jumlahTransfer) : ''"></span></div>
-        <div class="flex items-center gap-2">
+      <!-- Modal Footer -->
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-slate-600">
+        <div>
+          Nominal: <span class="font-mono font-bold text-slate-900" x-text="activeTrx ? formatRupiah(activeTrx.jumlahTransfer) : ''"></span>
+          <span class="text-slate-300 mx-1.5">|</span>
+          <span class="font-semibold text-brand-700" x-text="activeTrx ? ('Periode ' + activeTrx.periodeBulan) : ''"></span>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap justify-end">
+          <!-- Hidden File Input for Modal Upload/Replace -->
+          <input 
+            type="file" 
+            x-ref="buktiModalFileInput" 
+            @change="handleModalBuktiUpload($event)" 
+            accept="image/*,application/pdf,.pdf,.jpg,.jpeg,.png,.webp" 
+            class="hidden">
+
+          <!-- Tombol Upload (jika bukti kosong) / Ganti Bukti (jika bukti ada) -->
+          <button 
+            type="button"
+            @click="$refs.buktiModalFileInput.click()"
+            :disabled="isUploadingBuktiModal"
+            class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center gap-1.5 transition text-xs shadow-xs cursor-pointer">
+            <template x-if="!isUploadingBuktiModal">
+              <i :data-lucide="activeTrx && activeTrx.buktiUrl ? 'refresh-cw' : 'upload'" class="w-3.5 h-3.5"></i>
+            </template>
+            <template x-if="isUploadingBuktiModal">
+              <div class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            </template>
+            <span x-text="isUploadingBuktiModal ? 'Mengunggah...' : (activeTrx && activeTrx.buktiUrl ? 'Ganti Bukti' : 'Upload Bukti')"></span>
+          </button>
+
+          <!-- Buka di Drive -->
           <template x-if="activeTrx && activeTrx.buktiUrl && activeTrx.buktiUrl.includes('drive.google.com')">
-            <a :href="activeTrx.buktiUrl" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-brand-50 hover:bg-brand-100 text-brand-700 font-semibold flex items-center gap-1.5 transition">
+            <a :href="activeTrx.buktiUrl" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-brand-50 hover:bg-brand-100 text-brand-700 font-semibold flex items-center gap-1.5 transition text-xs">
               <span>Buka di Drive</span>
               <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
             </a>
           </template>
-          <button @click="showBuktiModal = false" class="px-4 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium">
+
+          <button @click="showBuktiModal = false" class="px-4 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium cursor-pointer transition">
             Tutup
           </button>
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL EDIT TRANSAKSI PEMBAYARAN SPPG (KLIK DARI NAMA SPPG)                -->
+  <!-- ========================================================================= -->
+  <div x-show="showEditTransaksiModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm" x-cloak>
+    <div 
+      x-show="showEditTransaksiModal"
+      x-transition:enter="transition ease-out duration-200"
+      x-transition:enter-start="opacity-0 scale-95"
+      x-transition:enter-end="opacity-100 scale-100"
+      class="bg-white border border-slate-200 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      
+      <!-- Modal Header -->
+      <div class="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
+            <i data-lucide="edit-3" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-headline font-bold text-slate-900 text-sm sm:text-base">Edit Data Pembayaran SPPG</h3>
+            <p class="text-[11px] text-slate-500 font-mono" x-text="editTrxForm.id ? (editTrxForm.id + ' • ' + editTrxForm.namaSppg) : ''"></p>
+          </div>
+        </div>
+        <button @click="showEditTransaksiModal = false" class="p-1.5 rounded-full text-slate-400 hover:text-slate-600 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Form Fields) -->
+      <form @submit.prevent="saveEditTransaksi()" class="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- 1. SPPG Selection -->
+          <div class="sm:col-span-2">
+            <label class="block font-semibold text-slate-700 mb-1">Nama SPPG & Wilayah <span class="text-rose-500">*</span></label>
+            <select 
+              x-model="editTrxForm.sppgId" 
+              @change="onEditTrxSppgChange()"
+              required 
+              class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 font-semibold outline-none shadow-2xs">
+              <template x-for="sppg in masterData" :key="sppg.id">
+                <option :value="sppg.id" x-text="(sppg.nama.startsWith('SPPG') ? sppg.nama : 'SPPG ' + sppg.nama) + ' (Kec. ' + sppg.kec + ')'"></option>
+              </template>
+            </select>
+          </div>
+
+          <!-- 2. Tanggal Bayar -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Tanggal Bayar / Transfer <span class="text-rose-500">*</span></label>
+            <input 
+              type="date" 
+              x-model="editTrxForm.tanggalTransfer" 
+              required
+              class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 font-mono outline-none shadow-2xs">
+          </div>
+
+          <!-- 3. Periode Bulan -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Periode Bulan Setoran <span class="text-rose-500">*</span></label>
+            <select 
+              x-model="editTrxForm.periodeBulan" 
+              required 
+              class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 font-semibold outline-none shadow-2xs">
+              <template x-for="bln in bulanList" :key="bln">
+                <option :value="bln" x-text="'Bulan ' + bln"></option>
+              </template>
+            </select>
+          </div>
+
+          <!-- 4. Penyetor / Nama Pelapor -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Nama Penyetor / Penanggung Jawab</label>
+            <input 
+              type="text" 
+              x-model="editTrxForm.namaPelapor" 
+              placeholder="Contoh: Muh. Yusuf"
+              class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 outline-none shadow-2xs">
+          </div>
+
+          <!-- 5. Kontak Penyetor -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Nomor Kontak / WhatsApp</label>
+            <input 
+              type="text" 
+              x-model="editTrxForm.kontakPelapor" 
+              placeholder="Contoh: 08123456789"
+              class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 font-mono outline-none shadow-2xs">
+          </div>
+
+          <!-- 6. Nominal Setoran -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Nominal Setoran (Rp) <span class="text-rose-500">*</span></label>
+            <input 
+              type="number" 
+              x-model.number="editTrxForm.jumlahTransfer" 
+              required
+              class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 font-mono font-bold outline-none shadow-2xs">
+          </div>
+
+          <!-- 7. Status Verifikasi -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Status Verifikasi</label>
+            <select 
+              x-model="editTrxForm.status" 
+              class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg px-3 py-2 text-xs text-slate-900 font-semibold outline-none shadow-2xs">
+              <option value="terverifikasi">Terverifikasi (Lunas / Hijau)</option>
+              <option value="menunggu">Menunggu Verifikasi (Kuning)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Nomor Administrasi DLH -->
+        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+          <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="file-check" class="w-3.5 h-3.5 text-brand-600"></i>
+            <span>Administrasi & Legalitas Penyetoran</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-600 mb-1 text-[11px]">No. STS</label>
+              <input 
+                type="text" 
+                x-model="editTrxForm.noSts" 
+                placeholder="No. STS"
+                class="w-full bg-white border border-slate-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded px-2.5 py-1.5 text-xs font-mono text-slate-900 outline-none shadow-2xs">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 mb-1 text-[11px]">No. STBP</label>
+              <input 
+                type="text" 
+                x-model="editTrxForm.noStbp" 
+                placeholder="No. STBP"
+                class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded px-2.5 py-1.5 text-xs font-mono text-slate-900 outline-none shadow-2xs">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 mb-1 text-[11px]">ID Transaksi Bank</label>
+              <input 
+                type="text" 
+                x-model="editTrxForm.noTrxBank" 
+                placeholder="ID Transaksi"
+                class="w-full bg-white border border-slate-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded px-2.5 py-1.5 text-xs font-mono text-slate-900 outline-none shadow-2xs">
+            </div>
+          </div>
+        </div>
+
+        <!-- Bukti Transfer Slip (Upload / Ganti) -->
+        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+          <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="receipt" class="w-3.5 h-3.5 text-brand-600"></i>
+              <span>Bukti Transfer Slip</span>
+            </div>
+            <span class="text-[10.5px] font-normal" :class="editTrxForm.filePreview || editTrxForm.buktiUrl ? 'text-emerald-700 font-semibold' : 'text-slate-400'" x-text="editTrxForm.filePreview ? 'Bukti baru dipilih' : (editTrxForm.buktiUrl ? 'Bukti sudah terlampir' : 'Belum ada bukti')"></span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <input 
+              type="file" 
+              x-ref="editTrxFileInput" 
+              @change="handleEditTrxFileUpload($event)" 
+              accept="image/*,application/pdf,.pdf,.jpg,.jpeg,.png,.webp" 
+              class="hidden">
+            
+            <button 
+              type="button" 
+              @click="$refs.editTrxFileInput.click()" 
+              class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition cursor-pointer">
+              <i :data-lucide="editTrxForm.filePreview || editTrxForm.buktiUrl ? 'refresh-cw' : 'upload'" class="w-3.5 h-3.5 text-brand-600"></i>
+              <span x-text="editTrxForm.filePreview ? 'Ganti File Pilihan' : (editTrxForm.buktiUrl ? 'Ganti Bukti Transfer' : 'Upload Bukti Transfer')"></span>
+            </button>
+
+            <template x-if="editTrxForm.fileName">
+              <span class="text-[11px] text-slate-600 truncate max-w-xs font-mono" x-text="editTrxForm.fileName"></span>
+            </template>
+          </div>
+        </div>
+
+        <!-- Modal Actions Footer -->
+        <div class="pt-3 border-t border-slate-200 flex items-center justify-between">
+          <button 
+            type="button" 
+            @click="confirmHapusTransaksi(editTrxForm)" 
+            class="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+            <span>Hapus Transaksi</span>
+          </button>
+
+          <div class="flex items-center gap-2">
+            <button 
+              type="button" 
+              @click="showEditTransaksiModal = false" 
+              class="px-4 py-2 border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold transition cursor-pointer">
+              Batal
+            </button>
+            <button 
+              type="submit" 
+              :disabled="editTrxForm.isSubmitting"
+              class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs transition cursor-pointer">
+              <template x-if="!editTrxForm.isSubmitting">
+                <i data-lucide="save" class="w-4 h-4"></i>
+              </template>
+              <template x-if="editTrxForm.isSubmitting">
+                <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              </template>
+              <span x-text="editTrxForm.isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'"></span>
+            </button>
+          </div>
+        </div>
+
+      </form>
     </div>
   </div>
 
@@ -2890,6 +3219,29 @@
         showStsModal: false,
         showBuktiModal: false,
         showEditSppgModal: false,
+        showEditTransaksiModal: false,
+        isUploadingBuktiModal: false,
+
+        editTrxForm: {
+          id: '',
+          sppgId: '',
+          namaSppg: '',
+          kecamatan: '',
+          namaPelapor: '',
+          kontakPelapor: '',
+          periodeBulan: 'Juli',
+          tanggalTransfer: '',
+          jumlahTransfer: 750000,
+          noSts: '',
+          noStbp: '',
+          noTrxBank: '',
+          status: 'terverifikasi',
+          buktiUrl: '',
+          filePreview: null,
+          fileName: '',
+          fileType: '',
+          isSubmitting: false
+        },
         
         // Master SPPG Inline & Filter State
         showAddSppgInline: false,
@@ -6754,6 +7106,393 @@
             }
             this.notifySuccess('STS Diterbitkan', `Surat Tanda Setoran ${noSts} resmi diterbitkan. Status pembayaran otomatis LUNAS.`);
             this.$nextTick(() => lucide.createIcons());
+          }
+        },
+
+        // =========================================================================
+        // HELPER & ACTIONS BUKTI TRANSFER SLIP (PREVIEW & UPLOAD/GANTI)
+        // =========================================================================
+        isSlipPdf(url) {
+          if (!url) return false;
+          const lower = String(url).toLowerCase();
+          return lower.includes('.pdf') || lower.startsWith('data:application/pdf');
+        },
+
+        getDriveEmbedUrl(url) {
+          if (!url) return '';
+          const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+          if (match && match[1]) {
+            return `https://drive.google.com/file/d/${match[1]}/preview`;
+          }
+          return url;
+        },
+
+        async handleModalBuktiUpload(e) {
+          const file = e.target.files && e.target.files[0];
+          if (!file || !this.activeTrx) return;
+
+          const sizeInMB = file.size / (1024 * 1024);
+          if (sizeInMB > 25) {
+            this.notifyError('Ukuran Berkas Terlalu Besar', 'Maksimal ukuran file adalah 25 MB.');
+            e.target.value = '';
+            return;
+          }
+
+          const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+          const mimeType = isPdf ? 'application/pdf' : (file.type || 'image/jpeg');
+
+          let fileBase64 = '';
+          this.isUploadingBuktiModal = true;
+
+          try {
+            if (isPdf) {
+              if (sizeInMB > 10) {
+                this.isUploadingBuktiModal = false;
+                this.notifyError('Ukuran PDF Terlalu Besar', 'Maksimal ukuran PDF adalah 10 MB.');
+                e.target.value = '';
+                return;
+              }
+              fileBase64 = await new Promise((resolve) => {
+                const r = new FileReader();
+                r.onload = (evt) => resolve(evt.target.result);
+                r.readAsDataURL(file);
+              });
+            } else {
+              const compressed = await this.compressImageFile(file, 1600, 1600, 0.82);
+              fileBase64 = compressed.dataUrl;
+            }
+
+            // Pratinjau instan di browser
+            this.activeTrx.buktiUrl = fileBase64;
+            this.$nextTick(() => {
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+            });
+
+            const payload = {
+              idTrx: this.activeTrx.id,
+              fileBase64: fileBase64,
+              fileName: file.name,
+              fileType: mimeType
+            };
+
+            const handleSuccess = (res) => {
+              this.isUploadingBuktiModal = false;
+              if (res && res.buktiUrl) {
+                this.activeTrx.buktiUrl = res.buktiUrl;
+                const targetInList = this.transaksiList.find(t => t.id === this.activeTrx.id);
+                if (targetInList) targetInList.buktiUrl = res.buktiUrl;
+              }
+              this.notifySuccess('Bukti Tersimpan', 'Slip bukti transfer berhasil diunggah ke Google Drive.');
+              this.$nextTick(() => {
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+              });
+            };
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+              google.script.run
+                .withSuccessHandler((res) => {
+                  if (res && res.success) {
+                    handleSuccess(res);
+                  } else {
+                    this.isUploadingBuktiModal = false;
+                    this.notifyError('Gagal Menyimpan Bukti', (res && res.message) || 'Terjadi kesalahan sistem.');
+                  }
+                })
+                .withFailureHandler((err) => {
+                  this.isUploadingBuktiModal = false;
+                  this.notifyError('Kesalahan Jaringan', err.toString());
+                })
+                .updateBuktiSlip(payload.idTrx, payload.fileBase64, payload.fileName, payload.fileType);
+            } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+              apiCall('updateBuktiSlip', payload)
+                .then((res) => {
+                  if (res && res.success) {
+                    handleSuccess(res);
+                  } else {
+                    this.isUploadingBuktiModal = false;
+                    this.notifyError('Gagal Menyimpan Bukti', (res && res.message) || 'Terjadi kesalahan sistem.');
+                  }
+                })
+                .catch((err) => {
+                  this.isUploadingBuktiModal = false;
+                  this.notifyError('Kesalahan Jaringan', err.toString());
+                });
+            } else {
+              setTimeout(() => handleSuccess({ success: true, buktiUrl: fileBase64 }), 400);
+            }
+          } catch (err) {
+            this.isUploadingBuktiModal = false;
+            this.notifyError('Gagal Memproses File', err.toString());
+          }
+        },
+
+        // =========================================================================
+        // EDIT TRANSAKSI PEMBAYARAN (KLIK NAMA SPPG)
+        // =========================================================================
+        openEditTransaksiModal(trx) {
+          if (!trx) return;
+          this.editTrxForm = {
+            id: trx.id,
+            sppgId: trx.sppgId,
+            namaSppg: trx.namaSppg,
+            kecamatan: trx.kecamatan,
+            namaPelapor: trx.namaPelapor || '',
+            kontakPelapor: trx.kontakPelapor || '',
+            periodeBulan: trx.periodeBulan || 'Juli',
+            tanggalTransfer: trx.tanggalTransfer || '',
+            jumlahTransfer: trx.jumlahTransfer || 750000,
+            noSts: trx.editNoSts !== undefined ? trx.editNoSts : (trx.noSts || ''),
+            noStbp: trx.editNoStbp !== undefined ? trx.editNoStbp : (trx.noStbp || ''),
+            noTrxBank: trx.editNoTrxBank !== undefined ? trx.editNoTrxBank : (trx.noTrxBank || ''),
+            status: trx.status || 'terverifikasi',
+            buktiUrl: trx.buktiUrl || '',
+            filePreview: null,
+            fileName: '',
+            fileType: '',
+            isSubmitting: false
+          };
+          this.showEditTransaksiModal = true;
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
+        },
+
+        onEditTrxSppgChange() {
+          const sppgObj = (this.masterData || []).find(s => s.id === this.editTrxForm.sppgId);
+          if (sppgObj) {
+            this.editTrxForm.namaSppg = sppgObj.nama;
+            this.editTrxForm.kecamatan = sppgObj.kec;
+            if (!this.editTrxForm.namaPelapor && (sppgObj.penanggung_jawab || sppgObj.pengurus)) {
+              this.editTrxForm.namaPelapor = sppgObj.penanggung_jawab || sppgObj.pengurus;
+            }
+            if (!this.editTrxForm.kontakPelapor && sppgObj.kontak) {
+              this.editTrxForm.kontakPelapor = sppgObj.kontak;
+            }
+          }
+        },
+
+        async handleEditTrxFileUpload(e) {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+
+          const sizeInMB = file.size / (1024 * 1024);
+          if (sizeInMB > 25) {
+            this.notifyError('Ukuran Berkas Terlalu Besar', `Maksimal ukuran file adalah 25 MB.`);
+            e.target.value = '';
+            return;
+          }
+
+          this.editTrxForm.fileName = file.name;
+          const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+          this.editTrxForm.fileType = isPdf ? 'application/pdf' : (file.type || 'image/jpeg');
+
+          if (isPdf) {
+            if (sizeInMB > 10) {
+              this.notifyError('Ukuran PDF Terlalu Besar', 'Maksimal ukuran PDF adalah 10 MB.');
+              e.target.value = '';
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              this.editTrxForm.filePreview = evt.target.result;
+              this.notifySuccess('PDF Terlampir', `Dokumen ${file.name} siap disimpan.`);
+            };
+            reader.readAsDataURL(file);
+            return;
+          }
+
+          try {
+            const compressed = await this.compressImageFile(file, 1600, 1600, 0.82);
+            this.editTrxForm.filePreview = compressed.dataUrl;
+            this.editTrxForm.fileType = 'image/jpeg';
+            this.notifySuccess('Slip Terlampir', `Foto ${file.name} dioptimasi (${(compressed.sizeBytes / 1024).toFixed(0)} KB).`);
+          } catch (err) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              this.editTrxForm.filePreview = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        },
+
+        saveEditTransaksi() {
+          if (this.editTrxForm.isSubmitting) return;
+          if (!this.editTrxForm.sppgId) {
+            this.notifyWarning('Validasi', 'Silakan tentukan SPPG.');
+            return;
+          }
+          if (!this.editTrxForm.tanggalTransfer) {
+            this.notifyWarning('Validasi', 'Silakan pilih tanggal pembayaran.');
+            return;
+          }
+          if (!this.editTrxForm.periodeBulan) {
+            this.notifyWarning('Validasi', 'Silakan pilih periode bulan setoran.');
+            return;
+          }
+
+          this.editTrxForm.isSubmitting = true;
+          const payload = {
+            id: this.editTrxForm.id,
+            sppgId: this.editTrxForm.sppgId,
+            namaSppg: this.editTrxForm.namaSppg,
+            kecamatan: this.editTrxForm.kecamatan,
+            namaPelapor: this.editTrxForm.namaPelapor,
+            kontakPelapor: this.editTrxForm.kontakPelapor,
+            periodeBulan: this.editTrxForm.periodeBulan,
+            tanggalTransfer: this.editTrxForm.tanggalTransfer,
+            jumlahTransfer: Number(this.editTrxForm.jumlahTransfer) || 750000,
+            noSts: this.editTrxForm.noSts,
+            noStbp: this.editTrxForm.noStbp,
+            noTrxBank: this.editTrxForm.noTrxBank,
+            status: this.editTrxForm.status,
+            buktiUrl: this.editTrxForm.buktiUrl,
+            fileBase64: this.editTrxForm.filePreview || '',
+            fileName: this.editTrxForm.fileName || '',
+            fileType: this.editTrxForm.fileType || ''
+          };
+
+          const handleSuccess = (res) => {
+            this.editTrxForm.isSubmitting = false;
+            this.showEditTransaksiModal = false;
+
+            // Update in local transaksiList
+            const target = this.transaksiList.find(t => t.id === payload.id);
+            if (target) {
+              target.sppgId = payload.sppgId;
+              target.namaSppg = payload.namaSppg;
+              target.kecamatan = payload.kecamatan;
+              target.namaPelapor = payload.namaPelapor;
+              target.kontakPelapor = payload.kontakPelapor;
+              target.periodeBulan = payload.periodeBulan;
+              target.tanggalTransfer = payload.tanggalTransfer;
+              target.jumlahTransfer = payload.jumlahTransfer;
+              target.noSts = payload.noSts;
+              target.noStbp = payload.noStbp;
+              target.noTrxBank = payload.noTrxBank;
+              target.editNoSts = payload.noSts;
+              target.editNoStbp = payload.noStbp;
+              target.editNoTrxBank = payload.noTrxBank;
+              target.status = payload.status;
+              if (res && res.buktiUrl) {
+                target.buktiUrl = res.buktiUrl;
+              } else if (payload.fileBase64) {
+                target.buktiUrl = payload.fileBase64;
+              }
+            }
+
+            this.notifySuccess('Perubahan Tersimpan', `Data pembayaran ${payload.namaSppg} periode ${payload.periodeBulan} berhasil diperbarui.`);
+            this.$nextTick(() => {
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+            });
+          };
+
+          if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+              .withSuccessHandler((res) => {
+                if (res && res.success) {
+                  handleSuccess(res);
+                } else {
+                  this.editTrxForm.isSubmitting = false;
+                  this.notifyError('Gagal Menyimpan', (res && (res.message || res.error)) || 'Terjadi kesalahan sistem.');
+                }
+              })
+              .withFailureHandler((err) => {
+                this.editTrxForm.isSubmitting = false;
+                this.notifyError('Kesalahan Jaringan', err.toString());
+              })
+              .updateTransaksi(payload);
+          } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+            apiCall('updateTransaksi', { data: payload })
+              .then((res) => {
+                if (res && res.success) {
+                  handleSuccess(res);
+                } else {
+                  this.editTrxForm.isSubmitting = false;
+                  this.notifyError('Gagal Menyimpan', (res && (res.message || res.error)) || 'Terjadi kesalahan sistem.');
+                }
+              })
+              .catch((err) => {
+                this.editTrxForm.isSubmitting = false;
+                this.notifyError('Kesalahan Jaringan', err.toString());
+              });
+          } else {
+            setTimeout(() => handleSuccess({ success: true }), 300);
+          }
+        },
+
+        // =========================================================================
+        // HAPUS TRANSAKSI PEMBAYARAN (DENGAN KONFIRMASI)
+        // =========================================================================
+        confirmHapusTransaksi(trx) {
+          if (!trx || !trx.id) return;
+          const sppgNama = trx.namaSppg || 'SPPG';
+          const bln = trx.periodeBulan || '';
+          const nominalStr = this.formatRupiah(trx.jumlahTransfer || 750000);
+
+          this.askConfirm({
+            title: 'Konfirmasi Hapus Pembayaran',
+            message: `Apakah Anda yakin ingin menghapus data pembayaran untuk ${sppgNama} periode ${bln} (${nominalStr})? Data yang sudah dihapus tidak dapat dipulihkan kembali.`,
+            confirmText: 'Ya, Hapus Data',
+            cancelText: 'Batal',
+            type: 'danger',
+            onConfirm: () => {
+              this.executeHapusTransaksi(trx);
+            }
+          });
+        },
+
+        executeHapusTransaksi(trx) {
+          const idTrx = trx.id;
+          trx.isDeleting = true;
+
+          const handleSuccess = () => {
+            const idx = this.transaksiList.findIndex(t => t.id === idTrx);
+            if (idx !== -1) {
+              this.transaksiList.splice(idx, 1);
+            }
+            if (this.showEditTransaksiModal) {
+              this.showEditTransaksiModal = false;
+            }
+            this.notifySuccess('Data Dihapus', `Catatan pembayaran ${trx.namaSppg} periode ${trx.periodeBulan} berhasil dihapus.`);
+            this.$nextTick(() => {
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+            });
+          };
+
+          if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+              .withSuccessHandler((res) => {
+                trx.isDeleting = false;
+                if (res && res.success) {
+                  handleSuccess();
+                } else {
+                  this.notifyError('Gagal Menghapus', (res && res.message) || 'Terjadi kesalahan sistem.');
+                }
+              })
+              .withFailureHandler((err) => {
+                trx.isDeleting = false;
+                this.notifyError('Kesalahan Jaringan', err.toString());
+              })
+              .deleteTransaksi(idTrx);
+          } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+            apiCall('deleteTransaksi', { idTrx: idTrx })
+              .then((res) => {
+                trx.isDeleting = false;
+                if (res && res.success) {
+                  handleSuccess();
+                } else {
+                  this.notifyError('Gagal Menghapus', (res && res.message) || 'Terjadi kesalahan sistem.');
+                }
+              })
+              .catch((err) => {
+                trx.isDeleting = false;
+                this.notifyError('Kesalahan Jaringan', err.toString());
+              });
+          } else {
+            setTimeout(() => {
+              trx.isDeleting = false;
+              handleSuccess();
+            }, 300);
           }
         },
 
