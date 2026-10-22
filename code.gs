@@ -107,6 +107,11 @@ function handleApiRequest(action, payload) {
         result = addMasterSppg(payload.data || payload);
         break;
 
+      case 'updateMasterSppg':
+      case 'editMasterSppg':
+        result = updateMasterSppg(payload.data || payload);
+        break;
+
       case 'saveAppConfig':
         result = saveAppConfig(payload.configMap || payload.data);
         break;
@@ -223,7 +228,7 @@ function styleHeaderRow(sheet, numCols) {
 
 function setupSheetMasterSppg(ss) {
   var sheet = ss.getSheetByName(SHEETS.MASTER_SPPG) || ss.insertSheet(SHEETS.MASTER_SPPG);
-  var headers = ['id_sppg', 'kecamatan', 'nama_sppg', 'penanggung_jawab', 'kontak', 'status_aktif', 'created_at'];
+  var headers = ['id_sppg', 'kecamatan', 'nama_sppg', 'penanggung_jawab', 'kontak', 'status_aktif', 'created_at', 'yayasan', 'mulai_wajib_bayar'];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   styleHeaderRow(sheet, headers.length);
 }
@@ -285,7 +290,9 @@ function setupSheetPembayaran(ss) {
     'id_transaksi_bank', 
     'tanggal_sts', 
     'catatan', 
-    'created_at'
+    'created_at',
+    'seri_awal',
+    'seri_akhir'
   ];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   styleHeaderRow(sheet, headers.length);
@@ -331,7 +338,10 @@ function migrateDatabaseHeaders() {
     // 5. pembayaran_retribusi
     var s5 = ss.getSheetByName(SHEETS.PEMBAYARAN);
     if (s5) {
-      var payHeaders = ['id_transaksi', 'id_sppg', 'nama_sppg', 'kecamatan', 'nama_pelapor', 'kontak_pelapor', 'periode_bulan', 'tanggal_transfer', 'jumlah_transfer', 'bukti_slip_url', 'status_verifikasi', 'no_sts', 'no_stbp', 'id_transaksi_bank', 'tanggal_sts', 'catatan', 'created_at'];
+      var payHeaders = ['id_transaksi', 'id_sppg', 'nama_sppg', 'kecamatan', 'nama_pelapor', 'kontak_pelapor', 'periode_bulan', 'tanggal_transfer', 'jumlah_transfer', 'bukti_slip_url', 'status_verifikasi', 'no_sts', 'no_stbp', 'id_transaksi_bank', 'tanggal_sts', 'catatan', 'created_at',
+    'seri_awal',
+    'seri_akhir'
+  ];
       s5.getRange(1, 1, 1, payHeaders.length).setValues([payHeaders]);
       styleHeaderRow(s5, payHeaders.length);
     }
@@ -518,7 +528,8 @@ function getPublicDashboardData() {
     var sppgSheet = ss.getSheetByName(SHEETS.MASTER_SPPG);
     var masterSppg = [];
     if (sppgSheet && sppgSheet.getLastRow() > 1) {
-      var sppgVals = sppgSheet.getRange(2, 1, sppgSheet.getLastRow() - 1, 6).getValues();
+      var sppgCols = Math.max(9, sppgSheet.getLastColumn());
+      var sppgVals = sppgSheet.getRange(2, 1, sppgSheet.getLastRow() - 1, sppgCols).getValues();
       masterSppg = sppgVals.map(function(r) {
         return { 
           id: r[0], 
@@ -528,7 +539,11 @@ function getPublicDashboardData() {
           penanggungJawab: r[3] || '',
           pengurus: r[3] || '',
           kontak: r[4] || '',
-          active: r[5] === 'AKTIF' 
+          active: r[5] === 'AKTIF',
+          yayasan: r[7] || '',
+          namaYayasan: r[7] || '',
+          startMonth: r[8] || 'April',
+          mulaiWajibBayar: r[8] || 'April'
         };
       });
     } else {
@@ -553,7 +568,8 @@ function getPublicDashboardData() {
     var paySheet = ss.getSheetByName(SHEETS.PEMBAYARAN);
     var transaksiList = [];
     if (paySheet && paySheet.getLastRow() > 1) {
-      var payVals = paySheet.getRange(2, 1, paySheet.getLastRow() - 1, 17).getValues();
+      var payCols = Math.max(19, paySheet.getLastColumn());
+      var payVals = paySheet.getRange(2, 1, paySheet.getLastRow() - 1, payCols).getValues();
       transaksiList = payVals.map(function(r) {
         return {
           id: r[0],
@@ -571,7 +587,11 @@ function getPublicDashboardData() {
           noStbp: r[12] !== '' && r[12] !== null && r[12] !== undefined ? String(r[12]) : '',
           noTrxBank: r[13] !== '' && r[13] !== null && r[13] !== undefined ? String(r[13]) : '',
           tanggalSts: r[14] instanceof Date ? Utilities.formatDate(r[14], Session.getScriptTimeZone(), 'yyyy-MM-dd') : String(r[14]),
-          catatan: r[15]
+          catatan: r[15],
+          seriAwal: r[17] !== '' && r[17] !== null && r[17] !== undefined ? String(r[17]) : '',
+          seriAkhir: r[18] !== '' && r[18] !== null && r[18] !== undefined ? String(r[18]) : '',
+          seri_awal: r[17] !== '' && r[17] !== null && r[17] !== undefined ? String(r[17]) : '',
+          seri_akhir: r[18] !== '' && r[18] !== null && r[18] !== undefined ? String(r[18]) : ''
         };
       });
     }
@@ -601,7 +621,7 @@ function submitKonfirmasiPembayaran(payload) {
 
     // Handle Upload file slip ke Google Drive jika ada
     var buktiUrl = '';
-    if (payload.fileBase64 && payload.fileName) {
+    if (payload.fileBase64 && payload.fileName && String(payload.fileBase64).startsWith('data:')) {
       try {
         var uploadedUrl = uploadSlipToDrive(payload.fileBase64, payload.fileName, payload.fileType, {
           idTrx: idTrx,
@@ -617,7 +637,9 @@ function submitKonfirmasiPembayaran(payload) {
         Logger.log('Gagal uploadSlipToDrive: ' + eUpload.toString());
       }
     } else if (payload.buktiUrl && !String(payload.buktiUrl).startsWith('data:')) {
-      buktiUrl = String(payload.buktiUrl);
+      buktiUrl = String(payload.buktiUrl).trim();
+    } else if (payload.fileBase64 && (String(payload.fileBase64).startsWith('http://') || String(payload.fileBase64).startsWith('https://'))) {
+      buktiUrl = String(payload.fileBase64).trim();
     }
 
     // Safeguard: Jangan biarkan base64 string jutaan karakter lolos ke Spreadsheet (limit sel 50.000 char)
@@ -1329,7 +1351,9 @@ function updateBuktiSlip(idTrx, base64Data, fileName, mimeType) {
     }
 
     var buktiUrl = '';
-    if (base64Data && fileName) {
+    if (base64Data && (String(base64Data).startsWith('http://') || String(base64Data).startsWith('https://'))) {
+      buktiUrl = String(base64Data).trim();
+    } else if (base64Data && fileName) {
       var meta = {
         idTrx: idTrx,
         kecamatan: rowData[3],
@@ -1375,7 +1399,7 @@ function updateTransaksi(payload) {
     }
 
     var buktiUrl = payload.buktiUrl || data[rowIndex - 1][9] || '';
-    if (payload.fileBase64 && payload.fileName) {
+    if (payload.fileBase64 && payload.fileName && String(payload.fileBase64).startsWith('data:')) {
       var meta = {
         idTrx: idTrx,
         kecamatan: payload.kecamatan,
@@ -1385,6 +1409,8 @@ function updateTransaksi(payload) {
       };
       var newUrl = uploadSlipToDrive(payload.fileBase64, payload.fileName, payload.fileType, meta);
       if (newUrl) buktiUrl = newUrl;
+    } else if (payload.buktiUrl && !String(payload.buktiUrl).startsWith('data:')) {
+      buktiUrl = String(payload.buktiUrl).trim();
     }
 
     var cleanSts = String(payload.noSts || '').trim();
@@ -1408,6 +1434,10 @@ function updateTransaksi(payload) {
     if (cleanSts && !data[rowIndex - 1][14]) {
       sheet.getRange(rowIndex, 15).setValue(Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd'));
     }
+    var seriAwal = String(payload.seriAwal || payload.seri_awal || '').trim();
+    var seriAkhir = String(payload.seriAkhir || payload.seri_akhir || '').trim();
+    sheet.getRange(rowIndex, 18).setValue(seriAwal);
+    sheet.getRange(rowIndex, 19).setValue(seriAkhir);
 
     return { 
       success: true, 
@@ -1452,15 +1482,96 @@ function addMasterSppg(payload) {
     var sheet = getSheet(SHEETS.MASTER_SPPG);
     var count = sheet.getLastRow();
     var newId = 'SPPG-' + (count < 10 ? '00' : (count < 100 ? '0' : '')) + count;
+    var startMonth = payload.startMonth || payload.mulaiWajibBayar || 'April';
+    var yayasan = payload.yayasan || payload.namaYayasan || '';
 
-    var newRow = [newId, payload.kecamatan, payload.nama, payload.penanggung_jawab || payload.penanggungJawab || payload.pengurus || '', payload.kontak || '', 'AKTIF', new Date()];
+    var newRow = [
+      newId, 
+      payload.kecamatan || payload.kec || '', 
+      payload.nama || '', 
+      payload.penanggung_jawab || payload.penanggungJawab || payload.pengurus || '', 
+      payload.kontak || '', 
+      'AKTIF', 
+      new Date(),
+      yayasan,
+      startMonth
+    ];
     sheet.appendRow(newRow);
 
-    // Tambahkan juga ke sheet periode_wajib
+    // Tambahkan juga ke sheet periode_wajib sesuai mulaiWajibBayar
     var pwSheet = getSheet(SHEETS.PERIODE_WAJIB);
-    pwSheet.appendRow([newId, payload.kecamatan, payload.nama, true, true, true, true, true, true, true, true, true, new Date()]);
+    var monthNames = ['April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    var mIdx = monthNames.findIndex(function(m) { return m.toLowerCase() === String(startMonth).toLowerCase().trim(); });
+    if (mIdx === -1) mIdx = 0;
+    var pwRow = [newId, payload.kecamatan || payload.kec || '', payload.nama || ''];
+    for (var i = 0; i < monthNames.length; i++) {
+      pwRow.push(i >= mIdx);
+    }
+    pwRow.push(new Date());
+    pwSheet.appendRow(pwRow);
 
     return { success: true, id: newId };
+  } catch (err) {
+    return { success: false, error: err.toString() };
+  }
+}
+
+/**
+ * Edit / Update Master SPPG (Nama, Kecamatan, Yayasan, Mulai Wajib Bayar)
+ */
+function updateMasterSppg(payload) {
+  try {
+    if (!payload || (!payload.id && !payload.sppgId)) {
+      return { success: false, message: 'ID SPPG tidak valid.' };
+    }
+    var sppgId = payload.id || payload.sppgId;
+    var sheet = getSheet(SHEETS.MASTER_SPPG);
+    var data = sheet.getDataRange().getValues();
+    var rowIndex = -1;
+
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(sppgId).trim()) {
+        rowIndex = i + 1;
+        break;
+      }
+    }
+
+    if (rowIndex === -1) {
+      return { success: false, message: 'Data SPPG tidak ditemukan.' };
+    }
+
+    if (payload.nama) sheet.getRange(rowIndex, 3).setValue(payload.nama);
+    if (payload.kec || payload.kecamatan) sheet.getRange(rowIndex, 2).setValue(payload.kec || payload.kecamatan);
+    if (payload.penanggung_jawab || payload.penanggungJawab || payload.pengurus) {
+      sheet.getRange(rowIndex, 4).setValue(payload.penanggung_jawab || payload.penanggungJawab || payload.pengurus);
+    }
+    if (payload.kontak) sheet.getRange(rowIndex, 5).setValue(payload.kontak);
+    if (payload.yayasan !== undefined || payload.namaYayasan !== undefined) {
+      sheet.getRange(rowIndex, 8).setValue(payload.yayasan || payload.namaYayasan || '');
+    }
+    if (payload.startMonth || payload.mulaiWajibBayar) {
+      var startMonth = payload.startMonth || payload.mulaiWajibBayar;
+      sheet.getRange(rowIndex, 9).setValue(startMonth);
+
+      // Sinkronkan ke sheet periode_wajib
+      var pwSheet = getSheet(SHEETS.PERIODE_WAJIB);
+      if (pwSheet && pwSheet.getLastRow() > 1) {
+        var pwData = pwSheet.getDataRange().getValues();
+        for (var p = 1; p < pwData.length; p++) {
+          if (String(pwData[p][0]).trim() === String(sppgId).trim()) {
+            var monthNames = ['April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            var mIdx = monthNames.findIndex(function(m) { return m.toLowerCase() === String(startMonth).toLowerCase().trim(); });
+            if (mIdx === -1) mIdx = 0;
+            for (var mi = 0; mi < monthNames.length; mi++) {
+              pwSheet.getRange(p + 1, 4 + mi).setValue(mi >= mIdx);
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    return { success: true, message: 'Data SPPG berhasil diperbarui.' };
   } catch (err) {
     return { success: false, error: err.toString() };
   }

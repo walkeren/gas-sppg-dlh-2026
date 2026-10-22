@@ -1196,23 +1196,25 @@
                       class="w-full bg-slate-100/90 border border-slate-200 rounded px-1.5 py-1 text-xs text-right font-mono font-bold text-slate-800 outline-none cursor-default shadow-2xs">
                   </td>
 
-                  <!-- 5. Bukti (Tombol Upload) -->
+                  <!-- 5. Bukti (Tombol Upload atau Link) -->
                   <td class="py-2 px-1.5 text-center border-r border-brand-200/80 align-top">
-                    <input 
-                      type="file" 
-                      accept="image/*,application/pdf,.pdf,.jpg,.jpeg,.png,.webp" 
-                      @change="handleInputBayarFileUpload($event)" 
-                      class="hidden" 
-                      x-ref="inlineBuktiFile">
                     <button 
                       type="button" 
                       tabindex="4"
-                      @click="$refs.inlineBuktiFile.click()" 
+                      @click="openSlipChoiceModal('inline')" 
                       :class="inputBayar.filePreview ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-300'"
-                      class="w-full py-1 px-1 rounded border text-[11px] font-semibold flex items-center justify-center gap-1 shadow-2xs transition truncate"
-                      :title="inputBayar.fileName || 'Upload Bukti Slip Transfer'">
-                      <i :data-lucide="inputBayar.filePreview ? 'check-circle-2' : 'upload'" class="w-3.5 h-3.5 shrink-0"></i>
-                      <span class="truncate" x-text="inputBayar.filePreview ? 'OK' : 'Slip'"></span>
+                      class="w-full py-1 px-1 rounded border text-[11px] font-semibold flex items-center justify-center gap-1 shadow-2xs transition truncate cursor-pointer"
+                      :title="inputBayar.fileName || (inputBayar.filePreview ? 'Bukti slip terlampir (Klik untuk ubah)' : 'Pilih Bukti Slip (Upload atau Link)')">
+                      <template x-if="inputBayar.filePreview && (inputBayar.fileType === 'link' || String(inputBayar.filePreview).startsWith('http'))">
+                        <i data-lucide="link" class="w-3.5 h-3.5 shrink-0 text-emerald-600"></i>
+                      </template>
+                      <template x-if="inputBayar.filePreview && inputBayar.fileType !== 'link' && !String(inputBayar.filePreview).startsWith('http')">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 shrink-0 text-emerald-600"></i>
+                      </template>
+                      <template x-if="!inputBayar.filePreview">
+                        <i data-lucide="upload" class="w-3.5 h-3.5 shrink-0 text-slate-500"></i>
+                      </template>
+                      <span class="truncate" x-text="inputBayar.filePreview ? ((inputBayar.fileType === 'link' || String(inputBayar.filePreview).startsWith('http')) ? 'Link' : 'OK') : 'Slip'"></span>
                     </button>
                   </td>
 
@@ -1670,7 +1672,7 @@
             </div>
 
             <form @submit.prevent="submitTambahSPPG()" class="space-y-4">
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
                 <div>
                   <label class="block font-semibold text-slate-700 mb-1">Kecamatan <span class="text-rose-500">*</span></label>
                   <select 
@@ -1695,16 +1697,29 @@
                 </div>
 
                 <div>
+                  <label class="block font-semibold text-slate-700 mb-1">Nama Yayasan</label>
+                  <input 
+                    type="text" 
+                    x-model="newSppg.yayasan" 
+                    placeholder="Contoh: Yayasan Al-Ikhlas"
+                    class="w-full bg-white border border-slate-300 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none">
+                </div>
+
+                <div>
                   <label class="block font-semibold text-slate-700 mb-1">Mulai Wajib Bayar <span class="text-rose-500">*</span></label>
                   <select 
                     x-model="newSppg.startMonth" 
                     required
-                    class="w-full bg-white border border-slate-300 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 outline-none">
+                    class="w-full bg-white border border-slate-300 focus:border-brand-500 rounded-lg px-3 py-2 text-xs text-slate-800 font-semibold outline-none">
                     <option value="April">April</option>
                     <option value="Mei">Mei</option>
                     <option value="Juni">Juni</option>
                     <option value="Juli">Juli</option>
                     <option value="Agustus">Agustus</option>
+                    <option value="September">September</option>
+                    <option value="Oktober">Oktober</option>
+                    <option value="November">November</option>
+                    <option value="Desember">Desember</option>
                   </select>
                 </div>
 
@@ -1779,8 +1794,11 @@
                 <template x-for="item in filteredMasterData" :key="item.id">
                   <tr class="hover:bg-slate-50 transition-colors">
                     <td class="py-2.5 px-3 font-mono font-bold text-brand-700" x-text="item.id"></td>
-                    <td class="py-2.5 px-3 font-semibold text-slate-900" x-text="item.nama"></td>
-                    <td class="py-2.5 px-3 text-slate-600" x-text="'Kec. ' + item.kec"></td>
+                    <td class="py-2.5 px-3">
+                      <div class="font-semibold text-slate-900" x-text="item.nama"></div>
+                      <div class="text-[10.5px] text-slate-500 font-sans" x-show="item.yayasan || item.namaYayasan" x-text="item.yayasan || item.namaYayasan"></div>
+                    </td>
+                    <td class="py-2.5 px-3 text-slate-600" x-text="'Kec. ' + (item.kec || item.kecamatan)"></td>
                     <td class="py-2.5 px-3 font-mono text-slate-500" x-text="item.startMonth || 'April'"></td>
                     <td class="py-2.5 px-3 text-center">
                       <span class="px-2 py-0.5 rounded-pill bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">Aktif</span>
@@ -2556,16 +2574,36 @@
             <input type="text" :value="editingSppg.id" disabled class="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-500 font-mono">
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Nama SPPG</label>
-            <input type="text" x-model="editingSppg.nama" class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-slate-800">
+            <label class="block font-semibold text-slate-700 mb-1">Nama SPPG <span class="text-rose-500">*</span></label>
+            <input type="text" x-model="editingSppg.nama" placeholder="Nama SPPG" class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-slate-800 outline-none">
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Kecamatan</label>
-            <select x-model="editingSppg.kec" class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-slate-800">
-              <template x-for="kec in masterKecamatan" :key="kec">
-                <option :value="kec" x-text="kec"></option>
-              </template>
-            </select>
+            <label class="block font-semibold text-slate-700 mb-1">Nama Yayasan</label>
+            <input type="text" x-model="editingSppg.yayasan" placeholder="Contoh: Yayasan Al-Ikhlas" class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-slate-800 outline-none">
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Kecamatan <span class="text-rose-500">*</span></label>
+              <select x-model="editingSppg.kec" class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-slate-800 outline-none">
+                <template x-for="kec in masterKecamatan" :key="kec">
+                  <option :value="kec" x-text="kec"></option>
+                </template>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Mulai Wajib Bayar <span class="text-rose-500">*</span></label>
+              <select x-model="editingSppg.startMonth" class="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-500 rounded-lg px-3 py-2 text-slate-800 font-semibold outline-none">
+                <option value="April">April</option>
+                <option value="Mei">Mei</option>
+                <option value="Juni">Juni</option>
+                <option value="Juli">Juli</option>
+                <option value="Agustus">Agustus</option>
+                <option value="September">September</option>
+                <option value="Oktober">Oktober</option>
+                <option value="November">November</option>
+                <option value="Desember">Desember</option>
+              </select>
+            </div>
           </div>
         </div>
       </template>
@@ -2651,7 +2689,7 @@
             </div>
             <button 
               type="button" 
-              @click="$refs.buktiModalFileInput.click()" 
+              @click="openSlipChoiceModal('activeTrx')" 
               class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold inline-flex items-center gap-1.5 shadow-xs transition cursor-pointer">
               <i data-lucide="upload" class="w-4 h-4"></i>
               <span>Upload Bukti Sekarang</span>
@@ -2681,7 +2719,7 @@
           <!-- Tombol Upload (jika bukti kosong) / Ganti Bukti (jika bukti ada) -->
           <button 
             type="button"
-            @click="$refs.buktiModalFileInput.click()"
+            @click="openSlipChoiceModal('activeTrx')"
             :disabled="isUploadingBuktiModal"
             class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center gap-1.5 transition text-xs shadow-xs cursor-pointer">
             <template x-if="!isUploadingBuktiModal">
@@ -2705,6 +2743,214 @@
 
           <button @click="showBuktiModal = false" class="px-4 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium cursor-pointer transition">
             Tutup
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL PILIH BUKTI SLIP (2 PILIHAN: UPLOAD ATAU LINK)                      -->
+  <!-- ========================================================================= -->
+  <div x-show="slipModal.show" class="fixed inset-0 z-[90] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm" x-cloak>
+    <div 
+      x-show="slipModal.show"
+      x-transition:enter="transition ease-out duration-200"
+      x-transition:enter-start="opacity-0 scale-95"
+      x-transition:enter-end="opacity-100 scale-100"
+      class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      
+      <!-- Modal Header -->
+      <div class="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+            <i data-lucide="receipt" class="w-4.5 h-4.5"></i>
+          </div>
+          <div>
+            <h3 class="font-headline font-bold text-slate-900 text-sm">Lampiran Bukti Slip Transfer</h3>
+            <p class="text-[11px] text-slate-500">Pilih metode: Unggah berkas atau tempel link URL</p>
+          </div>
+        </div>
+        <button type="button" @click="closeSlipModal()" class="p-1.5 rounded-full text-slate-400 hover:text-slate-600 transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Segmented Buttons / Tab Switcher: Upload vs Link -->
+      <div class="p-3 bg-slate-100/70 border-b border-slate-200">
+        <div class="grid grid-cols-2 gap-2 bg-slate-200/70 p-1 rounded-xl text-xs font-semibold">
+          <button 
+            type="button" 
+            @click="slipModal.mode = 'upload'"
+            :class="slipModal.mode === 'upload' ? 'bg-white text-emerald-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+            class="py-2 px-3 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
+            <i data-lucide="upload" class="w-4 h-4"></i>
+            <span>Upload Berkas</span>
+          </button>
+          <button 
+            type="button" 
+            @click="slipModal.mode = 'link'"
+            :class="slipModal.mode === 'link' ? 'bg-white text-emerald-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+            class="py-2 px-3 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
+            <i data-lucide="link" class="w-4 h-4"></i>
+            <span>Tautan / Link</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 overflow-y-auto space-y-4 text-xs">
+        
+        <!-- ================= TAB 1: UPLOAD BERKAS ================= -->
+        <template x-if="slipModal.mode === 'upload'">
+          <div class="space-y-3">
+            <input 
+              type="file" 
+              x-ref="slipModalFileInput" 
+              @change="handleSlipModalFileUpload($event)" 
+              accept="image/*,application/pdf,.pdf,.jpg,.jpeg,.png,.webp" 
+              class="hidden">
+
+            <!-- Jika Berkas Sudah Dipilih -->
+            <template x-if="slipModal.tempPreview && slipModal.tempType !== 'link'">
+              <div class="p-3.5 bg-emerald-50/60 border border-emerald-200 rounded-xl space-y-3">
+                <div class="flex items-center gap-3">
+                  <!-- Gambar Preview -->
+                  <template x-if="slipModal.tempType !== 'application/pdf'">
+                    <img :src="slipModal.tempPreview" class="w-16 h-16 object-cover rounded-lg border border-emerald-300 shadow-2xs bg-white">
+                  </template>
+                  <!-- PDF Preview Icon -->
+                  <template x-if="slipModal.tempType === 'application/pdf'">
+                    <div class="w-16 h-16 bg-rose-100 border border-rose-300 rounded-lg flex flex-col items-center justify-center text-rose-600">
+                      <i data-lucide="file-text" class="w-6 h-6"></i>
+                      <span class="text-[9px] font-bold mt-0.5">PDF</span>
+                    </div>
+                  </template>
+                  
+                  <div class="flex-1 min-w-0">
+                    <div class="font-bold text-slate-800 text-xs truncate" x-text="slipModal.tempName || 'Berkas Slip Terpilih'"></div>
+                    <div class="text-[11px] text-emerald-700 font-medium mt-0.5">Berkas siap digunakan</div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-1 border-t border-emerald-200/60">
+                  <button 
+                    type="button" 
+                    @click="$refs.slipModalFileInput.click()" 
+                    class="px-3 py-1.5 bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs cursor-pointer">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    <span>Pilih Berkas Lain</span>
+                  </button>
+                  <button 
+                    type="button" 
+                    @click="clearSlipModalTempFile()" 
+                    class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <span>Hapus</span>
+                  </button>
+                </div>
+              </div>
+            </template>
+
+            <!-- Jika Belum Ada Berkas yang Dipilih -->
+            <template x-if="!slipModal.tempPreview || slipModal.tempType === 'link'">
+              <div 
+                @click="$refs.slipModalFileInput.click()" 
+                class="border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50/30 rounded-2xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center group">
+                <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
+                  <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+                </div>
+                <div class="font-bold text-slate-800 text-xs">Klik untuk Memilih Berkas</div>
+                <p class="text-[11px] text-slate-500 mt-1 max-w-xs">Mendukung format gambar (JPG, PNG, WebP) atau berkas dokumen (PDF) hingga ukuran 25 MB.</p>
+                <span class="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs">
+                  <i data-lucide="file-plus" class="w-3.5 h-3.5"></i>
+                  <span>Pilih Dari Perangkat</span>
+                </span>
+              </div>
+            </template>
+          </div>
+        </template>
+
+        <!-- ================= TAB 2: TAUTAN / LINK ================= -->
+        <template x-if="slipModal.mode === 'link'">
+          <div class="space-y-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">
+                URL / Link Tautan Bukti Transfer
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="link" class="w-4 h-4"></i>
+                </div>
+                <input 
+                  type="url" 
+                  x-model="slipModal.linkUrl" 
+                  placeholder="https://drive.google.com/file/d/... atau https://..."
+                  class="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl text-xs text-slate-900 outline-none shadow-2xs font-mono">
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+                Anda dapat menempelkan tautan berkas dari <strong>Google Drive</strong>, link web gambar, atau penyimpanan awan lainnya yang dapat dibuka.
+              </p>
+            </div>
+
+            <!-- Preview Link Jika Terisi -->
+            <template x-if="slipModal.linkUrl && slipModal.linkUrl.trim().length > 5">
+              <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                  <span class="text-xs text-slate-700 font-mono truncate" x-text="slipModal.linkUrl"></span>
+                </div>
+                <a 
+                  :href="slipModal.linkUrl" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  class="px-2.5 py-1 bg-white hover:bg-slate-100 text-brand-700 border border-slate-200 rounded-lg text-[11px] font-semibold flex items-center gap-1 transition shrink-0">
+                  <span>Cek Link</span>
+                  <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </div>
+            </template>
+          </div>
+        </template>
+
+      </div>
+
+      <!-- Modal Footer Actions -->
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2">
+        <div>
+          <!-- Tombol Hapus Bukti Jika Sebelumnya Sudah Terpasang -->
+          <template x-if="hasExistingSlip()">
+            <button 
+              type="button" 
+              @click="removeExistingSlip()" 
+              class="px-3 py-1.5 text-rose-600 hover:bg-rose-50 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <span>Hapus Bukti</span>
+            </button>
+          </template>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button 
+            type="button" 
+            @click="closeSlipModal()" 
+            class="px-3.5 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold transition cursor-pointer">
+            Batal
+          </button>
+
+          <button 
+            type="button" 
+            @click="applySlipChoice()" 
+            :disabled="slipModal.isSaving"
+            class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs transition cursor-pointer">
+            <template x-if="!slipModal.isSaving">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+            </template>
+            <template x-if="slipModal.isSaving">
+              <div class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            </template>
+            <span x-text="slipModal.isSaving ? 'Menyimpan...' : 'Gunakan Bukti Ini'"></span>
           </button>
         </div>
       </div>
@@ -2935,26 +3181,52 @@
                 class="w-full bg-white border border-slate-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded px-2.5 py-1.5 text-xs font-mono text-slate-900 outline-none shadow-2xs">
             </div>
           </div>
+
+          <!-- Seri Karcis (Seri Awal & Seri Akhir) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2.5 border-t border-slate-200/70">
+            <div>
+              <label class="block font-semibold text-slate-600 mb-1 text-[11px] flex items-center justify-between">
+                <span>Seri Awal</span>
+                <span class="text-[10px] text-slate-400 font-normal">Karcis Awal</span>
+              </label>
+              <input 
+                type="text" 
+                x-model="editTrxForm.seriAwal" 
+                placeholder="Contoh: 001 atau A-001"
+                class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded px-2.5 py-1.5 text-xs font-mono text-slate-900 outline-none shadow-2xs">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 mb-1 text-[11px] flex items-center justify-between">
+                <span>Seri Akhir</span>
+                <span class="text-[10px] text-slate-400 font-normal">Karcis Akhir</span>
+              </label>
+              <input 
+                type="text" 
+                x-model="editTrxForm.seriAkhir" 
+                placeholder="Contoh: 150 atau A-150"
+                class="w-full bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded px-2.5 py-1.5 text-xs font-mono text-slate-900 outline-none shadow-2xs">
+            </div>
+          </div>
         </div>
 
-        <!-- Bukti Transfer Slip (Preview & Upload/Ganti) -->
+        <!-- Bukti Transfer Slip (2 Pilihan: Upload atau Link) -->
         <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
           <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center justify-between">
             <div class="flex items-center gap-1.5">
               <i data-lucide="receipt" class="w-3.5 h-3.5 text-brand-600"></i>
               <span>Bukti Transfer Slip</span>
             </div>
-            <span class="text-[10.5px] font-normal" :class="editTrxForm.filePreview || editTrxForm.buktiUrl ? 'text-emerald-700 font-semibold' : 'text-slate-400'" x-text="editTrxForm.filePreview ? 'Bukti baru dipilih' : (editTrxForm.buktiUrl ? 'Bukti sudah terlampir' : 'Belum ada bukti')"></span>
+            <span class="text-[10.5px] font-normal" :class="(editTrxForm.filePreview || editTrxForm.buktiUrl || editTrxForm.linkUrl) ? 'text-emerald-700 font-semibold' : 'text-slate-400'" x-text="editTrxForm.filePreview ? 'Berkas baru dipilih' : ((editTrxForm.buktiUrl || editTrxForm.linkUrl) ? 'Bukti sudah terlampir' : 'Belum ada bukti')"></span>
           </div>
 
-          <!-- Thumbnail & Detail Box Saat Ada Bukti -->
-          <template x-if="editTrxForm.filePreview || editTrxForm.buktiUrl">
+          <!-- Pratinjau Bukti Terlampir Saat Ada Berkas / Link -->
+          <template x-if="editTrxForm.filePreview || editTrxForm.buktiUrl || (editTrxForm.sourceType === 'link' && editTrxForm.linkUrl)">
             <div class="p-3 bg-white border border-slate-200 rounded-xl flex flex-col sm:flex-row items-center gap-3">
               <!-- Pratinjau Gambar -->
-              <template x-if="!isSlipPdf(editTrxForm.filePreview || editTrxForm.buktiUrl)">
+              <template x-if="!isSlipPdf(editTrxForm.filePreview || editTrxForm.buktiUrl || editTrxForm.linkUrl)">
                 <div class="relative group cursor-pointer shrink-0" @click="previewEditTrxSlip()" title="Klik untuk memperbesar pratinjau slip">
                   <img 
-                    :src="getSlipPreviewUrl(editTrxForm.filePreview || editTrxForm.buktiUrl)" 
+                    :src="getSlipPreviewUrl(editTrxForm.filePreview || editTrxForm.buktiUrl || editTrxForm.linkUrl)" 
                     alt="Slip Bukti Transfer" 
                     class="h-20 w-28 object-cover rounded-lg border border-slate-200 shadow-2xs group-hover:opacity-90 transition bg-slate-50">
                   <div class="absolute inset-0 bg-slate-900/40 rounded-lg opacity-0 group-hover:opacity-100 flex items-center justify-center transition text-white">
@@ -2964,20 +3236,23 @@
               </template>
 
               <!-- Pratinjau Dokumen PDF -->
-              <template x-if="isSlipPdf(editTrxForm.filePreview || editTrxForm.buktiUrl)">
+              <template x-if="isSlipPdf(editTrxForm.filePreview || editTrxForm.buktiUrl || editTrxForm.linkUrl)">
                 <div class="h-20 w-28 bg-rose-50 border border-rose-200 rounded-lg flex flex-col items-center justify-center text-rose-600 shrink-0 cursor-pointer group" @click="previewEditTrxSlip()" title="Klik untuk membuka dokumen PDF">
                   <i data-lucide="file-text" class="w-7 h-7 group-hover:scale-110 transition-transform"></i>
                   <span class="text-[10px] font-bold mt-1 font-mono uppercase">Dokumen PDF</span>
                 </div>
               </template>
 
-              <!-- Keterangan & Tombol Preview -->
+              <!-- Keterangan & Aksi -->
               <div class="flex-1 min-w-0 text-left space-y-1">
-                <div class="font-bold text-slate-800 text-xs truncate" x-text="editTrxForm.fileName || ('Slip Pembayaran ' + (editTrxForm.namaSppg || 'SPPG'))"></div>
+                <div class="font-bold text-slate-800 text-xs truncate" x-text="editTrxForm.fileName || (editTrxForm.sourceType === 'link' && editTrxForm.linkUrl ? editTrxForm.linkUrl : ('Slip Pembayaran ' + (editTrxForm.namaSppg || 'SPPG')))"></div>
                 <div class="text-[11px] text-slate-500">
-                  <span>Periode: <strong class="text-slate-700" x-text="editTrxForm.periodeBulan"></strong></span>
+                  <span class="inline-flex items-center gap-1 font-semibold" :class="(editTrxForm.sourceType === 'link' || (editTrxForm.buktiUrl && editTrxForm.buktiUrl.startsWith('http')) || (editTrxForm.linkUrl && editTrxForm.linkUrl.startsWith('http'))) ? 'text-blue-700' : 'text-emerald-700'">
+                    <i :data-lucide="(editTrxForm.sourceType === 'link' || (editTrxForm.buktiUrl && editTrxForm.buktiUrl.startsWith('http')) || (editTrxForm.linkUrl && editTrxForm.linkUrl.startsWith('http'))) ? 'link' : 'file-check'" class="w-3 h-3"></i>
+                    <span x-text="(editTrxForm.sourceType === 'link' || (editTrxForm.buktiUrl && editTrxForm.buktiUrl.startsWith('http')) || (editTrxForm.linkUrl && editTrxForm.linkUrl.startsWith('http'))) ? 'Tautan Link URL' : 'Berkas Terunggah'"></span>
+                  </span>
                   <span class="mx-1">&bull;</span>
-                  <span>Nominal: <strong class="text-slate-700 font-mono" x-text="formatRupiah(editTrxForm.jumlahTransfer)"></strong></span>
+                  <span>Periode: <strong class="text-slate-700" x-text="editTrxForm.periodeBulan"></strong></span>
                 </div>
                 <div class="flex items-center gap-2 pt-1 flex-wrap">
                   <!-- Tombol Lihat Preview -->
@@ -2989,51 +3264,114 @@
                     <span>Lihat Preview</span>
                   </button>
 
-                  <!-- Buka di Drive jika link Drive -->
-                  <template x-if="editTrxForm.buktiUrl && editTrxForm.buktiUrl.includes('drive.google.com')">
-                    <a :href="editTrxForm.buktiUrl" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-md text-[11px] font-semibold flex items-center gap-1 transition">
+                  <!-- Buka Link Luar jika ada -->
+                  <template x-if="(editTrxForm.buktiUrl || editTrxForm.linkUrl) && String(editTrxForm.buktiUrl || editTrxForm.linkUrl).startsWith('http')">
+                    <a :href="editTrxForm.buktiUrl || editTrxForm.linkUrl" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-md text-[11px] font-semibold flex items-center gap-1 transition">
                       <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500"></i>
-                      <span>Buka di Drive</span>
+                      <span>Buka Link</span>
                     </a>
                   </template>
+
+                  <!-- Tombol Hapus Bukti -->
+                  <button 
+                    type="button" 
+                    @click="clearEditTrxBukti()" 
+                    class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-md text-[11px] font-semibold flex items-center gap-1 transition cursor-pointer"
+                    title="Kosongkan bukti slip untuk setoran ini">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <span>Hapus Bukti</span>
+                  </button>
                 </div>
               </div>
             </div>
           </template>
 
-          <!-- Input File Tersembunyi & Tombol Upload/Ganti -->
-          <div class="flex items-center gap-2.5 flex-wrap">
-            <input 
-              type="file" 
-              x-ref="editTrxFileInput" 
-              @change="handleEditTrxFileUpload($event)" 
-              accept="image/*,application/pdf,.pdf,.jpg,.jpeg,.png,.webp" 
-              class="hidden">
-            
-            <button 
-              type="button" 
-              @click="$refs.editTrxFileInput.click()" 
-              class="px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition cursor-pointer">
-              <svg class="w-3.5 h-3.5 text-brand-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-              </svg>
-              <span x-text="editTrxForm.filePreview ? 'Pilih Berkas Lain' : (editTrxForm.buktiUrl ? 'Ganti Bukti Transfer' : 'Upload Bukti Transfer')"></span>
-            </button>
-
-            <!-- Tombol Pratinjau Cepat di Samping Tombol Ganti -->
-            <template x-if="editTrxForm.filePreview || editTrxForm.buktiUrl">
+          <!-- 2 Pilihan Metode: Upload atau Link -->
+          <div class="space-y-2.5 pt-1">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-semibold text-slate-700">Metode Lampiran Bukti:</span>
               <button 
                 type="button" 
-                @click="previewEditTrxSlip()" 
-                class="px-3 py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition cursor-pointer">
-                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                <span>Pratinjau Slip</span>
+                @click="openSlipChoiceModal('editTrx')" 
+                class="text-[11px] text-brand-600 hover:text-brand-800 font-semibold flex items-center gap-1 hover:underline cursor-pointer">
+                <i data-lucide="external-link" class="w-3 h-3"></i>
+                <span>Buka Dialog Popup</span>
               </button>
+            </div>
+
+            <!-- Segmented Buttons: Upload vs Link -->
+            <div class="grid grid-cols-2 gap-2 bg-slate-200/70 p-1 rounded-xl text-xs font-semibold">
+              <button 
+                type="button" 
+                @click="setEditTrxSourceType('upload')"
+                :class="editTrxForm.sourceType === 'upload' ? 'bg-white text-emerald-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+                class="py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition cursor-pointer">
+                <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                <span>1. Upload Berkas</span>
+              </button>
+              <button 
+                type="button" 
+                @click="setEditTrxSourceType('link')"
+                :class="editTrxForm.sourceType === 'link' ? 'bg-white text-emerald-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+                class="py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition cursor-pointer">
+                <i data-lucide="link" class="w-3.5 h-3.5"></i>
+                <span>2. Tautan / Link</span>
+              </button>
+            </div>
+
+            <!-- OPSI 1: UPLOAD BERKAS -->
+            <template x-if="editTrxForm.sourceType === 'upload'">
+              <div class="space-y-2 pt-0.5">
+                <input 
+                  type="file" 
+                  x-ref="editTrxFileInput" 
+                  @change="handleEditTrxFileUpload($event)" 
+                  accept="image/*,application/pdf,.pdf,.jpg,.jpeg,.png,.webp" 
+                  class="hidden">
+
+                <div class="flex items-center gap-2 flex-wrap">
+                  <button 
+                    type="button" 
+                    @click="$refs.editTrxFileInput.click()" 
+                    class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition cursor-pointer">
+                    <i data-lucide="file-plus" class="w-3.5 h-3.5"></i>
+                    <span x-text="editTrxForm.filePreview ? 'Pilih Berkas Lain' : 'Pilih Berkas Dari Perangkat'"></span>
+                  </button>
+
+                  <template x-if="editTrxForm.fileName">
+                    <span class="text-[11px] text-slate-700 font-mono truncate max-w-xs bg-white px-2 py-1 rounded border border-slate-200" x-text="editTrxForm.fileName"></span>
+                  </template>
+                </div>
+                <p class="text-[10.5px] text-slate-400">Mendukung berkas JPG, PNG, atau dokumen PDF hingga ukuran 25 MB.</p>
+              </div>
             </template>
 
-            <template x-if="editTrxForm.fileName">
-              <span class="text-[11px] text-slate-600 truncate max-w-xs font-mono" x-text="editTrxForm.fileName"></span>
+            <!-- OPSI 2: TAUTAN / LINK -->
+            <template x-if="editTrxForm.sourceType === 'link'">
+              <div class="space-y-1.5 pt-0.5">
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
+                    <i data-lucide="link" class="w-3.5 h-3.5"></i>
+                  </div>
+                  <input 
+                    type="url" 
+                    x-model="editTrxForm.linkUrl" 
+                    @input="onEditTrxLinkChange()"
+                    placeholder="https://drive.google.com/file/d/... atau https://..."
+                    class="w-full pl-8 pr-3 py-2 bg-white border border-slate-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 rounded-lg text-xs font-mono text-slate-900 outline-none shadow-2xs">
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-slate-500">
+                  <span>Tempel URL Google Drive atau tautan berkas web</span>
+                  <template x-if="editTrxForm.linkUrl && editTrxForm.linkUrl.startsWith('http')">
+                    <a :href="editTrxForm.linkUrl" target="_blank" rel="noopener noreferrer" class="text-brand-600 hover:underline font-semibold inline-flex items-center gap-1">
+                      <span>Uji Link</span>
+                      <i data-lucide="external-link" class="w-3 h-3"></i>
+                    </a>
+                  </template>
+                </div>
+              </div>
             </template>
+
           </div>
         </div>
 
@@ -3404,6 +3742,17 @@
         showEditTransaksiModal: false,
         isUploadingBuktiModal: false,
 
+        slipModal: {
+          show: false,
+          context: 'inline', // 'inline' | 'editTrx' | 'activeTrx'
+          mode: 'upload', // 'upload' | 'link'
+          linkUrl: '',
+          tempPreview: null,
+          tempName: '',
+          tempType: '',
+          isSaving: false
+        },
+
         editTrxForm: {
           id: '',
           sppgId: '',
@@ -3559,6 +3908,7 @@
         newSppg: {
           kec: '',
           nama: '',
+          yayasan: '',
           startMonth: 'April',
           nominalTarget: null,
         },
@@ -6356,6 +6706,33 @@
           }
 
           const targetSppgId = String(this.inputBayar.sppgId).trim().toLowerCase();
+          const sppgObj = (this.masterData || []).find(s => String(s.id || '').trim().toLowerCase() === targetSppgId);
+
+          // Tentukan indeks bulan pertama yang WAJIB bayar untuk SPPG terpilih
+          let firstWajibIndex = -1;
+          const kewajiban = (this.periodeWajibMap && (this.periodeWajibMap[this.inputBayar.sppgId] || (sppgObj && this.periodeWajibMap[sppgObj.id]))) || {};
+          
+          for (let i = 0; i < list.length; i++) {
+            if (kewajiban[list[i]] === true) {
+              firstWajibIndex = i;
+              break;
+            }
+          }
+
+          if (firstWajibIndex === -1 && sppgObj && (sppgObj.startMonth || sppgObj.mulaiWajibBayar)) {
+            const rawStart = String(sppgObj.startMonth || sppgObj.mulaiWajibBayar).toLowerCase().trim();
+            const startShort = bulanFullToShort[rawStart] || rawStart.substr(0, 3);
+            const idx = list.findIndex(b => b.toLowerCase() === startShort.toLowerCase());
+            if (idx !== -1) firstWajibIndex = idx;
+          }
+
+          if (firstWajibIndex === -1) {
+            firstWajibIndex = 0;
+          }
+
+          // Filter: Hanya sertakan bulan mulai dari mulaiWajibBayar ke depan (bulan sebelum mulai wajib tidak ditampilkan)
+          const activeList = list.slice(firstWajibIndex);
+
           const paidMonths = new Set();
 
           // 1. Cek langsung dari transaksiList (mencakup status terverifikasi & menunggu)
@@ -6386,7 +6763,7 @@
             });
           }
 
-          return list.map(b => {
+          return activeList.map(b => {
             const fullBln = bulanFullMap[b] || b;
             const isPaid = paidMonths.has(b.toLowerCase()) || paidMonths.has(fullBln.toLowerCase());
             return {
@@ -6532,6 +6909,7 @@
           this.inputBayar.isSubmitting = true;
           const sppgObj = (this.masterData || []).find(d => d.id === this.inputBayar.sppgId);
 
+          const isLink = this.inputBayar.fileType === 'link' || (this.inputBayar.filePreview && (String(this.inputBayar.filePreview).startsWith('http://') || String(this.inputBayar.filePreview).startsWith('https://')));
           const payload = {
             sppgId: this.inputBayar.sppgId,
             namaSppg: this.inputBayar.namaSppg || (sppgObj ? sppgObj.nama : 'SPPG'),
@@ -6541,9 +6919,9 @@
             periodeBulan: this.inputBayar.periodeBulan,
             tanggalTransfer: this.inputBayar.tanggalBayar,
             jumlahTransfer: this.inputBayar.jumlahTransfer || 750000,
-            buktiUrl: this.inputBayar.filePreview || '',
-            fileBase64: this.inputBayar.filePreview || '',
-            fileName: this.inputBayar.fileName || '',
+            buktiUrl: isLink ? this.inputBayar.filePreview : '',
+            fileBase64: isLink ? '' : (this.inputBayar.filePreview || ''),
+            fileName: isLink ? '' : (this.inputBayar.fileName || ''),
             fileType: this.inputBayar.fileType || '',
             noSts: this.inputBayar.noSts || '',
             noStbp: this.inputBayar.noStbp || '',
@@ -6565,7 +6943,7 @@
               periodeBulan: payload.periodeBulan,
               tanggalTransfer: payload.tanggalTransfer,
               jumlahTransfer: payload.jumlahTransfer,
-              buktiUrl: (res && res.buktiUrl) ? res.buktiUrl : payload.fileBase64,
+              buktiUrl: (res && res.buktiUrl) ? res.buktiUrl : (isLink ? payload.buktiUrl : payload.fileBase64),
               status: payload.statusVerifikasi,
               noTrxBank: payload.noTrxBank,
               noStbp: payload.noStbp,
@@ -6820,27 +7198,80 @@
             return;
           }
 
-          const newId = 'SPPG-0' + String(this.masterData.length + 1).padStart(2, '0');
-          this.masterData.push({
+          const newId = 'SPPG-' + (this.masterData.length + 1 < 10 ? '00' : (this.masterData.length + 1 < 100 ? '0' : '')) + (this.masterData.length + 1);
+          const sppgData = {
             id: newId,
             kec: this.newSppg.kec,
             nama: this.newSppg.nama,
-            startMonth: this.newSppg.startMonth
-          });
-          
-          this.periodeWajibMap[newId] = { Jan: false, Feb: false, Mar: false, Apr: true, Mei: true, Jun: true, Jul: true, Agu: true, Sep: true, Okt: true, Nov: true, Des: true };
-            this.ensurePeriodeWajibMap();
+            yayasan: this.newSppg.yayasan || '',
+            namaYayasan: this.newSppg.yayasan || '',
+            startMonth: this.newSppg.startMonth || 'April',
+            mulaiWajibBayar: this.newSppg.startMonth || 'April',
+            penanggung_jawab: '',
+            kontak: '',
+            active: true
+          };
 
-          this.notifySuccess('SPPG Ditambahkan', `SPPG ${this.newSppg.nama} (${newId}) berhasil didaftarkan.`);
-          this.newSppg = { kec: '', nama: '', startMonth: 'April', nominalTarget: null };
+          this.masterData.push(sppgData);
+          
+          // Inisialisasi kewajiban periode_wajib sesuai bulan mulai wajib bayar
+          const monthShorts = ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          const monthFulls = ['April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+          const mIdx = monthFulls.findIndex(m => m.toLowerCase() === (sppgData.startMonth || 'April').toLowerCase());
+          const startIdx = mIdx === -1 ? 0 : mIdx;
+
+          this.periodeWajibMap[newId] = { Jan: false, Feb: false, Mar: false };
+          monthShorts.forEach((m, idx) => {
+            this.periodeWajibMap[newId][m] = idx >= startIdx;
+          });
+          this.ensurePeriodeWajibMap();
+
+          // Simpan ke backend
+          if (typeof google !== 'undefined' && google.script && google.script.run) {
+            if (google.script.run.addMasterSppg) google.script.run.addMasterSppg(sppgData);
+            google.script.run.savePeriodeWajib(this.periodeWajibMap);
+          } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+            apiCall('addMasterSppg', { data: sppgData });
+            apiCall('savePeriodeWajib', { periodeMap: this.periodeWajibMap });
+          }
+
+          this.notifySuccess('SPPG Ditambahkan', `SPPG ${sppgData.nama} (${newId}) berhasil didaftarkan.`);
+          this.newSppg = { kec: '', nama: '', yayasan: '', startMonth: 'April', nominalTarget: null };
           this.showAddSppgInline = false;
-          this.$nextTick(() => lucide.createIcons());
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
         },
 
         openEditSppgModal(item) {
-          this.editingSppg = { ...item };
+          let startMonth = item.startMonth || item.mulaiWajibBayar || '';
+          if (!startMonth && this.periodeWajibMap && this.periodeWajibMap[item.id]) {
+            const monthMap = {
+              'Apr': 'April', 'Mei': 'Mei', 'Jun': 'Juni', 'Jul': 'Juli',
+              'Agu': 'Agustus', 'Sep': 'September', 'Okt': 'Oktober', 'Nov': 'November', 'Des': 'Desember'
+            };
+            for (let b of ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']) {
+              if (this.periodeWajibMap[item.id][b] === true) {
+                startMonth = monthMap[b] || 'April';
+                break;
+              }
+            }
+          }
+          if (!startMonth) startMonth = 'April';
+
+          this.editingSppg = {
+            id: item.id,
+            nama: item.nama,
+            kec: item.kec || item.kecamatan || '',
+            yayasan: item.yayasan || item.namaYayasan || '',
+            startMonth: startMonth,
+            penanggung_jawab: item.penanggung_jawab || item.penanggungJawab || item.pengurus || '',
+            kontak: item.kontak || ''
+          };
           this.showEditSppgModal = true;
-          this.$nextTick(() => lucide.createIcons());
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
         },
 
         saveEditSppg() {
@@ -6850,11 +7281,43 @@
           }
           const idx = this.masterData.findIndex(d => d.id === this.editingSppg.id);
           if (idx !== -1) {
-            this.masterData[idx] = { ...this.editingSppg };
+            const target = this.masterData[idx];
+            target.nama = this.editingSppg.nama;
+            target.kec = this.editingSppg.kec;
+            target.kecamatan = this.editingSppg.kec;
+            target.yayasan = this.editingSppg.yayasan || '';
+            target.namaYayasan = this.editingSppg.yayasan || '';
+            target.startMonth = this.editingSppg.startMonth || 'April';
+            target.mulaiWajibBayar = this.editingSppg.startMonth || 'April';
+
+            // Sinkronkan periodeWajibMap jika startMonth berubah
+            if (this.periodeWajibMap && this.editingSppg.id) {
+              const sppgId = this.editingSppg.id;
+              if (!this.periodeWajibMap[sppgId]) this.periodeWajibMap[sppgId] = {};
+              const monthShorts = ['Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+              const monthFulls = ['April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+              const mIdx = monthFulls.findIndex(m => m.toLowerCase() === (this.editingSppg.startMonth || 'April').toLowerCase());
+              const startIdx = mIdx === -1 ? 0 : mIdx;
+              monthShorts.forEach((m, i) => {
+                this.periodeWajibMap[sppgId][m] = i >= startIdx;
+              });
+            }
+
+            // Sync ke backend
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+              if (google.script.run.updateMasterSppg) google.script.run.updateMasterSppg(this.editingSppg);
+              google.script.run.savePeriodeWajib(this.periodeWajibMap);
+            } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+              apiCall('updateMasterSppg', { data: this.editingSppg });
+              apiCall('savePeriodeWajib', { periodeMap: this.periodeWajibMap });
+            }
+
             this.notifySuccess('SPPG Diperbarui', `Data ${this.editingSppg.nama} berhasil diperbarui.`);
           }
           this.showEditSppgModal = false;
-          this.$nextTick(() => lucide.createIcons());
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
         },
 
         // Discreet Login Actions (HANYA DARI FOOTER)
@@ -7323,6 +7786,310 @@
           return url;
         },
 
+        openSlipChoiceModal(context) {
+          const ctx = context || 'inline';
+          this.slipModal.context = ctx;
+          this.slipModal.isSaving = false;
+
+          let existingUrl = '';
+          let existingName = '';
+          let existingType = '';
+
+          if (ctx === 'inline') {
+            existingUrl = this.inputBayar.filePreview || '';
+            existingName = this.inputBayar.fileName || '';
+            existingType = this.inputBayar.fileType || '';
+          } else if (ctx === 'editTrx') {
+            existingUrl = this.editTrxForm.filePreview || this.editTrxForm.linkUrl || this.editTrxForm.buktiUrl || '';
+            existingName = this.editTrxForm.fileName || '';
+            existingType = this.editTrxForm.fileType || '';
+          } else if (ctx === 'activeTrx' && this.activeTrx) {
+            existingUrl = this.activeTrx.buktiUrl || '';
+            existingName = '';
+            existingType = '';
+          }
+
+          if (existingUrl) {
+            const isLink = existingType === 'link' || String(existingUrl).startsWith('http://') || String(existingUrl).startsWith('https://');
+            if (isLink) {
+              this.slipModal.mode = 'link';
+              this.slipModal.linkUrl = existingUrl;
+              this.slipModal.tempPreview = existingUrl;
+              this.slipModal.tempName = existingName || existingUrl;
+              this.slipModal.tempType = 'link';
+            } else {
+              this.slipModal.mode = 'upload';
+              this.slipModal.linkUrl = '';
+              this.slipModal.tempPreview = existingUrl;
+              this.slipModal.tempName = existingName || 'Berkas Bukti Terlampir';
+              this.slipModal.tempType = existingType || (existingUrl.startsWith('data:application/pdf') ? 'application/pdf' : 'image/jpeg');
+            }
+          } else {
+            this.slipModal.mode = 'upload';
+            this.slipModal.linkUrl = '';
+            this.slipModal.tempPreview = null;
+            this.slipModal.tempName = '';
+            this.slipModal.tempType = '';
+          }
+
+          this.slipModal.show = true;
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
+        },
+
+        closeSlipModal() {
+          this.slipModal.show = false;
+        },
+
+        hasExistingSlip() {
+          const ctx = this.slipModal.context;
+          if (ctx === 'inline') {
+            return !!(this.inputBayar.filePreview || this.inputBayar.fileName);
+          }
+          if (ctx === 'editTrx') {
+            return !!(this.editTrxForm.filePreview || this.editTrxForm.linkUrl || this.editTrxForm.buktiUrl);
+          }
+          if (ctx === 'activeTrx' && this.activeTrx) {
+            return !!this.activeTrx.buktiUrl;
+          }
+          return false;
+        },
+
+        removeExistingSlip() {
+          const ctx = this.slipModal.context;
+          if (ctx === 'inline') {
+            this.inputBayar.filePreview = null;
+            this.inputBayar.fileName = '';
+            this.inputBayar.fileType = '';
+            this.notifyInfo('Bukti Dihapus', 'Bukti slip transfer telah dikosongkan.');
+          } else if (ctx === 'editTrx') {
+            this.editTrxForm.filePreview = null;
+            this.editTrxForm.buktiUrl = '';
+            this.editTrxForm.fileName = '';
+            this.editTrxForm.fileType = '';
+            this.editTrxForm.linkUrl = '';
+            if (this.$refs.editTrxFileInput) this.$refs.editTrxFileInput.value = '';
+            this.notifyInfo('Bukti Dihapus', 'Bukti slip transfer telah dikosongkan.');
+          } else if (ctx === 'activeTrx' && this.activeTrx) {
+            this.activeTrx.buktiUrl = '';
+            const target = this.transaksiList.find(t => t.id === this.activeTrx.id);
+            if (target) target.buktiUrl = '';
+            this.saveUpdatedBukti(this.activeTrx.id, '', '', '');
+          }
+          this.closeSlipModal();
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
+        },
+
+        async handleSlipModalFileUpload(e) {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+
+          const sizeInMB = file.size / (1024 * 1024);
+          if (sizeInMB > 25) {
+            this.notifyError('Ukuran Terlalu Besar', `Maksimal ukuran berkas adalah 25 MB. Berkas Anda: ${sizeInMB.toFixed(1)} MB.`);
+            e.target.value = '';
+            return;
+          }
+
+          const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+          this.slipModal.tempName = file.name;
+          this.slipModal.tempType = isPdf ? 'application/pdf' : (file.type || 'image/jpeg');
+
+          if (isPdf) {
+            if (sizeInMB > 10) {
+              this.notifyError('Ukuran PDF Terlalu Besar', 'Maksimal ukuran dokumen PDF adalah 10 MB.');
+              e.target.value = '';
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              this.slipModal.tempPreview = evt.target.result;
+              this.$nextTick(() => {
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+              });
+            };
+            reader.readAsDataURL(file);
+            return;
+          }
+
+          try {
+            const compressed = await this.compressImageFile(file, 1600, 1600, 0.82);
+            this.slipModal.tempPreview = compressed.dataUrl;
+            this.slipModal.tempType = 'image/jpeg';
+            this.$nextTick(() => {
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+            });
+          } catch (err) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              this.slipModal.tempPreview = evt.target.result;
+              this.$nextTick(() => {
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+              });
+            };
+            reader.readAsDataURL(file);
+          }
+        },
+
+        clearSlipModalTempFile() {
+          this.slipModal.tempPreview = null;
+          this.slipModal.tempName = '';
+          this.slipModal.tempType = '';
+          if (this.$refs.slipModalFileInput) {
+            this.$refs.slipModalFileInput.value = '';
+          }
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
+        },
+
+        applySlipChoice() {
+          const mode = this.slipModal.mode;
+          const ctx = this.slipModal.context;
+
+          if (mode === 'upload') {
+            if (!this.slipModal.tempPreview) {
+              this.notifyWarning('Belum Ada Berkas', 'Silakan pilih berkas foto atau dokumen PDF terlebih dahulu.');
+              return;
+            }
+          } else if (mode === 'link') {
+            const url = (this.slipModal.linkUrl || '').trim();
+            if (!url) {
+              this.notifyWarning('Link Kosong', 'Silakan tempel URL link bukti transfer (misal Google Drive atau tautan web).');
+              return;
+            }
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+              this.notifyWarning('Format Link Salah', 'URL harus diawali dengan http:// atau https://');
+              return;
+            }
+          }
+
+          if (ctx === 'inline') {
+            if (mode === 'upload') {
+              this.inputBayar.filePreview = this.slipModal.tempPreview;
+              this.inputBayar.fileName = this.slipModal.tempName;
+              this.inputBayar.fileType = this.slipModal.tempType;
+              this.notifySuccess('Berkas Terpilih', `Bukti ${this.slipModal.tempName} berhasil dilampirkan.`);
+            } else {
+              const url = this.slipModal.linkUrl.trim();
+              this.inputBayar.filePreview = url;
+              this.inputBayar.fileName = 'Link: ' + url;
+              this.inputBayar.fileType = 'link';
+              this.notifySuccess('Link Terpasang', 'Tautan bukti transfer berhasil dilampirkan.');
+            }
+            this.closeSlipModal();
+            this.$nextTick(() => {
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+            });
+          } else if (ctx === 'editTrx') {
+            if (mode === 'upload') {
+              this.editTrxForm.sourceType = 'upload';
+              this.editTrxForm.filePreview = this.slipModal.tempPreview;
+              this.editTrxForm.fileName = this.slipModal.tempName;
+              this.editTrxForm.fileType = this.slipModal.tempType;
+              this.editTrxForm.buktiUrl = '';
+              this.editTrxForm.linkUrl = '';
+              this.notifySuccess('Berkas Terpilih', `Bukti ${this.slipModal.tempName} siap disimpan.`);
+            } else {
+              const url = this.slipModal.linkUrl.trim();
+              this.editTrxForm.sourceType = 'link';
+              this.editTrxForm.linkUrl = url;
+              this.editTrxForm.filePreview = url;
+              this.editTrxForm.buktiUrl = url;
+              this.editTrxForm.fileName = 'Link: ' + url;
+              this.editTrxForm.fileType = 'link';
+              this.notifySuccess('Link Terpasang', 'Tautan bukti transfer siap disimpan.');
+            }
+            this.closeSlipModal();
+            this.$nextTick(() => {
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+            });
+          } else if (ctx === 'activeTrx' && this.activeTrx) {
+            const idTrx = this.activeTrx.id;
+            let valData = '';
+            let valName = '';
+            let valType = '';
+
+            if (mode === 'upload') {
+              valData = this.slipModal.tempPreview;
+              valName = this.slipModal.tempName || 'bukti_transfer.jpg';
+              valType = this.slipModal.tempType || 'image/jpeg';
+            } else {
+              valData = this.slipModal.linkUrl.trim();
+              valName = 'Tautan Bukti Transfer';
+              valType = 'link';
+            }
+
+            this.slipModal.isSaving = true;
+            this.saveUpdatedBukti(idTrx, valData, valName, valType, () => {
+              this.slipModal.isSaving = false;
+              this.closeSlipModal();
+            });
+          }
+        },
+
+        saveUpdatedBukti(idTrx, base64OrUrl, fileName, mimeType, cb) {
+          const payload = {
+            idTrx: idTrx,
+            fileBase64: base64OrUrl,
+            fileName: fileName || '',
+            fileType: mimeType || ''
+          };
+
+          if (this.activeTrx && this.activeTrx.id === idTrx) {
+            this.activeTrx.buktiUrl = base64OrUrl;
+          }
+          const targetInList = this.transaksiList.find(t => t.id === idTrx);
+          if (targetInList) targetInList.buktiUrl = base64OrUrl;
+
+          const handleDone = (res) => {
+            if (cb) cb();
+            if (res && res.buktiUrl) {
+              if (this.activeTrx && this.activeTrx.id === idTrx) this.activeTrx.buktiUrl = res.buktiUrl;
+              if (targetInList) targetInList.buktiUrl = res.buktiUrl;
+            }
+            this.notifySuccess('Bukti Diperbarui', 'Bukti slip transfer berhasil disimpan.');
+            this.$nextTick(() => {
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+            });
+          };
+
+          const handleFail = (err) => {
+            if (cb) cb();
+            this.notifyError('Gagal Menyimpan', err || 'Terjadi kesalahan sistem.');
+          };
+
+          if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+              .withSuccessHandler((res) => {
+                if (res && res.success) {
+                  handleDone(res);
+                } else {
+                  handleFail((res && res.message) || 'Gagal menyimpan bukti.');
+                }
+              })
+              .withFailureHandler((err) => {
+                handleFail(err.toString());
+              })
+              .updateBuktiSlip(payload.idTrx, payload.fileBase64, payload.fileName, payload.fileType);
+          } else if (GAS_API_URL && !GAS_API_URL.includes("GANTI_DENGAN_DEPLOYMENT_ID_ANDA")) {
+            apiCall('updateBuktiSlip', payload)
+              .then((res) => {
+                if (res && res.success) {
+                  handleDone(res);
+                } else {
+                  handleFail((res && res.message) || 'Gagal menyimpan bukti.');
+                }
+              })
+              .catch((err) => handleFail(err.toString()));
+          } else {
+            setTimeout(() => handleDone({ success: true, buktiUrl: base64OrUrl }), 300);
+          }
+        },
+
         async handleModalBuktiUpload(e) {
           const file = e.target.files && e.target.files[0];
           if (!file || !this.activeTrx) return;
@@ -7492,6 +8259,7 @@
 
         openEditTransaksiModal(trx) {
           if (!trx) return;
+          const isLink = trx.buktiUrl && (String(trx.buktiUrl).startsWith('http://') || String(trx.buktiUrl).startsWith('https://'));
           this.editTrxForm = {
             id: trx.id,
             sppgId: trx.sppgId,
@@ -7505,11 +8273,15 @@
             noSts: trx.editNoSts !== undefined ? trx.editNoSts : (trx.noSts || ''),
             noStbp: trx.editNoStbp !== undefined ? trx.editNoStbp : (trx.noStbp || ''),
             noTrxBank: trx.editNoTrxBank !== undefined ? trx.editNoTrxBank : (trx.noTrxBank || ''),
+            seriAwal: trx.seriAwal !== undefined ? trx.seriAwal : (trx.seri_awal || ''),
+            seriAkhir: trx.seriAkhir !== undefined ? trx.seriAkhir : (trx.seri_akhir || ''),
             status: trx.status || 'terverifikasi',
             buktiUrl: trx.buktiUrl || '',
             filePreview: null,
             fileName: '',
-            fileType: '',
+            fileType: isLink ? 'link' : '',
+            sourceType: isLink ? 'link' : 'upload',
+            linkUrl: isLink ? trx.buktiUrl : '',
             isSubmitting: false
           };
           this.showEditTransaksiModal = true;
@@ -7532,6 +8304,41 @@
           }
         },
 
+        setEditTrxSourceType(type) {
+          this.editTrxForm.sourceType = type;
+          if (type === 'link') {
+            if (!this.editTrxForm.linkUrl && this.editTrxForm.buktiUrl && (String(this.editTrxForm.buktiUrl).startsWith('http://') || String(this.editTrxForm.buktiUrl).startsWith('https://'))) {
+              this.editTrxForm.linkUrl = this.editTrxForm.buktiUrl;
+            }
+          }
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
+        },
+
+        onEditTrxLinkChange() {
+          const url = (this.editTrxForm.linkUrl || '').trim();
+          if (url.startsWith('http://') || url.startsWith('https://')) {
+            this.editTrxForm.buktiUrl = url;
+            this.editTrxForm.filePreview = null;
+            this.editTrxForm.fileName = 'Link: ' + url;
+            this.editTrxForm.fileType = 'link';
+          }
+        },
+
+        clearEditTrxBukti() {
+          this.editTrxForm.buktiUrl = '';
+          this.editTrxForm.filePreview = null;
+          this.editTrxForm.fileName = '';
+          this.editTrxForm.fileType = '';
+          this.editTrxForm.linkUrl = '';
+          if (this.$refs.editTrxFileInput) this.$refs.editTrxFileInput.value = '';
+          this.notifyInfo('Bukti Dikosongkan', 'Bukti transfer untuk transaksi ini siap dihapus saat Anda menekan tombol Simpan.');
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
+        },
+
         async handleEditTrxFileUpload(e) {
           const file = e.target.files && e.target.files[0];
           if (!file) return;
@@ -7543,6 +8350,7 @@
             return;
           }
 
+          this.editTrxForm.sourceType = 'upload';
           this.editTrxForm.fileName = file.name;
           const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
           this.editTrxForm.fileType = isPdf ? 'application/pdf' : (file.type || 'image/jpeg');
@@ -7557,6 +8365,7 @@
             reader.onload = (evt) => {
               this.editTrxForm.filePreview = evt.target.result;
               this.notifySuccess('PDF Terlampir', `Dokumen ${file.name} siap disimpan.`);
+              this.$nextTick(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); });
             };
             reader.readAsDataURL(file);
             return;
@@ -7567,10 +8376,12 @@
             this.editTrxForm.filePreview = compressed.dataUrl;
             this.editTrxForm.fileType = 'image/jpeg';
             this.notifySuccess('Slip Terlampir', `Foto ${file.name} dioptimasi (${(compressed.sizeBytes / 1024).toFixed(0)} KB).`);
+            this.$nextTick(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); });
           } catch (err) {
             const reader = new FileReader();
             reader.onload = (evt) => {
               this.editTrxForm.filePreview = evt.target.result;
+              this.$nextTick(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); });
             };
             reader.readAsDataURL(file);
           }
@@ -7605,11 +8416,13 @@
             noSts: this.editTrxForm.noSts,
             noStbp: this.editTrxForm.noStbp,
             noTrxBank: this.editTrxForm.noTrxBank,
+            seriAwal: this.editTrxForm.seriAwal || '',
+            seriAkhir: this.editTrxForm.seriAkhir || '',
             status: this.editTrxForm.status,
-            buktiUrl: this.editTrxForm.buktiUrl,
-            fileBase64: this.editTrxForm.filePreview || '',
-            fileName: this.editTrxForm.fileName || '',
-            fileType: this.editTrxForm.fileType || ''
+            buktiUrl: (this.editTrxForm.sourceType === 'link' || (this.editTrxForm.linkUrl && String(this.editTrxForm.linkUrl).startsWith('http'))) ? (this.editTrxForm.linkUrl || this.editTrxForm.buktiUrl) : (this.editTrxForm.filePreview ? '' : this.editTrxForm.buktiUrl),
+            fileBase64: (this.editTrxForm.sourceType === 'link' || (this.editTrxForm.linkUrl && String(this.editTrxForm.linkUrl).startsWith('http'))) ? '' : (this.editTrxForm.filePreview || ''),
+            fileName: (this.editTrxForm.sourceType === 'link' || (this.editTrxForm.linkUrl && String(this.editTrxForm.linkUrl).startsWith('http'))) ? '' : (this.editTrxForm.fileName || ''),
+            fileType: (this.editTrxForm.sourceType === 'link' || (this.editTrxForm.linkUrl && String(this.editTrxForm.linkUrl).startsWith('http'))) ? 'link' : (this.editTrxForm.fileType || '')
           };
 
           const handleSuccess = (res) => {
@@ -7633,9 +8446,15 @@
               target.editNoSts = payload.noSts;
               target.editNoStbp = payload.noStbp;
               target.editNoTrxBank = payload.noTrxBank;
+              target.seriAwal = payload.seriAwal;
+              target.seriAkhir = payload.seriAkhir;
+              target.seri_awal = payload.seriAwal;
+              target.seri_akhir = payload.seriAkhir;
               target.status = payload.status;
               if (res && res.buktiUrl) {
                 target.buktiUrl = res.buktiUrl;
+              } else if (payload.buktiUrl) {
+                target.buktiUrl = payload.buktiUrl;
               } else if (payload.fileBase64) {
                 target.buktiUrl = payload.fileBase64;
               }
