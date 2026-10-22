@@ -1425,7 +1425,7 @@
                         <!-- Tombol 3: Icon Silang untuk Delete (di sebelah kanan tombol simpan) -->
                         <button 
                           type="button" 
-                          @click="confirmHapusTransaksi(trx)"
+                          @click.stop="confirmHapusTransaksi(trx)"
                           :disabled="trx.isDeleting"
                           class="w-7 h-7 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-300 transition flex items-center justify-center shadow-2xs cursor-pointer shrink-0"
                           title="Hapus data transaksi ini">
@@ -3076,14 +3076,20 @@
   <!-- ========================================================================= -->
   <!-- MODAL KONFIRMASI AKSI / DIALOG (PENGGANTI WINDOW.CONFIRM / ALERT)         -->
   <!-- ========================================================================= -->
-  <div x-show="confirmModal.show" class="fixed inset-0 z-[90] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" x-cloak>
+  <div 
+    x-show="showConfirmModal || confirmModal.show" 
+    @keydown.escape.window="showConfirmModal = false; confirmModal.show = false"
+    @click.self="showConfirmModal = false; confirmModal.show = false"
+    class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" 
+    x-cloak>
     <div 
-      x-show="confirmModal.show"
+      x-show="showConfirmModal || confirmModal.show"
       x-transition:enter="transition ease-out duration-200"
       x-transition:enter-start="opacity-0 scale-95"
       x-transition:enter-end="opacity-100 scale-100"
       class="bg-white border border-slate-200 rounded-2xl max-w-md w-full shadow-2xl p-6 text-center space-y-4">
       
+      <!-- Icon Konfirmasi (Direct SVG - 100% Reliable & Kebal Error) -->
       <div 
         class="w-14 h-14 mx-auto rounded-full flex items-center justify-center text-xl shadow-sm"
         :class="{
@@ -3092,10 +3098,26 @@
           'bg-emerald-50 text-emerald-600 border border-emerald-200': confirmModal.type === 'success',
           'bg-blue-50 text-brand-600 border border-blue-200': confirmModal.type === 'info'
         }">
-        <template x-if="confirmModal.type === 'warning'"><i data-lucide="alert-triangle" class="w-7 h-7"></i></template>
-        <template x-if="confirmModal.type === 'danger' || confirmModal.type === 'error'"><i data-lucide="alert-octagon" class="w-7 h-7"></i></template>
-        <template x-if="confirmModal.type === 'success'"><i data-lucide="check-circle-2" class="w-7 h-7"></i></template>
-        <template x-if="confirmModal.type === 'info'"><i data-lucide="help-circle" class="w-7 h-7"></i></template>
+        <template x-if="confirmModal.type === 'warning'">
+          <svg class="w-7 h-7 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+        </template>
+        <template x-if="confirmModal.type === 'danger' || confirmModal.type === 'error'">
+          <svg class="w-7 h-7 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+          </svg>
+        </template>
+        <template x-if="confirmModal.type === 'success'">
+          <svg class="w-7 h-7 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </template>
+        <template x-if="confirmModal.type === 'info'">
+          <svg class="w-7 h-7 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+          </svg>
+        </template>
       </div>
 
       <div class="space-y-1">
@@ -3106,21 +3128,23 @@
       <div class="pt-2 flex items-center justify-center gap-2.5">
         <button 
           type="button" 
-          @click="confirmModal.show = false" 
-          class="flex-1 py-2.5 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+          @click="showConfirmModal = false; confirmModal.show = false" 
+          class="flex-1 py-2.5 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition cursor-pointer">
           <span x-text="confirmModal.cancelText || 'Batal'"></span>
         </button>
         <button 
           type="button" 
           @click="executeConfirmAction()" 
-          class="flex-1 py-2.5 px-4 rounded-xl text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-1.5"
+          class="flex-1 py-2.5 px-4 rounded-xl text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer"
           :class="{
             'bg-amber-600 hover:bg-amber-700': confirmModal.type === 'warning',
             'bg-rose-600 hover:bg-rose-700': confirmModal.type === 'danger' || confirmModal.type === 'error',
             'bg-emerald-600 hover:bg-emerald-700': confirmModal.type === 'success',
             'bg-brand-600 hover:bg-brand-700': confirmModal.type === 'info'
           }">
-          <i data-lucide="check" class="w-4 h-4"></i>
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
           <span x-text="confirmModal.confirmText || 'Ya, Lanjutkan'"></span>
         </button>
       </div>
@@ -3331,6 +3355,7 @@
         },
 
         // ================= MODAL KONFIRMASI / DIALOG =================
+        showConfirmModal: false,
         confirmModal: {
           show: false,
           type: 'warning', // 'warning' | 'danger' | 'info' | 'success'
@@ -3342,24 +3367,30 @@
         },
 
         askConfirm(options) {
-          this.confirmModal = {
-            show: true,
-            type: options.type || 'warning',
-            title: options.title || 'Konfirmasi',
-            message: options.message || 'Apakah Anda yakin ingin melanjutkan tindakan ini?',
-            confirmText: options.confirmText || 'Ya, Lanjutkan',
-            cancelText: options.cancelText || 'Batal',
-            onConfirm: options.onConfirm || null
-          };
-          this.$nextTick(() => lucide.createIcons());
+          options = options || {};
+          this.confirmModal.type = options.type || 'warning';
+          this.confirmModal.title = options.title || 'Konfirmasi';
+          this.confirmModal.message = options.message || 'Apakah Anda yakin ingin melanjutkan tindakan ini?';
+          this.confirmModal.confirmText = options.confirmText || 'Ya, Lanjutkan';
+          this.confirmModal.cancelText = options.cancelText || 'Batal';
+          this.confirmModal.onConfirm = typeof options.onConfirm === 'function' ? options.onConfirm : null;
+          this.confirmModal.show = true;
+          this.showConfirmModal = true;
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
         },
 
         executeConfirmAction() {
-          if (typeof this.confirmModal.onConfirm === 'function') {
-            this.confirmModal.onConfirm();
-          }
+          const fn = this.confirmModal.onConfirm;
           this.confirmModal.show = false;
-          this.$nextTick(() => lucide.createIcons());
+          this.showConfirmModal = false;
+          if (typeof fn === 'function') {
+            fn();
+          }
+          this.$nextTick(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          });
         },
 
         // Modals
